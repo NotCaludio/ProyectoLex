@@ -10,7 +10,7 @@
 
 
 %%
-\{					{BEGIN(COMENTARIO_LLAVE); printf("Se encontro comentario");}
+\{					BEGIN(COMENTARIO_LLAVE); 
 
 \(\*				BEGIN(COMENTARIO_PARENTESIS);
 
