@@ -1,7 +1,8 @@
 %{
 #include <stdio.h>
-#pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312)
-#define CANTIDAD_OPERADORES 22  
+#pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
+#define CANTIDAD_OPERADORES 22
+#define CANTIDAD_NUMEROS 1000  
 
 struct operadores{
 	char operador[3]= {' ', ' ', '\0'};
@@ -14,6 +15,39 @@ esto porque hay operadores de mas de 1 caracter
 Entonces hay un arreglo de estructuras, que contiene a todos los operadores y las veces que salen
 */
 
+struct numero{
+	char* constante_numerica = 0; //es char* porque son muy variables las constantes numericas
+	unsigned int cantidad = 0;
+};	
+numero arreglo_numeros[CANTIDAD_NUMEROS];
+
+void contar_cantidad_numero()
+{
+	unsigned char numero_existe_en_arreglo= 0;
+	for (int i = 0; i< CANTIDAD_NUMEROS; i++)
+	{
+		if(arreglo_numeros[i].constante_numerica)
+			if(strcmp(arreglo_numeros[i].constante_numerica,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_numeros[i].cantidad++;
+				numero_existe_en_arreglo=1;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_numeros[i].constante_numerica = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_numeros[i].constante_numerica)
+			{
+				strcpy(arreglo_numeros[i].constante_numerica, yytext);
+				arreglo_numeros[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
 
 %}
 
@@ -21,8 +55,28 @@ Entonces hay un arreglo de estructuras, que contiene a todos los operadores y la
 %option outfile="escaner.cpp"
 %x COMENTARIO_LLAVE COMENTARIO_PARENTESIS
 
+ENTERO_DECIMAL (\+|-)?(0|[1-9][0-9]*)
+HEXADECIMAL (\+|-)?\$(0|[1-9A-F][0-9A-F]*)
+REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 
 %%
+
+{ENTERO_DECIMAL}	{
+						printf("Entero: %s\n",yytext);
+						contar_cantidad_numero();
+					}
+
+{HEXADECIMAL}		{
+						printf("Hexadecimal: %s\n",yytext);
+						contar_cantidad_numero();
+					}
+					
+{REAL_DECIMAL}		{
+						printf("Real: %s\n",yytext);
+						contar_cantidad_numero();
+					}
+
+
 
 "@"|"#"|"<>"|"<="|">="|"+"|"-"|"*"	|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
@@ -59,9 +113,9 @@ Entonces hay un arreglo de estructuras, que contiene a todos los operadores y la
 
 
 
-\{					BEGIN(COMENTARIO_LLAVE); 
+\{					{BEGIN(COMENTARIO_LLAVE);printf("Comentario llave\n");} 
 
-\(\*				BEGIN(COMENTARIO_PARENTESIS);
+\(\*				{BEGIN(COMENTARIO_PARENTESIS);printf("Comentario parentesis\n");} 
 
 <COMENTARIO_LLAVE>{
 \{						{
@@ -142,5 +196,19 @@ int main(int argc, char * argv[])
 				fprintf(caracteres_especiales,"%d,%s,%d\n",i,"comma",arreglo_operadores[i].cantidad);
 			else
 				fprintf(caracteres_especiales,"%d,%s,%d\n",i,arreglo_operadores[i].operador,arreglo_operadores[i].cantidad);
+	}
+	FILE * constantes_numericas = fopen("constantes_numericas.csv", "wt");
+	if (!constantes_numericas)
+		printf("No se pudo abrir el archivo de constantes_numericas");
+	else
+	{
+		for(int i = 0; i < CANTIDAD_NUMEROS; i++)
+		if(arreglo_numeros[i].constante_numerica)
+		{
+			fprintf(constantes_numericas,"%d,%s,%d\n",i,arreglo_numeros[i].constante_numerica,arreglo_numeros[i].cantidad);
+			free(arreglo_numeros[i].constante_numerica);
+		}
+		else
+			continue;
 	}
 }
