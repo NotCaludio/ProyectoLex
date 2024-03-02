@@ -64,4 +64,13 @@ int main(int argc, char * argv[])
 	yylex();
 	if(archivo_abierto)
 		fclose(yyin);
+		
+	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
+	if (!palabras_reservadas)
+		printf("No se pudo abrir el archivo de palabras_reservadas");
+	else
+	{
+		for(int i = 0; i < 5; i++)
+			fprintf(palabras_reservadas, "1,2,3,4\n");
+	}
 }
