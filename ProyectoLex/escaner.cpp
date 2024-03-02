@@ -285,12 +285,13 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 9
-#define YY_END_OF_BUFFER 10
-static yyconst short int yy_accept[21] =
+#define YY_NUM_RULES 12
+#define YY_END_OF_BUFFER 13
+static yyconst short int yy_accept[30] =
     {   0,
-        0,    0,    0,    0,    0,    0,   10,    9,    9,    1,
-        5,    3,    4,    8,    8,    8,    2,    6,    7,    0
+        0,    0,    0,    0,    0,    0,   13,   12,    1,    2,
+        3,    2,   12,    3,    2,    2,    4,    8,    6,    7,
+       11,   11,   11,    5,    3,    1,    9,   10,    0
     } ;
 
 static yyconst int yy_ec[256] =
@@ -298,17 +299,17 @@ static yyconst int yy_ec[256] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    3,
-        4,    5,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    3,    1,    1,    1,    1,    4,
+        5,    6,    7,    8,    9,   10,   11,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,   12,   13,   14,
+       15,   16,    1,   17,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+       18,    1,   19,   20,    1,    1,    1,    1,    1,    1,
 
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    6,    1,    7,    1,    1,    1,    1,    1,
+        1,    1,   21,    1,   22,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -325,39 +326,49 @@ static yyconst int yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst int yy_meta[8] =
+static yyconst int yy_meta[23] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1
     } ;
 
-static yyconst short int yy_base[22] =
+static yyconst short int yy_base[32] =
     {   0,
-        0,    4,   10,    0,   17,    0,    9,   25,    3,   25,
-       25,   25,   25,   25,    0,    0,   25,   25,   25,   25,
-        0
+        0,    0,   21,   23,   22,   25,   41,   46,   46,   34,
+       46,   46,   29,   23,   17,   22,   46,   46,   46,   46,
+       46,   30,   30,   46,   46,   46,   46,   46,   46,   33,
+       29
     } ;
 
-static yyconst short int yy_def[22] =
+static yyconst short int yy_def[32] =
     {   0,
-       21,   21,   20,    3,   20,    5,   20,   20,   20,   20,
-       20,   20,   20,   20,   20,   20,   20,   20,   20,    0,
-       20
+       29,    1,   30,   30,   31,   31,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,    0,   29,
+       29
     } ;
 
-static yyconst short int yy_nxt[33] =
+static yyconst short int yy_nxt[69] =
     {   0,
-        8,   20,    9,   19,   18,   10,    9,   17,   20,   10,
-       11,    8,   11,   11,   11,   12,   13,   14,    8,   15,
-       14,   16,   14,   14,    7,   20,   20,   20,   20,   20,
-       20,   20
+        8,    8,    9,   10,   11,    9,    9,   12,    9,   13,
+       12,   14,   12,   15,   12,   16,    9,   11,   11,   12,
+       17,    8,    8,    8,    8,   22,    8,   23,   22,   21,
+       23,   26,   26,   18,   28,   27,   26,   25,   25,   24,
+       29,   19,   20,   19,   20,    7,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29
     } ;
 
-static yyconst short int yy_chk[33] =
+static yyconst short int yy_chk[69] =
     {   0,
-       21,    0,    1,   16,   15,    1,    2,    9,    7,    2,
-        3,    3,    3,    3,    3,    3,    3,    5,    5,    5,
-        5,    5,    5,    5,   20,   20,   20,   20,   20,   20,
-       20,   20
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    3,    5,    4,    5,    6,    5,    6,   31,
+        6,   15,   15,   30,   23,   22,   16,   14,   13,   10,
+        7,    3,    3,    4,    4,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -374,7 +385,20 @@ char *yytext;
 #define INITIAL 0
 #include <stdio.h>
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312)
-	
+#define CANTIDAD_OPERADORES 22  
+
+struct operadores{
+	char operador[3]= {' ', ' ', '\0'};
+	unsigned int cantidad = 0;
+};	
+operadores arreglo_operadores[CANTIDAD_OPERADORES];
+
+/*estructura operadores contiene el operador en char[] y toma dos espacios,
+esto porque hay operadores de mas de 1 caracter
+Entonces hay un arreglo de estructuras, que contiene a todos los operadores y las veces que salen
+*/
+
+
 #define COMENTARIO_LLAVE 1
 #define COMENTARIO_PARENTESIS 2
 
@@ -530,6 +554,7 @@ YY_DECL
 
 
 
+
 	if ( yy_init )
 		{
 		yy_init = 0;
@@ -579,13 +604,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 21 )
+				if ( yy_current_state >= 30 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 25 );
+		while ( yy_base[yy_current_state] != 46 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -612,33 +637,46 @@ do_action:	/* This label is used only to access EOF actions. */
 			goto yy_find_action;
 
 case 1:
-YY_RULE_SETUP
-BEGIN(COMENTARIO_LLAVE); 
-	YY_BREAK
 case 2:
-YY_RULE_SETUP
-BEGIN(COMENTARIO_PARENTESIS);
-	YY_BREAK
-
 case 3:
 YY_RULE_SETUP
 {
-							printf("No se puede abrir comentario dentro de un comentario\n");
-							yyterminate();
-							
-						}
+							/* primero checa si existe el operador en alguna estructura del arreglo, si si le suma a la cantidad
+							de lo contrario sobreescribe uno vacio para poner el operador*/
+								unsigned int operador_existe_en_arreglo= 0;
+								for (int i = 0; i< CANTIDAD_OPERADORES; i++)
+								{
+									if(strcmp(arreglo_operadores[i].operador,yytext) == 0) //si es 0 es que son iguales
+										{
+											arreglo_operadores[i].cantidad++;
+											operador_existe_en_arreglo=1;
+											break;
+										}
+
+								}
+								if(!operador_existe_en_arreglo)
+								for (int i = 0; i< CANTIDAD_OPERADORES; i++)
+								{
+										if (strcmp(arreglo_operadores[i].operador,"  ") == 0 )
+										{
+											strncpy(arreglo_operadores[i].operador, yytext, 2);
+											arreglo_operadores[i].cantidad++;
+											operador_existe_en_arreglo=0;
+											break;
+											
+										}
+
+								}
+							}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-{
-							BEGIN(INITIAL);
-						}
+BEGIN(COMENTARIO_LLAVE); 
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-ECHO;
+BEGIN(COMENTARIO_PARENTESIS);
 	YY_BREAK
-
 
 case 6:
 YY_RULE_SETUP
@@ -659,7 +697,27 @@ YY_RULE_SETUP
 ECHO;
 	YY_BREAK
 
+
 case 9:
+YY_RULE_SETUP
+{
+							printf("No se puede abrir comentario dentro de un comentario\n");
+							yyterminate();
+							
+						}
+	YY_BREAK
+case 10:
+YY_RULE_SETUP
+{
+							BEGIN(INITIAL);
+						}
+	YY_BREAK
+case 11:
+YY_RULE_SETUP
+ECHO;
+	YY_BREAK
+
+case 12:
 YY_RULE_SETUP
 ECHO;
 	YY_BREAK
@@ -956,7 +1014,7 @@ static yy_state_type yy_get_previous_state()
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 21 )
+			if ( yy_current_state >= 30 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -991,11 +1049,11 @@ yy_state_type yy_current_state;
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 21 )
+		if ( yy_current_state >= 30 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 20);
+	yy_is_jam = (yy_current_state == 29);
 
 	return yy_is_jam ? 0 : yy_current_state;
 	}
@@ -1572,6 +1630,7 @@ int main(int argc, char * argv[])
 	yylex();
 	if(archivo_abierto)
 		fclose(yyin);
+		
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
 		printf("No se pudo abrir el archivo de palabras_reservadas");
@@ -1579,5 +1638,26 @@ int main(int argc, char * argv[])
 	{
 		for(int i = 0; i < 5; i++)
 			fprintf(palabras_reservadas, "1,2,3,4\n");
+	}
+	
+	for(int i = 0; i < CANTIDAD_OPERADORES; i++)
+		if(strcmp(arreglo_operadores[i].operador,"  ") == 0)
+			continue;
+		else
+			printf("Caracter %s: %d\n",arreglo_operadores[i].operador,arreglo_operadores[i].cantidad);
+			
+	FILE * caracteres_especiales = fopen("caracteres_especiales.csv", "wt");
+	if (!caracteres_especiales)
+		printf("No se pudo abrir el archivo de caracteres_especiales");
+	else
+	{
+		for(int i = 0; i < CANTIDAD_OPERADORES; i++)
+		if(strcmp(arreglo_operadores[i].operador,"  ") == 0)
+			continue;
+		else
+			if(strcmp(arreglo_operadores[i].operador,",") ==0)
+				fprintf(caracteres_especiales,"%d,%s,%d\n",i,"comma",arreglo_operadores[i].cantidad);
+			else
+				fprintf(caracteres_especiales,"%d,%s,%d\n",i,arreglo_operadores[i].operador,arreglo_operadores[i].cantidad);
 	}
 }
