@@ -51,6 +51,7 @@ void contar_cantidad_numero()
 
 %}
 
+%option caseless
 %option noyywrap
 %option outfile="escaner.cpp"
 %x COMENTARIO_LLAVE COMENTARIO_PARENTESIS
