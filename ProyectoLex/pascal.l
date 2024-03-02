@@ -23,7 +23,7 @@
 \}						{
 							BEGIN(INITIAL);
 						}
-.
+.						ECHO;
 
 }
 <COMENTARIO_PARENTESIS>{
@@ -35,7 +35,7 @@
 \*\)						{
 							BEGIN(INITIAL);
 						}
-.
+.						ECHO;
 }
 
 
