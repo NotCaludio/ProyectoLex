@@ -2,7 +2,8 @@
 #include <stdio.h>
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
 #define CANTIDAD_OPERADORES 22
-#define CANTIDAD_NUMEROS 1000  
+#define CANTIDAD_NUMEROS 1000
+#define CANTIDAD_CADENAS 1000  
 
 unsigned int columna =1;
 unsigned int fila =1; 
@@ -24,16 +25,20 @@ struct numero{
 };	
 numero arreglo_numeros[CANTIDAD_NUMEROS];
 
+struct cadena_caracteres{
+	char* cadena = 0; //es char* porque son muy variables las cadenas
+	unsigned int cantidad = 0;
+};	
+cadena_caracteres arreglo_cadenas[CANTIDAD_CADENAS];
+
 void contar_cantidad_numero()
 {
-	unsigned char numero_existe_en_arreglo= 0;
 	for (int i = 0; i< CANTIDAD_NUMEROS; i++)
 	{
 		if(arreglo_numeros[i].constante_numerica)
 			if(strcmp(arreglo_numeros[i].constante_numerica,yytext) == 0) //si es 0 es que son iguales
 			{
 				arreglo_numeros[i].cantidad++;
-				numero_existe_en_arreglo=1;
 				break;
 			}
 			else
@@ -45,6 +50,32 @@ void contar_cantidad_numero()
 			{
 				strcpy(arreglo_numeros[i].constante_numerica, yytext);
 				arreglo_numeros[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
+
+void contar_cantidad_cadena()
+{
+	for (int i = 0; i< CANTIDAD_CADENAS; i++)
+	{
+		if(arreglo_cadenas[i].cadena)
+			if(strcmp(arreglo_cadenas[i].cadena,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_cadenas[i].cantidad++;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_cadenas[i].cadena = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_cadenas[i].cadena)
+			{
+				strcpy(arreglo_cadenas[i].cadena, yytext);
+				arreglo_cadenas[i].cantidad++;
 			}
 				
 			break;
@@ -122,7 +153,11 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 								}
 							}
 
-
+\'([^\\\'\n]|\\.|\'\')*\' 	{
+								printf("Cadena: %s\n", yytext);
+								contar_cantidad_cadena();
+								
+							}
 
 
 
@@ -248,6 +283,20 @@ int main(int argc, char * argv[])
 			free(arreglo_numeros[i].constante_numerica);
 		}
 		else
-			continue;
+			break;
+	}
+	FILE* constantes_cadenas = fopen("constantes_cadenas.csv", "wt");
+	if (!constantes_cadenas)
+	    printf("No se pudo abrir el archivo de constantes_cadenas");
+	else 
+	{
+	    for (int i = 0; i < CANTIDAD_CADENAS; i++)
+		if(arreglo_cadenas[i].cadena)
+		{
+	        fprintf(constantes_cadenas, "%d,%s,%d\n", i, arreglo_cadenas[i].cadena, arreglo_cadenas[i].cantidad);
+			free(arreglo_cadenas[i].cadena);
+		}
+		else
+			break;
 	}
 }
