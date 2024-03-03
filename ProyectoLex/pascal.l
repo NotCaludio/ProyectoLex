@@ -3,10 +3,45 @@
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
 #define CANTIDAD_OPERADORES 22
 #define CANTIDAD_NUMEROS 1000
-#define CANTIDAD_CADENAS 1000  
+#define CANTIDAD_CADENAS 1000
+#define CANTIDAD_PALABRAS_RESERVADAS 26
 
 unsigned int columna =1;
 unsigned int fila =1; 
+
+struct palabras_reservadas {
+	char* palabra;
+	unsigned int contador;
+};
+
+palabras_reservadas reserved_words[NUM_RESERVED_WORDS] = {
+    {"program", 0},
+    {"begin", 0},
+    {"uses", 0},
+    {"unit", 0},
+    {"interface", 0},
+    {"implementation", 0},
+    {"label", 0},
+    {"const", 0},
+    {"type", 0},
+    {"real", 0},
+    {"integer", 0},
+    {"longint", 0},
+    {"word", 0},
+    {"char", 0},
+    {"boolean", 0},
+    {"true", 0},
+    {"false", 0},
+    {"string", 0},
+    {"packed", 0},
+    {"array", 0},
+    {"record", 0},
+    {"end", 0},
+    {"case", 0},
+    {"otherwise", 0},
+    {"of", 0},
+    {"set", 0}
+};
 
 struct operadores{
 	char operador[3]= {' ', ' ', '\0'};
@@ -78,6 +113,19 @@ void contar_cantidad_cadena()
 				arreglo_cadenas[i].cantidad++;
 			}
 				
+			break;
+		}
+	}
+}
+
+void contar_palabras_reservadas()
+{
+	for (int i = 0; i < NUM_RESERVED_WORDS; i++)
+	{
+		if (strcmp(reserved_words[i].palabra, yytext) == 0)
+		{
+			reserved_words[i].contador++;
+			printf("Palabra reservada: %s, contador: %d\n", reserved_words[i].palabra, reserved_words[i].contador```);
 			break;
 		}
 	}
@@ -171,6 +219,10 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 						columna++;
 					} 
 
+[a-zA-Z][a-zA-Z0-9_]*  {
+						contar_palabras_reservadas();
+					}
+
 .		{
 			columna++;
 		}
@@ -247,9 +299,10 @@ int main(int argc, char * argv[])
 		printf("No se pudo abrir el archivo de palabras_reservadas");
 	else
 	{
-		for(int i = 0; i < 5; i++)
-			fprintf(palabras_reservadas, "1,2,3,4\n");
-	}
+		fprintf(palabras_reservadas, "Numero,Palabra,Contador\n");
+		for (int i = 0; i < NUM_RESERVED_WORDS; i++)
+			fprintf(palabras_reservadas, "%d,%s,%d\n", i+1, reserved_words[i].palabra, reserved_words[i].contador);
+}
 	
 	for(int i = 0; i < CANTIDAD_OPERADORES; i++)
 		if(strcmp(arreglo_operadores[i].operador,"  ") == 0)
