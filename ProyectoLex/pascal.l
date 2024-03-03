@@ -4,7 +4,8 @@
 #define CANTIDAD_OPERADORES 22
 #define CANTIDAD_NUMEROS 1000
 #define CANTIDAD_CADENAS 1000  
-#define CANTIDAD_PALABRAS_RESERVADAS 26
+#define CANTIDAD_PALABRAS_RESERVADAS 55
+#define CANTIDAD_IDENTIFICADORES 1000
 
 unsigned int columna =1;
 unsigned int fila =1; 
@@ -37,6 +38,12 @@ struct numero{
 	unsigned int cantidad = 0;
 };	
 numero arreglo_numeros[CANTIDAD_NUMEROS];
+
+struct identificador{
+	char* cadena_identificador = 0; //es char* porque son muy variables las constantes numericas
+	unsigned int cantidad = 0;
+};	
+identificador arreglo_identificadores[CANTIDAD_IDENTIFICADORES];
 
 void contar_cantidad_palabra()
 {
@@ -133,6 +140,32 @@ void contar_cantidad_numero()
 	}
 }
 
+void contar_cantidad_identificador()
+{
+	for (int i = 0; i< CANTIDAD_IDENTIFICADORES; i++)
+	{
+		if(arreglo_identificadores[i].cadena_identificador)
+			if(strcmp(arreglo_identificadores[i].cadena_identificador,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_identificadores[i].cantidad++;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_identificadores[i].cadena_identificador = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_identificadores[i].cadena_identificador)
+			{
+				strcpy(arreglo_identificadores[i].cadena_identificador, yytext);
+				arreglo_identificadores[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
+
 %}
 
 %option caseless
@@ -147,27 +180,30 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 %%
 
 {ENTERO_DECIMAL}	{
-						printf("Entero: %s\n",yytext);
+						printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
+						columna += yyleng;
 					}
 
 {HEXADECIMAL}		{
-						printf("Hexadecimal: %s\n",yytext);
+						printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
+						columna += yyleng;
 					}
 					
 {REAL_DECIMAL}		{
-						printf("Real: %s\n",yytext);
+						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
+						columna += yyleng;
 					}
 
 [ \t]+				{
-						printf("(%d,%d) Espacios en blanco encontrados: %d\n",fila,columna,yyleng);
+						printf("(%d,%d) Espacios en blanco o tabuladores encontrados: %d\n",fila,columna,yyleng);
 						columna += yyleng;
 						
 					}
 [\n]+				{
-						printf("(%d,%d)Saltos de linea encontrados: %d\n",fila, columna,yyleng);
+						printf("(%d,%d) Saltos de linea encontrados: %d\n",fila, columna,yyleng);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -175,13 +211,15 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 "@"|"#"|"<>"|"<="|">="|"+"|"-"|"*"	|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
 ")"|"["|"]"|":"|":="|".."			{
+										printf("(%d,%d) Operador: %d\n",fila, columna,yyleng);
 										contar_cantidad_operador();
+										columna+=yyleng;
 									}
 
 \'([^\\\'\n]|\\.|\'\')*\' 	{
-								printf("Cadena: %s\n", yytext);
+								printf("(%d,%d) Cadena: %d\n",fila, columna,yyleng);
 								contar_cantidad_cadena();
-								
+								columna+=yyleng;
 							}
 
 "program"|"begin"|"uses"|"unit"|"interface"		|
@@ -195,17 +233,23 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 "for"|"to"|"downto"|"with"|"nil"|"read"			|
 "readln"|"write"|"writeln"|"in"|"or"|"div"		|
 "mod"|"and"|"not"		{
-							printf("Reservada: %s\n",yytext);
+							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							contar_cantidad_palabra();
+							columna+=yyleng;
 						}
 
-
+[a-z][0-9a-z_]*		{
+						printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
+						contar_cantidad_identificador();
+						columna+=yyleng;
+					}
 
 
 \{					{
+						printf("(%d,%d) Comentario:",fila,columna);
 						BEGIN(COMENTARIO_LLAVE);
 						columna++;
-						} 
+					} 
 
 \(\*				{
 						BEGIN(COMENTARIO_PARENTESIS);
@@ -223,15 +267,18 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 							
 						}
 \}						{
+							puts("");
 							BEGIN(INITIAL);
 							columna++;
 						}
 [\n]+				{
+						printf("%s",yytext);
 						fila+= yyleng;
 						columna=1;
 					}
-.						{
-							columna++;
+[^\{|\}\n]*				{
+							printf("%s",yytext);
+							columna+=yyleng;
 						}
 
 }
@@ -242,16 +289,18 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 							
 						}
 \*\)					{
+							puts("");
 							BEGIN(INITIAL);
 							columna++;
 						}
 [\n]+				{
+						printf("%s",yytext);
 						fila+=yyleng;
 						columna=1;
 					}
-.						{
-							ECHO;
-							columna++;
+[^\(\*|\*\)\n]*			{
+							printf("%s",yytext);
+							columna+=yyleng;
 						}
 
 }
@@ -282,12 +331,6 @@ int main(int argc, char * argv[])
 	yylex();
 	if(archivo_abierto)
 		fclose(yyin);
-		
-	for(int i = 0; i < CANTIDAD_OPERADORES; i++)
-	if(strcmp(arreglo_operadores[i].operador,"  ") == 0)
-		continue;
-	else
-		printf("Caracter %s: %d\n",arreglo_operadores[i].operador,arreglo_operadores[i].cantidad);	
 	
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
@@ -347,5 +390,20 @@ int main(int argc, char * argv[])
 		else
 			break;
 		fclose(constantes_numericas);
+	}
+	FILE * identificadores = fopen("identificadores.csv", "wt");
+	if (!identificadores)
+		printf("No se pudo abrir el archivo de identificadores");
+	else
+	{
+		for(int i = 0; i < CANTIDAD_IDENTIFICADORES; i++)
+		if(arreglo_identificadores[i].cadena_identificador)
+		{
+			fprintf(identificadores,"%d,%s,%d\n",i,arreglo_identificadores[i].cadena_identificador,arreglo_identificadores[i].cantidad);
+			free(arreglo_identificadores[i].cadena_identificador);
+		}
+		else
+			break;
+		fclose(identificadores);
 	}
 }
