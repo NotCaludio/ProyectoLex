@@ -4,6 +4,9 @@
 #define CANTIDAD_OPERADORES 22
 #define CANTIDAD_NUMEROS 1000  
 
+unsigned int columna =1;
+unsigned int fila =1; 
+
 struct operadores{
 	char operador[3]= {' ', ' ', '\0'};
 	unsigned int cantidad = 0;
@@ -77,7 +80,16 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 						contar_cantidad_numero();
 					}
 
-
+[ \t]+				{
+						printf("(%d,%d) Espacios en blanco encontrados: %d\n",fila,columna,yyleng);
+						columna += yyleng;
+						
+					}
+[\n]+				{
+						printf("(%d,%d)Saltos de linea encontrados: %d\n",fila, columna,yyleng);
+						fila+=yyleng;
+						columna=1;
+					}
 
 "@"|"#"|"<>"|"<="|">="|"+"|"-"|"*"	|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
@@ -114,9 +126,19 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 
 
 
-\{					{BEGIN(COMENTARIO_LLAVE);printf("Comentario llave\n");} 
+\{					{
+						BEGIN(COMENTARIO_LLAVE);
+						columna++;
+						} 
 
-\(\*				{BEGIN(COMENTARIO_PARENTESIS);printf("Comentario parentesis\n");} 
+\(\*				{
+						BEGIN(COMENTARIO_PARENTESIS);
+						columna++;
+					} 
+
+.		{
+			columna++;
+		}
 
 <COMENTARIO_LLAVE>{
 \{						{
@@ -126,20 +148,36 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 						}
 \}						{
 							BEGIN(INITIAL);
+							columna++;
 						}
-.						ECHO;
+[\n]+				{
+						fila+= yyleng;
+						columna=1;
+					}
+.						{
+							columna++;
+						}
 
 }
 <COMENTARIO_PARENTESIS>{
-\(\*						{
+\(\*					{
 							printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
-\*\)						{
+\*\)					{
 							BEGIN(INITIAL);
+							columna++;
 						}
-.						ECHO;
+[\n]+				{
+						fila+=yyleng;
+						columna=1;
+					}
+.						{
+							ECHO;
+							columna++;
+						}
+
 }
 
 
