@@ -55,9 +55,15 @@ etiqueta: ENTERO_DECIMAL
 		|	ENTERO_DECIMAL /*Las etiquetas son del 0-9999*/ ','
 		;
 /**/
-/*3.0 Tipos de datos pag 34*/
+
 declaracion_tipo: IDENTIFICADOR '=' tipo ';'
 				;
+declaracion_variable:;
+declaracion_procedimientos:;
+declaracion_funciones:;
+sentencias_compuestas:;
+				
+/*3.0 Tipos de datos pag 34*/
 tipo: tipo_simple
 	| tipo_estructurado
 	| tipo_puntero
@@ -68,12 +74,10 @@ tipo_simple: tipo_ordinal
 			| tipo_string
 			;
 			
-tipo_real: 
+tipo_real: IDENTIFICADOR /*real*/
 
-declaracion_variable:;
-declaracion_procedimientos:;
-declaracion_funciones:;
-sentencias_compuestas:;
+
+
 
 /**/
 
@@ -81,7 +85,7 @@ sentencias_compuestas:;
 declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
 						;
 
-constante: IDENTIFICADOR
+constante: IDENTIFICADOR	/*int longint real*/
 		| 	signo IDENTIFICADOR
 		|	numero_signo
 		|	CADENA_CARACTERES
