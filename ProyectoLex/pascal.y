@@ -1,4 +1,6 @@
-%token entero_decimal hexadecimal real_decimal
+%token IDENTIFICADOR 
+%token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL
+%right ASIGNACION
 %token '=' "<>" '<' '>' "<=" ">=" "in"
 %token '+' '-' "or"
 %token '*' '/' 'div' 'mod' 'and'
@@ -20,6 +22,25 @@
 %output "parser.cpp"
 %%
 
+/*DECLARACION DE CONSTANTES 1.8 PAG 24*/
+declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
+						;
+
+constante: IDENTIFICADOR
+		| 	signo IDENTIFICADOR
+		|	numero_signo
+		|	cadena_caracteres
+		;
+
+signo: '+'
+	|	'-'
+	;
+	
+numero_signo: ENTERO_DECIMAL
+			| HEXADECIMAL
+			| REAL_DECIMAL
+			;
+/**/
 %%
 
 int yyerror(const char *s) 
