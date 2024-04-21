@@ -1,4 +1,8 @@
-
+%token entero_decimal hexadecimal real_decimal
+%token '=' "<>" '<' '>' "<=" ">=" "in"
+%token '+' '-' "or"
+%token '*' '/' 'div' 'mod' 'and'
+%token '@' 'not'
 
 %{
    #include <stdio.h>

@@ -58,9 +58,14 @@ void contar_cantidad_identificador();
 %option outfile="escaner.cpp"
 %x COMENTARIO_LLAVE COMENTARIO_PARENTESIS
 
-ENTERO_DECIMAL (\+|-)?(0|[1-9][0-9]*)
-HEXADECIMAL (\+|-)?\$(0|[1-9A-F][0-9A-F]*)
-REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
+NO_CERO	[1-9]
+DIGITOS [0-9]
+SIGNO 	(\+|-)
+NUMERO_ENTERO_SIN_SIGNO {NO_CERO}{DIGITOS}*
+ENTERO_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})
+HEXADECIMAL {SIGNO}?\$(0|[1-9A-F][0-9A-F]*)]
+FACTOR		([eE](\+|-)?{NUMERO_ENTERO_SIN_SIGNO})
+REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 
 %%
 
