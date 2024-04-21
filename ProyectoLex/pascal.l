@@ -55,7 +55,6 @@ void contar_cantidad_identificador();
 %}
 
 %option caseless
-%option noyywrap
 %option outfile="escaner.cpp"
 %x COMENTARIO_LLAVE COMENTARIO_PARENTESIS
 
@@ -318,27 +317,8 @@ void contar_cantidad_identificador()
 	}
 }
 
-
-int main(int argc, char * argv[])
+int yywrap(void) 
 {
-	char archivo_abierto = 0;
-	if (argc > 1)
-	{
-		++argv; //apunta al siguiente elemento del arreglo
-		yyin = fopen(argv[0], "rt");
-		archivo_abierto = 1;
-		if (!yyin)
-		{
-			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
-			yyin = stdin;
-			archivo_abierto = 0;
-		}		
-	}
-	
-	yylex();
-	if(archivo_abierto)
-		fclose(yyin);
-	
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
 		printf("No se pudo abrir el archivo de palabras_reservadas");
@@ -413,4 +393,29 @@ int main(int argc, char * argv[])
 			break;
 		fclose(identificadores);
 	}
+   return 1;
+}
+
+
+
+int main(int argc, char * argv[])
+{
+	char archivo_abierto = 0;
+	if (argc > 1)
+	{
+		++argv; //apunta al siguiente elemento del arreglo
+		yyin = fopen(argv[0], "rt");
+		archivo_abierto = 1;
+		if (!yyin)
+		{
+			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
+			yyin = stdin;
+			archivo_abierto = 0;
+		}		
+	}
+	
+	yylex();
+	if(archivo_abierto)
+		fclose(yyin);
+
 }
