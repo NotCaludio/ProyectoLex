@@ -1,10 +1,11 @@
 %token IDENTIFICADOR 
 %token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL
 %right ASIGNACION
-%token '=' "<>" '<' '>' "<=" ">=" "in"
-%token '+' '-' "or"
-%token '*' '/' 'div' 'mod' 'and'
-%token '@' 'not'
+%left '=' '<' '>' "<>" "<=" ">=" "in"
+%left '+' '-' "or"
+%left '*' '/' "div" "mod" "and"
+%left '@' "not"
+%left NEGATIVO POSITIVO
 
 %{
    #include <stdio.h>
@@ -22,6 +23,60 @@
 %output "parser.cpp"
 %%
 
+/*DEFINICION DE UN BLOQUE 2.1 PAG 28*/
+
+bloque: parte_declaracion_etiqueta
+		| parte_declaracion_constante
+		| parte_declaracion_tipo
+		| parte_declaracion_variable
+		| parte_declaracion_funciones_procedimientos
+		| parte_sentencias
+		;
+
+parte_declaracion_etiqueta: "label" etiqueta ';'
+						;
+
+parte_declaracion_constante: "const" declaracion_constante
+							;
+
+parte_declaracion_tipo: "type" declaracion_tipo
+						;
+						
+parte_declaracion_variable: "var" declaracion_variable
+						;
+
+parte_declaracion_funciones_procedimientos: declaracion_procedimientos
+											| declaracion_funciones
+											;
+
+parte_sentencias: sentencias_compuestas;
+
+etiqueta: ENTERO_DECIMAL
+		|	ENTERO_DECIMAL /*Las etiquetas son del 0-9999*/ ','
+		;
+/**/
+/*3.0 Tipos de datos pag 34*/
+declaracion_tipo: IDENTIFICADOR '=' tipo ';'
+				;
+tipo: tipo_simple
+	| tipo_estructurado
+	| tipo_puntero
+	;
+	
+tipo_simple: tipo_ordinal
+			| tipo_real
+			| tipo_string
+			;
+			
+tipo_real: 
+
+declaracion_variable:;
+declaracion_procedimientos:;
+declaracion_funciones:;
+sentencias_compuestas:;
+
+/**/
+
 /*DECLARACION DE CONSTANTES 1.8 PAG 24*/
 declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
 						;
@@ -29,7 +84,7 @@ declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
 constante: IDENTIFICADOR
 		| 	signo IDENTIFICADOR
 		|	numero_signo
-		|	cadena_caracteres
+		|	CADENA_CARACTERES
 		;
 
 signo: '+'
