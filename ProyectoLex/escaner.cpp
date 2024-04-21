@@ -261,9 +261,6 @@ static void yy_flex_free YY_PROTO(( void * ));
 
 #define YY_AT_BOL() (yy_current_buffer->yy_at_bol)
 
-
-#define yywrap() 1
-#define YY_SKIP_YYWRAP
 typedef unsigned char YY_CHAR;
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
 typedef int yy_state_type;
@@ -546,9 +543,10 @@ char *yytext;
 unsigned int columna =1;
 unsigned int fila =1; 
 
-struct palabra_reservada;
-
-
+struct palabra_reservada {
+	char palabra[15] ="";
+	unsigned int cantidad;
+};
 palabra_reservada arreglo_palabras[CANTIDAD_PALABRAS_RESERVADAS];
 
 struct cadena_caracteres{
@@ -1888,11 +1886,6 @@ int main()
 #endif
 
 
-struct palabra_reservada {
-	char palabra[15] ="";
-	unsigned int cantidad;
-};
-
 void contar_cantidad_palabra()
 {
 	for (int i = 0; i< CANTIDAD_PALABRAS_RESERVADAS; i++)
@@ -2014,27 +2007,8 @@ void contar_cantidad_identificador()
 	}
 }
 
-
-int main(int argc, char * argv[])
+int yywrap(void) 
 {
-	char archivo_abierto = 0;
-	if (argc > 1)
-	{
-		++argv; //apunta al siguiente elemento del arreglo
-		yyin = fopen(argv[0], "rt");
-		archivo_abierto = 1;
-		if (!yyin)
-		{
-			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
-			yyin = stdin;
-			archivo_abierto = 0;
-		}		
-	}
-	
-	yylex();
-	if(archivo_abierto)
-		fclose(yyin);
-	
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
 		printf("No se pudo abrir el archivo de palabras_reservadas");
@@ -2109,4 +2083,29 @@ int main(int argc, char * argv[])
 			break;
 		fclose(identificadores);
 	}
+   return 1;
+}
+
+
+
+int main(int argc, char * argv[])
+{
+	char archivo_abierto = 0;
+	if (argc > 1)
+	{
+		++argv; //apunta al siguiente elemento del arreglo
+		yyin = fopen(argv[0], "rt");
+		archivo_abierto = 1;
+		if (!yyin)
+		{
+			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
+			yyin = stdin;
+			archivo_abierto = 0;
+		}		
+	}
+	
+	yylex();
+	if(archivo_abierto)
+		fclose(yyin);
+
 }

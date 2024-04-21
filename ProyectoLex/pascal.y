@@ -2,8 +2,6 @@
 
 %{
    #include <stdio.h>
-   #include <stdlib.h>
-   #include <string.h>
    #pragma warning(disable: 4996 4273 4013 4065)
    
    extern unsigned int columna;
