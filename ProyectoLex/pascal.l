@@ -45,131 +45,16 @@ struct identificador{
 };	
 identificador arreglo_identificadores[CANTIDAD_IDENTIFICADORES];
 
-void contar_cantidad_palabra()
-{
-	for (int i = 0; i< CANTIDAD_PALABRAS_RESERVADAS; i++)
-	{
-		if(strcmp(arreglo_palabras[i].palabra,yytext) == 0) //si es 0 es que son iguales
-			{
-				arreglo_palabras[i].cantidad++;
-				break;
-			}
-		else if (strcmp(arreglo_palabras[i].palabra,"") == 0 )
-			{
-				strncpy(arreglo_palabras[i].palabra, yytext, 14);
-				arreglo_palabras[i].cantidad++;
-				break;
-				
-			}
-	}
-}
+void contar_cantidad_palabra();
+void contar_cantidad_cadena();
+void contar_cantidad_operador();
+void contar_cantidad_numero();
+void contar_cantidad_identificador();
 
-void contar_cantidad_cadena()
-{
-	for (int i = 0; i< CANTIDAD_CADENAS; i++)
-	{
-		if(arreglo_cadenas[i].cadena)
-			if(strcmp(arreglo_cadenas[i].cadena,yytext) == 0) //si es 0 es que son iguales
-			{
-				arreglo_cadenas[i].cantidad++;
-				break;
-			}
-			else
-				continue;
-		else
-		{
-			arreglo_cadenas[i].cadena = (char*) malloc((yyleng+1) * sizeof(char));
-			if(arreglo_cadenas[i].cadena)
-			{
-				strcpy(arreglo_cadenas[i].cadena, yytext);
-				arreglo_cadenas[i].cantidad++;
-			}
-				
-			break;
-		}
-	}
-}
-
-void contar_cantidad_operador()
-{
-	/* primero checa si existe el operador en alguna estructura del arreglo, si si le suma a la cantidad
-	de lo contrario sobreescribe uno vacio para poner el operador*/
-	for (int i = 0; i< CANTIDAD_OPERADORES; i++)
-	{
-		if(strcmp(arreglo_operadores[i].operador,yytext) == 0) //si es 0 es que son iguales
-			{
-				arreglo_operadores[i].cantidad++;
-				break;
-			}
-		else if (strcmp(arreglo_operadores[i].operador,"  ") == 0 )
-			{
-				strncpy(arreglo_operadores[i].operador, yytext, 2);
-				arreglo_operadores[i].cantidad++;
-				break;
-				
-			}
-		
-
-	}
-
-}
-
-void contar_cantidad_numero()
-{
-	for (int i = 0; i< CANTIDAD_NUMEROS; i++)
-	{
-		if(arreglo_numeros[i].constante_numerica)
-			if(strcmp(arreglo_numeros[i].constante_numerica,yytext) == 0) //si es 0 es que son iguales
-			{
-				arreglo_numeros[i].cantidad++;
-				break;
-			}
-			else
-				continue;
-		else
-		{
-			arreglo_numeros[i].constante_numerica = (char*) malloc((yyleng+1) * sizeof(char));
-			if(arreglo_numeros[i].constante_numerica)
-			{
-				strcpy(arreglo_numeros[i].constante_numerica, yytext);
-				arreglo_numeros[i].cantidad++;
-			}
-				
-			break;
-		}
-	}
-}
-
-void contar_cantidad_identificador()
-{
-	for (int i = 0; i< CANTIDAD_IDENTIFICADORES; i++)
-	{
-		if(arreglo_identificadores[i].cadena_identificador)
-			if(strcmp(arreglo_identificadores[i].cadena_identificador,yytext) == 0) //si es 0 es que son iguales
-			{
-				arreglo_identificadores[i].cantidad++;
-				break;
-			}
-			else
-				continue;
-		else
-		{
-			arreglo_identificadores[i].cadena_identificador = (char*) malloc((yyleng+1) * sizeof(char));
-			if(arreglo_identificadores[i].cadena_identificador)
-			{
-				strcpy(arreglo_identificadores[i].cadena_identificador, yytext);
-				arreglo_identificadores[i].cantidad++;
-			}
-				
-			break;
-		}
-	}
-}
 
 %}
 
 %option caseless
-%option noyywrap
 %option outfile="escaner.cpp"
 %x COMENTARIO_LLAVE COMENTARIO_PARENTESIS
 
@@ -311,27 +196,129 @@ REAL_DECIMAL (\+|-)?(0|[1-9][0-9]*)\.[0-9]+([eE](\+|-)?[1-9][0-9]*)?
 
 %%
 
-
-int main(int argc, char * argv[])
+void contar_cantidad_palabra()
 {
-	char archivo_abierto = 0;
-	if (argc > 1)
+	for (int i = 0; i< CANTIDAD_PALABRAS_RESERVADAS; i++)
 	{
-		++argv; //apunta al siguiente elemento del arreglo
-		yyin = fopen(argv[0], "rt");
-		archivo_abierto = 1;
-		if (!yyin)
-		{
-			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
-			yyin = stdin;
-			archivo_abierto = 0;
-		}		
+		if(strcmp(arreglo_palabras[i].palabra,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_palabras[i].cantidad++;
+				break;
+			}
+		else if (strcmp(arreglo_palabras[i].palabra,"") == 0 )
+			{
+				strncpy(arreglo_palabras[i].palabra, yytext, 14);
+				arreglo_palabras[i].cantidad++;
+				break;
+				
+			}
 	}
-	
-	yylex();
-	if(archivo_abierto)
-		fclose(yyin);
-	
+}
+
+void contar_cantidad_cadena()
+{
+	for (int i = 0; i< CANTIDAD_CADENAS; i++)
+	{
+		if(arreglo_cadenas[i].cadena)
+			if(strcmp(arreglo_cadenas[i].cadena,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_cadenas[i].cantidad++;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_cadenas[i].cadena = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_cadenas[i].cadena)
+			{
+				strcpy(arreglo_cadenas[i].cadena, yytext);
+				arreglo_cadenas[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
+
+void contar_cantidad_operador()
+{
+	/* primero checa si existe el operador en alguna estructura del arreglo, si si le suma a la cantidad
+	de lo contrario sobreescribe uno vacio para poner el operador*/
+	for (int i = 0; i< CANTIDAD_OPERADORES; i++)
+	{
+		if(strcmp(arreglo_operadores[i].operador,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_operadores[i].cantidad++;
+				break;
+			}
+		else if (strcmp(arreglo_operadores[i].operador,"  ") == 0 )
+			{
+				strncpy(arreglo_operadores[i].operador, yytext, 2);
+				arreglo_operadores[i].cantidad++;
+				break;
+				
+			}
+		
+
+	}
+
+}
+
+void contar_cantidad_numero()
+{
+	for (int i = 0; i< CANTIDAD_NUMEROS; i++)
+	{
+		if(arreglo_numeros[i].constante_numerica)
+			if(strcmp(arreglo_numeros[i].constante_numerica,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_numeros[i].cantidad++;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_numeros[i].constante_numerica = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_numeros[i].constante_numerica)
+			{
+				strcpy(arreglo_numeros[i].constante_numerica, yytext);
+				arreglo_numeros[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
+
+void contar_cantidad_identificador()
+{
+	for (int i = 0; i< CANTIDAD_IDENTIFICADORES; i++)
+	{
+		if(arreglo_identificadores[i].cadena_identificador)
+			if(strcmp(arreglo_identificadores[i].cadena_identificador,yytext) == 0) //si es 0 es que son iguales
+			{
+				arreglo_identificadores[i].cantidad++;
+				break;
+			}
+			else
+				continue;
+		else
+		{
+			arreglo_identificadores[i].cadena_identificador = (char*) malloc((yyleng+1) * sizeof(char));
+			if(arreglo_identificadores[i].cadena_identificador)
+			{
+				strcpy(arreglo_identificadores[i].cadena_identificador, yytext);
+				arreglo_identificadores[i].cantidad++;
+			}
+				
+			break;
+		}
+	}
+}
+
+int yywrap(void) 
+{
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
 		printf("No se pudo abrir el archivo de palabras_reservadas");
@@ -406,4 +393,29 @@ int main(int argc, char * argv[])
 			break;
 		fclose(identificadores);
 	}
+   return 1;
+}
+
+
+
+int main(int argc, char * argv[])
+{
+	char archivo_abierto = 0;
+	if (argc > 1)
+	{
+		++argv; //apunta al siguiente elemento del arreglo
+		yyin = fopen(argv[0], "rt");
+		archivo_abierto = 1;
+		if (!yyin)
+		{
+			printf("Archivo %s no puede ser abierto. Entrada tradicional.\n", argv[0]);
+			yyin = stdin;
+			archivo_abierto = 0;
+		}		
+	}
+	
+	yylex();
+	if(archivo_abierto)
+		fclose(yyin);
+
 }
