@@ -1,0 +1,101 @@
+/*DEFINICION DE UN BLOQUE 2.1 PAG 28*/
+
+bloque: parte_declaracion_etiqueta
+		| parte_declaracion_constante
+		| parte_declaracion_tipo
+		| parte_declaracion_variable
+		| parte_declaracion_funciones_procedimientos
+		| parte_sentencias
+		;
+
+parte_declaracion_etiqueta: "label" etiqueta ';'
+						;
+
+parte_declaracion_constante: "const" declaracion_constante
+							;
+
+parte_declaracion_tipo: "type" declaracion_tipo
+						;
+						
+parte_declaracion_variable: "var" declaracion_variable
+						;
+
+parte_declaracion_funciones_procedimientos: declaracion_procedimientos
+											| declaracion_funciones
+											;
+
+parte_sentencias: sentencias_compuestas;
+
+etiqueta: ENTERO_DECIMAL
+		|	ENTERO_DECIMAL /*Las etiquetas son del 0-9999*/ ','
+		;
+/**/
+
+declaracion_tipo: IDENTIFICADOR '=' tipo ';'
+				;
+declaracion_variable:;
+declaracion_procedimientos:;
+declaracion_funciones:;
+sentencias_compuestas:;
+				
+/*3.0 Tipos de datos pag 34*/
+tipo: tipo_simple
+	| tipo_estructurado
+	| tipo_puntero
+	;
+	
+tipo_simple: tipo_ordinal
+			| tipo_real
+			| tipo_string
+			;
+			
+tipo_real: identificador_tipo_real /*real*/
+		;
+		
+tipo_ordinal: tipo_subrango
+			| tipo_enumerado
+			| identificador_tipo_ordinal
+			;
+tipo_string: string '[' tamanio_atributo ']'
+			| identificador_tipo_string
+			;
+tamanio_atributo: ENTERO_SIN_SIGNO_NO_CERO
+				;
+tipo_enumerado: '(' lista_identificadores ')'
+				;
+lista_identificadores: IDENTIFICADOR
+					| IDENTIFICADOR ','
+					;
+tipo_subrango: constante '..' constante
+			;
+			
+tipo_estructurado: /*"packed"*/ tipo_arreglo
+				| tipo_set
+				| tipo_archivo
+				| tipo_record
+				| identificador_tipo_estructurado
+				;
+
+
+
+/**/
+
+/*DECLARACION DE CONSTANTES 1.8 PAG 24*/
+declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
+						;
+
+constante: IDENTIFICADOR	/*int longint real*/
+		| 	signo IDENTIFICADOR
+		|	numero_signo
+		|	CADENA_CARACTERES
+		;
+
+signo: '+'
+	|	'-'
+	;
+	
+numero_signo: ENTERO_DECIMAL
+			| HEXADECIMAL
+			| REAL_DECIMAL
+			;
+/**/

@@ -536,6 +536,7 @@ static char *yy_last_accepting_cpos;
 char *yytext;
 #define INITIAL 0
 #include <stdio.h>
+#include "parser.hpp"
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
 #define CANTIDAD_OPERADORES 22
 #define CANTIDAD_NUMEROS 1000
@@ -831,6 +832,7 @@ YY_RULE_SETUP
 						printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						return ENTERO_DECIMAL;
 					}
 	YY_BREAK
 case 2:
@@ -839,6 +841,7 @@ YY_RULE_SETUP
 						printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						return HEXADECIMAL;
 					}
 	YY_BREAK
 case 3:
@@ -847,6 +850,7 @@ YY_RULE_SETUP
 						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						return REAL_DECIMAL;
 					}
 	YY_BREAK
 case 4:
@@ -870,17 +874,19 @@ case 7:
 case 8:
 YY_RULE_SETUP
 {
-										printf("(%d,%d) Operador: %d\n",fila, columna,yyleng);
+										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										contar_cantidad_operador();
 										columna+=yyleng;
+										return *yytext;
 									}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 {
-								printf("(%d,%d) Cadena: %d\n",fila, columna,yyleng);
+								printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								contar_cantidad_cadena();
 								columna+=yyleng;
+								return CADENA_CARACTERES;
 							}
 	YY_BREAK
 case 10:
@@ -907,6 +913,7 @@ YY_RULE_SETUP
 						printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						contar_cantidad_identificador();
 						columna+=yyleng;
+						return IDENTIFICADOR;
 					}
 	YY_BREAK
 case 22:
@@ -2090,7 +2097,7 @@ int yywrap(void)
 }
 
 
-
+/*
 int main(int argc, char * argv[])
 {
 	char archivo_abierto = 0;
@@ -2111,4 +2118,4 @@ int main(int argc, char * argv[])
 	if(archivo_abierto)
 		fclose(yyin);
 
-}
+}*/

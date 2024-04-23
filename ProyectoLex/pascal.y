@@ -1,5 +1,4 @@
-%token IDENTIFICADOR 
-%token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL
+%token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL IDENTIFICADOR CADENA_CARACTERES
 %right ASIGNACION
 %left '=' '<' '>' "<>" "<=" ">=" "in"
 %left '+' '-' "or"
@@ -9,9 +8,8 @@
 
 %{
    #include <stdio.h>
-   #include <stdlib.h>
    #include <string.h>
-   #pragma warning(disable: 4996 4273 4013 4065)
+   #pragma warning(disable: 4996 6385 4273 4013 4065)
    
    extern unsigned int columna;
    extern unsigned int fila;
@@ -20,69 +18,15 @@
    extern FILE *yyin;
       
 %}
+%union
+{
+    int valor_entero;
+    char cadena_de_caracteres[256];
+}
+
 %output "parser.cpp"
 %%
-
-/*DEFINICION DE UN BLOQUE 2.1 PAG 28*/
-
-bloque: parte_declaracion_etiqueta
-		| parte_declaracion_constante
-		| parte_declaracion_tipo
-		| parte_declaracion_variable
-		| parte_declaracion_funciones_procedimientos
-		| parte_sentencias
-		;
-
-parte_declaracion_etiqueta: "label" etiqueta ';'
-						;
-
-parte_declaracion_constante: "const" declaracion_constante
-							;
-
-parte_declaracion_tipo: "type" declaracion_tipo
-						;
-						
-parte_declaracion_variable: "var" declaracion_variable
-						;
-
-parte_declaracion_funciones_procedimientos: declaracion_procedimientos
-											| declaracion_funciones
-											;
-
-parte_sentencias: sentencias_compuestas;
-
-etiqueta: ENTERO_DECIMAL
-		|	ENTERO_DECIMAL /*Las etiquetas son del 0-9999*/ ','
-		;
-/**/
-
-declaracion_tipo: IDENTIFICADOR '=' tipo ';'
-				;
-declaracion_variable:;
-declaracion_procedimientos:;
-declaracion_funciones:;
-sentencias_compuestas:;
-				
-/*3.0 Tipos de datos pag 34*/
-tipo: tipo_simple
-	| tipo_estructurado
-	| tipo_puntero
-	;
-	
-tipo_simple: tipo_ordinal
-			| tipo_real
-			| tipo_string
-			;
-			
-tipo_real: IDENTIFICADOR /*real*/
-
-
-
-
-/**/
-
-/*DECLARACION DE CONSTANTES 1.8 PAG 24*/
-declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
+declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION {printf("Gramatica aceptada"}
 						;
 
 constante: IDENTIFICADOR	/*int longint real*/
@@ -99,7 +43,6 @@ numero_signo: ENTERO_DECIMAL
 			| HEXADECIMAL
 			| REAL_DECIMAL
 			;
-/**/
 %%
 
 int yyerror(const char *s) 
