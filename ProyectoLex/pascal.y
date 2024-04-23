@@ -1,16 +1,15 @@
-%token IDENTIFICADOR 
-%token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL
+%token ENTERO_DECIMAL HEXADECIMAL REAL_DECIMAL IDENTIFICADOR CADENA_CARACTERES
 %right ASIGNACION
-%token '=' "<>" '<' '>' "<=" ">=" "in"
-%token '+' '-' "or"
-%token '*' '/' 'div' 'mod' 'and'
-%token '@' 'not'
+%left '=' '<' '>' "<>" "<=" ">=" "in"
+%left '+' '-' "or"
+%left '*' '/' "div" "mod" "and"
+%left '@' "not"
+%left NEGATIVO POSITIVO
 
 %{
    #include <stdio.h>
-   #include <stdlib.h>
    #include <string.h>
-   #pragma warning(disable: 4996 4273 4013 4065)
+   #pragma warning(disable: 4996 6385 4273 4013 4065)
    
    extern unsigned int columna;
    extern unsigned int fila;
@@ -19,17 +18,21 @@
    extern FILE *yyin;
       
 %}
+%union
+{
+    int valor_entero;
+    char cadena_de_caracteres[256];
+}
+
 %output "parser.cpp"
 %%
-
-/*DECLARACION DE CONSTANTES 1.8 PAG 24*/
-declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
+declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION {printf("Gramatica aceptada"}
 						;
 
-constante: IDENTIFICADOR
+constante: IDENTIFICADOR	/*int longint real*/
 		| 	signo IDENTIFICADOR
 		|	numero_signo
-		|	cadena_caracteres
+		|	CADENA_CARACTERES
 		;
 
 signo: '+'
@@ -40,7 +43,6 @@ numero_signo: ENTERO_DECIMAL
 			| HEXADECIMAL
 			| REAL_DECIMAL
 			;
-/**/
 %%
 
 int yyerror(const char *s) 
