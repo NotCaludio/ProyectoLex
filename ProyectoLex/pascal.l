@@ -77,6 +77,7 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						yylval.intVal = atoi(yytext);
 						return DECIMAL_INT;
 					}
 
@@ -91,6 +92,7 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						yylval.floatVal = atof(yytext);
 						return REAL_DECIMAL;
 					}
 
@@ -119,8 +121,14 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 										columna+=yyleng;
 										return regresar_numero_token_operador();
 									}
-
-\'([^\\\'\n]|\\.|\'\')*\' 	{
+(\'[^\\\'\n]?\')				|
+(\'([^\\\'\n]|\\.|\'\')\') 	{
+								printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
+								contar_cantidad_cadena();
+								columna+=yyleng;
+								return QUOTED_CHAR;
+							}
+(\'([^\\\'\n]|\\.|\'\')*\') 	{
 								printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								contar_cantidad_cadena();
 								columna+=yyleng;
@@ -141,6 +149,7 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							contar_cantidad_palabra();
 							columna+=yyleng;
+							return regresar_numero_token_palabra();
 						}
 
 [a-z][0-9a-z_]*		{

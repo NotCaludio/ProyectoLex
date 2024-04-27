@@ -1,4 +1,10 @@
-%token DECIMAL_INT HEXADECIMAL REAL_DECIMAL IDENTIFIER QUOTED_STRING
+%union {
+	unsigned int unsignedIntVal;
+    int intVal;
+    float floatVal;
+    char *pCharVal;
+}
+%token <intVal>DECIMAL_INT HEXADECIMAL REAL_DECIMAL IDENTIFIER QUOTED_STRING QUOTED_CHAR
 PROGRAM_TOKEN"program" BEGIN_TOKEN"begin" USES_TOKEN"uses" UNIT_TOKEN"unit" INTERFACE_TOKEN"interface"		
 IMPLEMENTATION_TOKEN"implementation" LABEL_TOKEN"label" CONST_TOKEN"const" TYPE_TOKEN"type" REAL_TOKEN"real"
 	
@@ -32,31 +38,63 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    extern FILE *yyin;
       
 %}
-%union
-{
-    int valor_entero;
-    char * cadena_de_caracteres;
-}
-%token-table
+
 %output "parser.cpp"
 %%
-constant_declaration: IDENTIFIER ASSIGN constant ';' %prec ASSIGNMENT_PRECEDENCE {printf("Gramatica aceptada");}
-						;
 
-constant: IDENTIFIER	/*int longint real*/
-		| 	sign IDENTIFIER
-		|	signed_number
-		|	QUOTED_STRING
-		;
+block : label_declaration_part
+        constant_declaration_part
+        type_declaration_part
+        variable_declaration_part
+        procedure_and_function_declaration_part
+        statement_part;
 
+label_declaration_part: LABEL_TOKEN label_list ';'
+					| /*empty*/ ;
+label_list: label_list ',' label
+			| label;
+label: DECIMAL_INT {		
+						if ($1 < 0 || $1 > 9999) {
+                			yyerror("Label debe estar entre 0 y 9999");
+            			}
+            			// $<unsignedIntVal>$ = $1;
+					}
+
+constant_declaration_part: CONST_TOKEN constant_declaration_list
+						| /*empty*/;
+constant_declaration_list: constant_declaration_list  constant_declaration
+						| constant_declaration ;
+constant_declaration: IDENTIFIER '=' constant ';'; 
+constant: IDENTIFIER{ /*verificar el tipo de identifier int longint real con una accion semantica*/	}
+		| sign IDENTIFIER
+		| DECIMAL_INT
+		| HEXADECIMAL
+		| REAL_DECIMAL
+		| QUOTED_STRING
+		| QUOTED_CHAR;
 sign: '+'
-	|	'-'
-	;
+	| '-';
+
+type_declaration_part: TYPE_TOKEN type_declaration_list
+					| /*empty*/;
+type_declaration_list: type_declaration_list  type_declaration
+					|type_declaration;
+type_declaration: IDENTIFIER '=' type ';';
 	
-signed_number: DECIMAL_INT
-			| HEXADECIMAL
-			| REAL_DECIMAL
-			;
+variable_declaration_part: VAR_TOKEN variable_declaration_list /*verificar que no se hayan  usado los identificadores antes*/
+						| /*emmpty*/;
+variable_declaration_list: variable_declaration_list variable_declaration
+						| variable_declaration;
+variable_declaration: identifier_list ':' type ';';
+
+identifier_list: identifier_list ',' IDENTIFIER
+				| IDENTIFIER;
+
+procedure_and_function_declaration_part:;
+statement_part:;
+
+
+
 %%
 
 int yyerror(const char *s) 
