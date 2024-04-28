@@ -20,7 +20,7 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
  
 %right ASSIGNMENT_PRECEDENCE
 %token ASSIGN":=" SUBRANGE".."
-%left '=' '<' '>' COMP"<>" LEFT"<=" RIGHT">=" "in"
+%left '=' '<' '>' NOTEQUAL"<>" LE"<=" RE">=" "in"
 %left '+' '-' "or"
 %left '*' '/' "div" "mod" "and"
 %left '@' "not"
@@ -100,7 +100,8 @@ variable_declaration_list: variable_declaration_list variable_declaration
 						| variable_declaration;
 variable_declaration: identifier_list ':' type ';';
 
-procedure_and_function_declaration_part: procedure_and_function_declaration_list;
+procedure_and_function_declaration_part: procedure_and_function_declaration_list
+										| /*empty*/;
 procedure_and_function_declaration_list: procedure_and_function_declaration_list procedure_and_function_declaration
 										| procedure_and_function_declaration;
 procedure_and_function_declaration: procedure_declaration
@@ -122,7 +123,7 @@ type: simple_type
 /**********************************SIMPLE TYPE*****************************/
 simple_type: ordinal_type
 			| real_type
-			| string_type;
+			| string_type; 
 
 ordinal_type: subrange_type
 			| enumerated_type
@@ -240,7 +241,7 @@ simple_expression_term_operator_list: '+' | '-' | OR_TOKEN;
 
 expression: simple_expression
 			| relational_operator simple_expression;
-relational_operator: '=' | '<' | '>' | LEFT | RIGHT | COMP | IN_TOKEN;
+relational_operator: '=' | '<' | '>' | LE | RE | NOTEQUAL | IN_TOKEN;
 
 function_call: function_identifier
 			| function_identifier actual_parameter_list;
@@ -423,9 +424,9 @@ int main(int argc, char * argv[])
 	else 
 		yyin = stdin;
 
-   //#ifdef YYDEBUG
-   // 	yydebug = 1;
-   //#endif
+   #ifdef YYDEBUG
+    	yydebug = 1;
+   #endif
 	yyparse();
 	if(archivo_abierto)
 		fclose(yyin);

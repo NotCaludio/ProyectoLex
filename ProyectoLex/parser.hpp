@@ -103,9 +103,9 @@
      ASSIGNMENT_PRECEDENCE = 319,
      ASSIGN = 320,
      SUBRANGE = 321,
-     RIGHT = 325,
-     LEFT = 326,
-     COMP = 327,
+     RE = 325,
+     LE = 326,
+     NOTEQUAL = 327,
      POSITIVE = 328,
      NEGATIVE = 329
    };

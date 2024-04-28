@@ -838,7 +838,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
+						//printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
 						yylval.intVal = atoi(yytext);
@@ -848,7 +848,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
+						//printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
 						return HEXADECIMAL;
@@ -857,7 +857,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
+						//printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
 						yylval.floatVal = atof(yytext);
@@ -867,7 +867,7 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Espacios en blanco o tabuladores encontrados: %d\n",fila,columna,yyleng);
+						//printf("(%d,%d) Espacios en blanco o tabuladores encontrados: %d\n",fila,columna,yyleng);
 						columna += yyleng;
 						
 					}
@@ -875,7 +875,7 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Saltos de linea encontrados: %d\n",fila, columna,yyleng);
+						//printf("(%d,%d) Saltos de linea encontrados: %d\n",fila, columna,yyleng);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -885,7 +885,7 @@ case 7:
 case 8:
 YY_RULE_SETUP
 {
-										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										contar_cantidad_operador();
 										columna+=yyleng;
 										return *yytext;
@@ -894,7 +894,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 {
-										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										contar_cantidad_operador();
 										columna+=yyleng;
 										return regresar_numero_token_operador();
@@ -904,7 +904,7 @@ case 10:
 case 11:
 YY_RULE_SETUP
 {
-								printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
+								//printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
 								contar_cantidad_cadena();
 								columna+=yyleng;
 								return QUOTED_CHAR;
@@ -913,7 +913,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 {
-								printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
+								//printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								contar_cantidad_cadena();
 								columna+=yyleng;
 								return QUOTED_STRING;
@@ -932,7 +932,7 @@ case 22:
 case 23:
 YY_RULE_SETUP
 {
-							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
+							//printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							contar_cantidad_palabra();
 							columna+=yyleng;
 							return regresar_numero_token_palabra();
@@ -941,7 +941,7 @@ YY_RULE_SETUP
 case 24:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
+						//printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						contar_cantidad_identificador();
 						columna+=yyleng;
 						return IDENTIFIER;
@@ -950,7 +950,7 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 {
-						printf("(%d,%d) Comentario:",fila,columna);
+						//printf("(%d,%d) Comentario:",fila,columna);
 						BEGIN(COMENTARIO_LLAVE);
 						columna++;
 					} 
@@ -972,7 +972,7 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 {
-							printf("No se puede abrir comentario dentro de un comentario\n");
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -988,7 +988,7 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 {
-						printf("%s",yytext);
+						//printf("%s",yytext);
 						fila+= yyleng;
 						columna=1;
 					}
@@ -996,7 +996,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 {
-							printf("%s",yytext);
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 	YY_BREAK
@@ -1005,7 +1005,7 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 {
-							printf("No se puede abrir comentario dentro de un comentario\n");
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -1021,7 +1021,7 @@ YY_RULE_SETUP
 case 34:
 YY_RULE_SETUP
 {
-						printf("%s",yytext);
+						//printf("%s",yytext);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -1029,7 +1029,7 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 {
-							printf("%s",yytext);
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 	YY_BREAK
@@ -2051,78 +2051,82 @@ int regresar_numero_token_operador()
 {
 	if (strcmp(yytext, ":=") == 0) return ASSIGN;
 	else if (strcmp(yytext, "..") == 0) return SUBRANGE;
-	else if (strcmp(yytext, "<>") == 0) return COMP;
-	else if (strcmp(yytext, "<=") == 0) return LEFT;
-	else if (strcmp(yytext, ">=") == 0) return RIGHT;
+	else if (strcmp(yytext, "<>") == 0) return NOTEQUAL;
+	else if (strcmp(yytext, "<=") == 0) return LE;
+	else if (strcmp(yytext, ">=") == 0) return RE;
 	return 0;
 }
 int regresar_numero_token_palabra()
 {
-	if (strcmp(yytext, "program") == 0) return PROGRAM_TOKEN;
-	else if (strcmp(yytext, "begin") == 0) return BEGIN_TOKEN;
-	else if (strcmp(yytext, "uses") == 0) return USES_TOKEN;
-	else if (strcmp(yytext, "unit") == 0) return UNIT_TOKEN;
-	else if (strcmp(yytext, "interface") == 0) return INTERFACE_TOKEN;
+	char* lowercase_yytext = strdup(yytext);
+	for (int i = 0; lowercase_yytext[i]; i++) {
+    	lowercase_yytext[i] = tolower(lowercase_yytext[i]);
+	}
+	if (strcmp(lowercase_yytext, "program") == 0) { free(lowercase_yytext); return PROGRAM_TOKEN;}
+	else if (strcmp(lowercase_yytext, "begin") == 0) { free(lowercase_yytext); return BEGIN_TOKEN;}
+	else if (strcmp(lowercase_yytext, "uses") == 0) { free(lowercase_yytext); return USES_TOKEN;}
+	else if (strcmp(lowercase_yytext, "unit") == 0) { free(lowercase_yytext); return UNIT_TOKEN;}
+	else if (strcmp(lowercase_yytext, "interface") == 0) { free(lowercase_yytext); return INTERFACE_TOKEN;}
 
-	else if (strcmp(yytext, "implementation") == 0) return IMPLEMENTATION_TOKEN;
-	else if (strcmp(yytext, "label") == 0) return LABEL_TOKEN;
-	else if (strcmp(yytext, "const") == 0) return CONST_TOKEN;
-	else if (strcmp(yytext, "type") == 0) return TYPE_TOKEN;
-	else if (strcmp(yytext, "real") == 0) return REAL_TOKEN;
+	else if (strcmp(lowercase_yytext, "implementation") == 0) { free(lowercase_yytext); return IMPLEMENTATION_TOKEN;}
+	else if (strcmp(lowercase_yytext, "label") == 0) { free(lowercase_yytext); return LABEL_TOKEN;}
+	else if (strcmp(lowercase_yytext, "const") == 0) { free(lowercase_yytext); return CONST_TOKEN;}
+	else if (strcmp(lowercase_yytext, "type") == 0) { free(lowercase_yytext); return TYPE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "real") == 0) { free(lowercase_yytext); return REAL_TOKEN;}
 
-	else if (strcmp(yytext, "integer") == 0) return INTEGER_TOKEN;
-	else if (strcmp(yytext, "longint") == 0) return LONGINT_TOKEN;
-	else if (strcmp(yytext, "word") == 0) return WORD_TOKEN;
-	else if (strcmp(yytext, "char") == 0) return CHAR_TOKEN;
-	else if (strcmp(yytext, "boolean") == 0) return BOOLEAN_TOKEN;
+	else if (strcmp(lowercase_yytext, "integer") == 0) { free(lowercase_yytext); return INTEGER_TOKEN;}
+	else if (strcmp(lowercase_yytext, "longint") == 0) { free(lowercase_yytext); return LONGINT_TOKEN;}
+	else if (strcmp(lowercase_yytext, "word") == 0) { free(lowercase_yytext); return WORD_TOKEN;}
+	else if (strcmp(lowercase_yytext, "char") == 0) { free(lowercase_yytext); return CHAR_TOKEN;}
+	else if (strcmp(lowercase_yytext, "boolean") == 0) { free(lowercase_yytext); return BOOLEAN_TOKEN;}
 
-	else if (strcmp(yytext, "true") == 0) return TRUE_TOKEN;
-	else if (strcmp(yytext, "false") == 0) return FALSE_TOKEN;
-	else if (strcmp(yytext, "string") == 0) return STRING_TOKEN;
-	else if (strcmp(yytext, "packed") == 0) return PACKED_TOKEN;
-	else if (strcmp(yytext, "array") == 0) return ARRAY_TOKEN;
+	else if (strcmp(lowercase_yytext, "true") == 0) { free(lowercase_yytext); return TRUE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "false") == 0) { free(lowercase_yytext); return FALSE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "string") == 0) { free(lowercase_yytext); return STRING_TOKEN;}
+	else if (strcmp(lowercase_yytext, "packed") == 0) { free(lowercase_yytext); return PACKED_TOKEN;}
+	else if (strcmp(lowercase_yytext, "array") == 0) { free(lowercase_yytext); return ARRAY_TOKEN;}
 
-	else if (strcmp(yytext, "record") == 0) return RECORD_TOKEN;
-	else if (strcmp(yytext, "end") == 0) return END_TOKEN;
-	else if (strcmp(yytext, "case") == 0) return CASE_TOKEN;
-	else if (strcmp(yytext, "otherwise") == 0) return OTHERWISE_TOKEN;
-	else if (strcmp(yytext, "of") == 0) return OF_TOKEN;
+	else if (strcmp(lowercase_yytext, "record") == 0) { free(lowercase_yytext); return RECORD_TOKEN;}
+	else if (strcmp(lowercase_yytext, "end") == 0) { free(lowercase_yytext); return END_TOKEN;}
+	else if (strcmp(lowercase_yytext, "case") == 0) { free(lowercase_yytext); return CASE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "otherwise") == 0) { free(lowercase_yytext); return OTHERWISE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "of") == 0) { free(lowercase_yytext); return OF_TOKEN;}
 
-	else if (strcmp(yytext, "set") == 0) return SET_TOKEN;
-	else if (strcmp(yytext, "var") == 0) return VAR_TOKEN;
-	else if (strcmp(yytext, "forward") == 0) return FORWARD_TOKEN;
-	else if (strcmp(yytext, "external") == 0) return EXTERNAL_TOKEN;
-	else if (strcmp(yytext, "function") == 0) return FUNCTION_TOKEN;
+	else if (strcmp(lowercase_yytext, "set") == 0) { free(lowercase_yytext); return SET_TOKEN;}
+	else if (strcmp(lowercase_yytext, "var") == 0) { free(lowercase_yytext); return VAR_TOKEN;}
+	else if (strcmp(lowercase_yytext, "forward") == 0) { free(lowercase_yytext); return FORWARD_TOKEN;}
+	else if (strcmp(lowercase_yytext, "external") == 0) { free(lowercase_yytext); return EXTERNAL_TOKEN;}
+	else if (strcmp(lowercase_yytext, "function") == 0) { free(lowercase_yytext); return FUNCTION_TOKEN;}
 	
-	else if (strcmp(yytext, "procedure") == 0) return PROCEDURE_TOKEN;
-	else if (strcmp(yytext, "file") == 0) return FILE_TOKEN;
-	else if (strcmp(yytext, "goto") == 0) return GOTO_TOKEN;
-	else if (strcmp(yytext, "if") == 0) return IF_TOKEN;
-	else if (strcmp(yytext, "then") == 0) return THEN_TOKEN;
+	else if (strcmp(lowercase_yytext, "procedure") == 0) { free(lowercase_yytext); return PROCEDURE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "file") == 0) { free(lowercase_yytext); return FILE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "goto") == 0) { free(lowercase_yytext); return GOTO_TOKEN;}
+	else if (strcmp(lowercase_yytext, "if") == 0) { free(lowercase_yytext); return IF_TOKEN;}
+	else if (strcmp(lowercase_yytext, "then") == 0) { free(lowercase_yytext); return THEN_TOKEN;}
 
-	else if (strcmp(yytext, "else") == 0) return ELSE_TOKEN;
-	else if (strcmp(yytext, "repeat") == 0) return REPEAT_TOKEN;
-	else if (strcmp(yytext, "until") == 0) return UNTIL_TOKEN;
-	else if (strcmp(yytext, "while") == 0) return WHILE_TOKEN;
-	else if (strcmp(yytext, "do") == 0) return DO_TOKEN;
+	else if (strcmp(lowercase_yytext, "else") == 0) { free(lowercase_yytext); return ELSE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "repeat") == 0) { free(lowercase_yytext); return REPEAT_TOKEN;}
+	else if (strcmp(lowercase_yytext, "until") == 0) { free(lowercase_yytext); return UNTIL_TOKEN;}
+	else if (strcmp(lowercase_yytext, "while") == 0) { free(lowercase_yytext); return WHILE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "do") == 0) { free(lowercase_yytext); return DO_TOKEN;}
 
-	else if (strcmp(yytext, "for") == 0) return FOR_TOKEN;
-	else if (strcmp(yytext, "to") == 0) return TO_TOKEN;
-	else if (strcmp(yytext, "downto") == 0) return DOWNTO_TOKEN;
-	else if (strcmp(yytext, "with") == 0) return WITH_TOKEN;
-	else if (strcmp(yytext, "nil") == 0) return NIL_TOKEN;
+	else if (strcmp(lowercase_yytext, "for") == 0) { free(lowercase_yytext); return FOR_TOKEN;}
+	else if (strcmp(lowercase_yytext, "to") == 0) { free(lowercase_yytext); return TO_TOKEN;}
+	else if (strcmp(lowercase_yytext, "downto") == 0) { free(lowercase_yytext); return DOWNTO_TOKEN;}
+	else if (strcmp(lowercase_yytext, "with") == 0) { free(lowercase_yytext); return WITH_TOKEN;}
+	else if (strcmp(lowercase_yytext, "nil") == 0) { free(lowercase_yytext); return NIL_TOKEN;}
 
-	else if (strcmp(yytext, "read") == 0) return READ_TOKEN;
-	else if (strcmp(yytext, "readln") == 0) return READLN_TOKEN;
-	else if (strcmp(yytext, "write") == 0) return WRITE_TOKEN;
-	else if (strcmp(yytext, "writeln") == 0) return WRITELN_TOKEN;
-	else if (strcmp(yytext, "in") == 0) return IN_TOKEN;
+	else if (strcmp(lowercase_yytext, "read") == 0) { free(lowercase_yytext); return READ_TOKEN;}
+	else if (strcmp(lowercase_yytext, "readln") == 0) { free(lowercase_yytext); return READLN_TOKEN;}
+	else if (strcmp(lowercase_yytext, "write") == 0) { free(lowercase_yytext); return WRITE_TOKEN;}
+	else if (strcmp(lowercase_yytext, "writeln") == 0) { free(lowercase_yytext); return WRITELN_TOKEN;}
+	else if (strcmp(lowercase_yytext, "in") == 0) { free(lowercase_yytext); return IN_TOKEN;}
 
-	else if (strcmp(yytext, "or") == 0) return OR_TOKEN;
-	else if (strcmp(yytext, "div") == 0) return DIV_TOKEN;
-	else if (strcmp(yytext, "mod") == 0) return MOD_TOKEN;
-	else if (strcmp(yytext, "and") == 0) return AND_TOKEN;
-	else if (strcmp(yytext, "not") == 0) return NOT_TOKEN;
+	else if (strcmp(lowercase_yytext, "or") == 0) { free(lowercase_yytext); return OR_TOKEN;}
+	else if (strcmp(lowercase_yytext, "div") == 0) { free(lowercase_yytext); return DIV_TOKEN;}
+	else if (strcmp(lowercase_yytext, "mod") == 0) { free(lowercase_yytext); return MOD_TOKEN;}
+	else if (strcmp(lowercase_yytext, "and") == 0) { free(lowercase_yytext); return AND_TOKEN;}
+	else if (strcmp(lowercase_yytext, "not") == 0) { free(lowercase_yytext); return NOT_TOKEN;}
 	return 0;
 }
 
