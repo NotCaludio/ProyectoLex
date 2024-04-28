@@ -45,8 +45,10 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %%
 
 /*PROGRAMS CHAPTER 8 */
-program: program_heading ';' block;
-		| program_heading ';' uses_clause ';' block;
+pascal: program {printf("Successful program");}
+		| regular_unit {printf("Successful program");};
+program: program_heading ';' block		
+		| program_heading ';' uses_clause ';' block  ;
 program_heading: PROGRAM_TOKEN IDENTIFIER
 				| PROGRAM_TOKEN IDENTIFIER '(' program_parameters ')';
 program_parameters: identifier_list;
@@ -123,20 +125,20 @@ type: simple_type
 
 /**********************************SIMPLE TYPE*****************************/
 simple_type: ordinal_type
-			/*| real_type*/
+			| real_type
 			| string_type; 
 
 ordinal_type: subrange_type
 			| enumerated_type
-			/*| ordinal_type_identifier*/;  /*tipo ordinal
+			| ordinal_type_identifier;  /*tipo ordinal
 							lo iba a modificar para que type tenga solo identifier pero veo que otras reglas usan esta gramatica entonces la dejo asi
 							va a provocar un problema reduce reduce*/
-ordinal_type_identifier: IDENTIFIER;
+ordinal_type_identifier: INTEGER_TOKEN | LONGINT_TOKEN | CHAR_TOKEN | BOOLEAN_TOKEN;
 enumerated_type: '(' identifier_list ')';
 subrange_type: constant SUBRANGE constant; /*verificar que estan en orden ascendente S/R1*/
 
 real_type: real_type_identifier
-real_type_identifier: IDENTIFIER; /*tipo real*/
+real_type_identifier: REAL_TOKEN ; /*tipo real*/
 
 string_type: STRING_TOKEN '[' DECIMAL_INT ']'  /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
 			/*| IDENTIFIER*/; /*tipo string*/
@@ -187,8 +189,8 @@ file_type: FILE_TOKEN
 /**************************************POINTER TYPE *************************/
 
 pointer_type: '^' base_type /*un identificaodr base_type: type_identifier*/
-			/*| IDENTIFIER*/; /* un identificador del tipo puntero*/
-pointer_type_identifier: IDENTIFIER
+			| pointer_type_identifier; /* un identificador del tipo puntero*/
+pointer_type_identifier: NIL_TOKEN;
 base_type: IDENTIFIER; /*identifier del tipo type, osea la base char int etc*/
 
 /*CHAPTER 4 VARIABLES*/
@@ -243,7 +245,7 @@ simple_expression_term_operator_iterable: simple_expression_term_operator_iterab
 simple_expression_term_operator_list: '+' | '-' | OR_TOKEN;
 
 expression: simple_expression
-			| relational_operator simple_expression;
+			| simple_expression relational_operator simple_expression;
 relational_operator: '=' | '<' | '>' | LE | RE | NOTEQUAL | IN_TOKEN;
 
 function_call: /*function_identifier
@@ -298,7 +300,7 @@ structured_statement: compound_statement
 
 /*compound statement*/
 
-compound_statement: BEGIN_TOKEN statement_list END_TOKEN;
+compound_statement: BEGIN_TOKEN statement_list END_TOKEN {printf("regla compound_statement\n")};
 statement_list: statement_list ';' statement
 			| statement;
 
@@ -377,17 +379,13 @@ type_identifier: IDENTIFIER; /*del tipo type
 
 regular_unit: unit_heading ';' interface_part implementation_part END_TOKEN '.';
 unit_heading: UNIT_TOKEN IDENTIFIER;
-interface_part: INTERFACE_TOKEN uses_clause_empty constant_declaration_part_empty
- type_declaration_part_empty variable_declaration_part_empty procedure_and_function_declaration_part_empty
+interface_part: INTERFACE_TOKEN uses_clause_empty constant_declaration_part
+ type_declaration_part variable_declaration_part procedure_and_function_declaration_part;
 
 uses_clause_empty: uses_clause | ;
-constant_declaration_part_empty: constant_declaration_part | ;
-type_declaration_part_empty: type_declaration_part | ;
-variable_declaration_part_empty: variable_declaration_part| ;
-procedure_and_function_declaration_part_empty: procedure_and_function_declaration_part |;
 
-implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part_empty type_declaration_part_empty
- variable_declaration_part_empty procedure_and_function_declaration_part_empty
+implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part type_declaration_part
+ variable_declaration_part procedure_and_function_declaration_part {printf("regla WAZ\n")};
 
 
 
@@ -427,9 +425,9 @@ int main(int argc, char * argv[])
 	else 
 		yyin = stdin;
 
-   #ifdef YYDEBUG
-    	yydebug = 1;
-   #endif
+   //#ifdef YYDEBUG
+   // 	yydebug = 1;
+   //#endif
 	yyparse();
 	if(archivo_abierto)
 		fclose(yyin);

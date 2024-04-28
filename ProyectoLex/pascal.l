@@ -107,9 +107,9 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						columna=1;
 					}
 
-"@"|"#"|"+"|"-"|"*"					|
+"@"|"#"|"+"|"-"|"*"|"."					|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
-")"|"["|"]"|":"						{
+")"|"["|"]"|":"|"$"					{
 										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										contar_cantidad_operador();
 										columna+=yyleng;
