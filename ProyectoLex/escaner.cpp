@@ -860,6 +860,7 @@ YY_RULE_SETUP
 						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						yylval.floatVal = atof(yytext);
 						return REAL_DECIMAL;
 					}
 	YY_BREAK

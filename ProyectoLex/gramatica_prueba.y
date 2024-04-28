@@ -1,3 +1,5 @@
+
+%%
 program : program_heading SEMICOLON block DOT;
 
 program_heading : PROGRAM identifier
@@ -337,3 +339,4 @@ string_literal : STRING_LITERAL
                      }
                      $$ = $1;
                  };
+%%
