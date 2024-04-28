@@ -81,20 +81,21 @@ tipo_estructurado: /*"packed"*/ tipo_arreglo
 /**/
 
 /*DECLARACION DE CONSTANTES 1.8 PAG 24*/
-declaracion_constante: IDENTIFICADOR '=' constante ';' %prec ASIGNACION
+
+constant_declaration: IDENTIFIER ASSIGN constant ';' %prec ASSIGNMENT_PRECEDENCE {printf("Gramatica aceptada");}
 						;
 
-constante: IDENTIFICADOR	/*int longint real*/
-		| 	signo IDENTIFICADOR
-		|	numero_signo
-		|	CADENA_CARACTERES
+constant: IDENTIFIER	/*int longint real*/
+		| 	sign IDENTIFIER
+		|	signed_number
+		|	QUOTED_STRING
 		;
 
-signo: '+'
+sign: '+'
 	|	'-'
 	;
 	
-numero_signo: ENTERO_DECIMAL
+signed_number: DECIMAL_INT
 			| HEXADECIMAL
 			| REAL_DECIMAL
 			;

@@ -52,6 +52,9 @@ void contar_cantidad_operador();
 void contar_cantidad_numero();
 void contar_cantidad_identificador();
 
+int regresar_numero_token_operador();
+int regresar_numero_token_palabra();
+
 
 %}
 
@@ -74,7 +77,8 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
-						return ENTERO_DECIMAL;
+						yylval.intVal = atoi(yytext);
+						return DECIMAL_INT;
 					}
 
 {HEXADECIMAL}		{
@@ -88,6 +92,7 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						contar_cantidad_numero();
 						columna += yyleng;
+						yylval.floatVal = atof(yytext);
 						return REAL_DECIMAL;
 					}
 
@@ -102,20 +107,32 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 						columna=1;
 					}
 
-"@"|"#"|"<>"|"<="|">="|"+"|"-"|"*"	|
+"@"|"#"|"+"|"-"|"*"					|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
-")"|"["|"]"|":"|":="|".."			{
+")"|"["|"]"|":"						{
 										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										contar_cantidad_operador();
 										columna+=yyleng;
 										return *yytext;
 									}
-
-\'([^\\\'\n]|\\.|\'\')*\' 	{
+":="|".."|"<>"|"<="|">="			{
+										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										contar_cantidad_operador();
+										columna+=yyleng;
+										return regresar_numero_token_operador();
+									}
+(\'[^\\\'\n]?\')				|
+(\'([^\\\'\n]|\\.|\'\')\') 	{
+								printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
+								contar_cantidad_cadena();
+								columna+=yyleng;
+								return QUOTED_CHAR;
+							}
+(\'([^\\\'\n]|\\.|\'\')*\') 	{
 								printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								contar_cantidad_cadena();
 								columna+=yyleng;
-								return CADENA_CARACTERES;
+								return QUOTED_STRING;
 							}
 
 "program"|"begin"|"uses"|"unit"|"interface"		|
@@ -132,13 +149,14 @@ REAL_DECIMAL {SIGNO}?(0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							contar_cantidad_palabra();
 							columna+=yyleng;
+							return regresar_numero_token_palabra();
 						}
 
 [a-z][0-9a-z_]*		{
 						printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						contar_cantidad_identificador();
 						columna+=yyleng;
-						return IDENTIFICADOR;
+						return IDENTIFIER;
 					}
 
 
@@ -327,6 +345,84 @@ void contar_cantidad_identificador()
 			break;
 		}
 	}
+}
+int regresar_numero_token_operador()
+{
+	if (strcmp(yytext, ":=") == 0) return ASSIGN;
+	else if (strcmp(yytext, "..") == 0) return SUBRANGE;
+	else if (strcmp(yytext, "<>") == 0) return COMP;
+	else if (strcmp(yytext, "<=") == 0) return LEFT;
+	else if (strcmp(yytext, ">=") == 0) return RIGHT;
+	return 0;
+}
+int regresar_numero_token_palabra()
+{
+	if (strcmp(yytext, "program") == 0) return PROGRAM_TOKEN;
+	else if (strcmp(yytext, "begin") == 0) return BEGIN_TOKEN;
+	else if (strcmp(yytext, "uses") == 0) return USES_TOKEN;
+	else if (strcmp(yytext, "unit") == 0) return UNIT_TOKEN;
+	else if (strcmp(yytext, "interface") == 0) return INTERFACE_TOKEN;
+
+	else if (strcmp(yytext, "implementation") == 0) return IMPLEMENTATION_TOKEN;
+	else if (strcmp(yytext, "label") == 0) return LABEL_TOKEN;
+	else if (strcmp(yytext, "const") == 0) return CONST_TOKEN;
+	else if (strcmp(yytext, "type") == 0) return TYPE_TOKEN;
+	else if (strcmp(yytext, "real") == 0) return REAL_TOKEN;
+
+	else if (strcmp(yytext, "integer") == 0) return INTEGER_TOKEN;
+	else if (strcmp(yytext, "longint") == 0) return LONGINT_TOKEN;
+	else if (strcmp(yytext, "word") == 0) return WORD_TOKEN;
+	else if (strcmp(yytext, "char") == 0) return CHAR_TOKEN;
+	else if (strcmp(yytext, "boolean") == 0) return BOOLEAN_TOKEN;
+
+	else if (strcmp(yytext, "true") == 0) return TRUE_TOKEN;
+	else if (strcmp(yytext, "false") == 0) return FALSE_TOKEN;
+	else if (strcmp(yytext, "string") == 0) return STRING_TOKEN;
+	else if (strcmp(yytext, "packed") == 0) return PACKED_TOKEN;
+	else if (strcmp(yytext, "array") == 0) return ARRAY_TOKEN;
+
+	else if (strcmp(yytext, "record") == 0) return RECORD_TOKEN;
+	else if (strcmp(yytext, "end") == 0) return END_TOKEN;
+	else if (strcmp(yytext, "case") == 0) return CASE_TOKEN;
+	else if (strcmp(yytext, "otherwise") == 0) return OTHERWISE_TOKEN;
+	else if (strcmp(yytext, "of") == 0) return OF_TOKEN;
+
+	else if (strcmp(yytext, "set") == 0) return SET_TOKEN;
+	else if (strcmp(yytext, "var") == 0) return VAR_TOKEN;
+	else if (strcmp(yytext, "forward") == 0) return FORWARD_TOKEN;
+	else if (strcmp(yytext, "external") == 0) return EXTERNAL_TOKEN;
+	else if (strcmp(yytext, "function") == 0) return FUNCTION_TOKEN;
+	
+	else if (strcmp(yytext, "procedure") == 0) return PROCEDURE_TOKEN;
+	else if (strcmp(yytext, "file") == 0) return FILE_TOKEN;
+	else if (strcmp(yytext, "goto") == 0) return GOTO_TOKEN;
+	else if (strcmp(yytext, "if") == 0) return IF_TOKEN;
+	else if (strcmp(yytext, "then") == 0) return THEN_TOKEN;
+
+	else if (strcmp(yytext, "else") == 0) return ELSE_TOKEN;
+	else if (strcmp(yytext, "repeat") == 0) return REPEAT_TOKEN;
+	else if (strcmp(yytext, "until") == 0) return UNTIL_TOKEN;
+	else if (strcmp(yytext, "while") == 0) return WHILE_TOKEN;
+	else if (strcmp(yytext, "do") == 0) return DO_TOKEN;
+
+	else if (strcmp(yytext, "for") == 0) return FOR_TOKEN;
+	else if (strcmp(yytext, "to") == 0) return TO_TOKEN;
+	else if (strcmp(yytext, "downto") == 0) return DOWNTO_TOKEN;
+	else if (strcmp(yytext, "with") == 0) return WITH_TOKEN;
+	else if (strcmp(yytext, "nil") == 0) return NIL_TOKEN;
+
+	else if (strcmp(yytext, "read") == 0) return READ_TOKEN;
+	else if (strcmp(yytext, "readln") == 0) return READLN_TOKEN;
+	else if (strcmp(yytext, "write") == 0) return WRITE_TOKEN;
+	else if (strcmp(yytext, "writeln") == 0) return WRITELN_TOKEN;
+	else if (strcmp(yytext, "in") == 0) return IN_TOKEN;
+
+	else if (strcmp(yytext, "or") == 0) return OR_TOKEN;
+	else if (strcmp(yytext, "div") == 0) return DIV_TOKEN;
+	else if (strcmp(yytext, "mod") == 0) return MOD_TOKEN;
+	else if (strcmp(yytext, "and") == 0) return AND_TOKEN;
+	else if (strcmp(yytext, "not") == 0) return NOT_TOKEN;
+	return 0;
 }
 
 int yywrap(void) 
