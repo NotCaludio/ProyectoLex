@@ -79,8 +79,8 @@ constant_declaration_part: CONST_TOKEN constant_declaration_list
 constant_declaration_list: constant_declaration_list  constant_declaration
 						| constant_declaration ;
 constant_declaration: IDENTIFIER '=' constant ';'; 
-constant: constant_identifier{ /*este es cualquier constante identifier*/	}
-		| sign constant_identifier /*verificar el tipo de identifier int longint real con una accion semantica*/
+constant: constant_identifier{ /*constant_identifier este es cualquier constante identifier*/	}
+		| sign constant_identifier /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
 		| DECIMAL_INT
 		| HEXADECIMAL
 		| REAL_DECIMAL
@@ -118,33 +118,34 @@ identifier_list: identifier_list ',' IDENTIFIER
 
 type: simple_type
 	| structured_type
-	| pointer_type;
+	| pointer_type
+	| IDENTIFIER;
 
 /**********************************SIMPLE TYPE*****************************/
 simple_type: ordinal_type
-			| real_type
+			/*| real_type*/
 			| string_type; 
 
 ordinal_type: subrange_type
 			| enumerated_type
-			| ordinal_type_identifier;  /*tipo ordinal
+			/*| ordinal_type_identifier*/;  /*tipo ordinal
 							lo iba a modificar para que type tenga solo identifier pero veo que otras reglas usan esta gramatica entonces la dejo asi
 							va a provocar un problema reduce reduce*/
 ordinal_type_identifier: IDENTIFIER;
 enumerated_type: '(' identifier_list ')';
-subrange_type: constant SUBRANGE constant; /*verificar que estan en orden ascendente*/
+subrange_type: constant SUBRANGE constant; /*verificar que estan en orden ascendente S/R1*/
 
 real_type: real_type_identifier
 real_type_identifier: IDENTIFIER; /*tipo real*/
 
-string_type: STRING_TOKEN '[' DECIMAL_INT ']' { /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/}
-			| IDENTIFIER; /*tipo string*/
+string_type: STRING_TOKEN '[' DECIMAL_INT ']'  /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
+			/*| IDENTIFIER*/; /*tipo string*/
 
 /***************************e**** STRUCTURED TYPE **************************/
 
 structured_type: PACKED_TOKEN  type_list /*packed no afecta a file ni set*/
 				| type_list				
-				| IDENTIFIER;	/*de tipo estructurado*/
+				/*| IDENTIFIER*/;	/*de tipo estructurado*/
 type_list: array_type
 		| set_type
 		| file_type
@@ -186,22 +187,23 @@ file_type: FILE_TOKEN
 /**************************************POINTER TYPE *************************/
 
 pointer_type: '^' base_type /*un identificaodr base_type: type_identifier*/
-			| IDENTIFIER; /* un identificador del tipo puntero*/
-
+			/*| IDENTIFIER*/; /* un identificador del tipo puntero*/
+pointer_type_identifier: IDENTIFIER
 base_type: IDENTIFIER; /*identifier del tipo type, osea la base char int etc*/
 
 /*CHAPTER 4 VARIABLES*/
 
 variable_reference: variable_identifier qualifier_list
-				| variable_identifier;
+				/*| variable_identifier*/;
 variable_identifier: IDENTIFIER;  /*identifier sin mas*/
 					
 qualifier_list: qualifier_list qualifier
 				| qualifier;
 qualifier: index
 		| field_designator
-		| file_buffer_symbol
-		| pointer_object_symbol;
+		|'^';
+		/*| file_buffer_symbol
+		| pointer_object_symbol*/;
 
 index: '[' expression_list ']';
 expression_list: expression_list ',' expression;
@@ -215,7 +217,7 @@ pointer_object_symbol: '^'; /*esto me va a ocasionar un problema reduce reduce*/
 
 unsigned_constant: unsigned_number
 				| QUOTED_STRING
-				| constant_identifier
+				/*| constant_identifier*/
 				| NIL_TOKEN;
 unsigned_number: DECIMAL_INT	/*en todos verificar que sea positivo porque sino no es unsigned*/
 				| HEXADECIMAL
@@ -227,7 +229,8 @@ factor: variable_reference
 		| function_call
 		| set_constructor
 		| '(' expression ')'
-		| NOT_TOKEN factor;
+		| NOT_TOKEN factor
+		| IDENTIFIER;
 
 term: term term_operator_list  factor
 	| factor;
@@ -243,17 +246,17 @@ expression: simple_expression
 			| relational_operator simple_expression;
 relational_operator: '=' | '<' | '>' | LE | RE | NOTEQUAL | IN_TOKEN;
 
-function_call: function_identifier
-			| function_identifier actual_parameter_list;
+function_call: /*function_identifier
+			|*/ function_identifier actual_parameter_list;
 function_identifier: IDENTIFIER; /*nada mas es su nombre de la funcion dbe existir*/
 
 actual_parameter_list: '(' actual_parameter_iterable ')';
 actual_parameter_iterable: actual_parameter_iterable ',' actual_parameter
 						| actual_parameter;
 actual_parameter: expression
-				| variable_reference
-				| procedure_identifier
-				| function_identifier;
+				/*| variable_reference*/
+				/*| procedure_identifier
+				| function_identifier*/;
 procedure_identifier: IDENTIFIER /*solo el nombre*/;
 
 set_constructor: '[' ']'
@@ -272,7 +275,7 @@ statement: /*al parecer es vacio pero no estoy seguro*/
 		| label ':' structured_statement
 		| simple_statement
 		| structured_statement;
-
+/******************************* SIMPLE STATEMENT ****************************************************/
 simple_statement: assignment_statement
 				| procedure_statement
 				| goto_statement;
@@ -353,11 +356,11 @@ function_declaration: function_heading ';' function_body ';';
 function_body: block
 			|	FORWARD_TOKEN
 			| EXTERNAL_TOKEN;
-function_heading: FUNCTION_TOKEN IDENTIFIER ':' result_type
-				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' result_type
+function_heading: FUNCTION_TOKEN IDENTIFIER ':' IDENTIFIER/*result_type*/
+				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' IDENTIFIER/*result_type*/;
 result_type: ordinal_type_identifier
 			| real_type_identifier
-			| ordinal_type_identifier;
+			| pointer_type_identifier;
 formal_parameter_list : '(' formal_parameter_list_iterable ')';
 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list
 							| formal_parameter_list_iterable_list
