@@ -47,8 +47,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 /*PROGRAMS CHAPTER 8 */
 pascal: program {printf("Successful program");}
 		| regular_unit {printf("Successful program");};
-program: program_heading ';' block		
-		| program_heading ';' uses_clause ';' block  ;
+program: program_heading ';' block		{printf("regla program1\n")}
+		| program_heading ';' uses_clause ';' block  {printf("regla program2\n")} ;
 program_heading: PROGRAM_TOKEN IDENTIFIER
 				| PROGRAM_TOKEN IDENTIFIER '(' program_parameters ')';
 program_parameters: identifier_list;
@@ -74,7 +74,7 @@ label: DECIMAL_INT {
                 			yyerror("Label debe estar entre 0 y 9999");
             			}
             			// $<unsignedIntVal>$ = $1;
-					}
+					};
 
 constant_declaration_part: CONST_TOKEN constant_declaration_list
 						| /*empty*/;
@@ -205,7 +205,7 @@ qualifier: index
 		| field_designator
 		|'^';
 		/*| file_buffer_symbol
-		| pointer_object_symbol*/;
+		| pointer_object_symbol*/
 
 index: '[' expression_list ']';
 expression_list: expression_list ',' expression;
@@ -239,7 +239,7 @@ term: term term_operator_list  factor
 term_operator_list: '*' | '/' | DIV_TOKEN | MOD_TOKEN | AND_TOKEN;
 
 simple_expression: sign simple_expression_term_operator_iterable 
-				| simple_expression_term_operator_iterable 
+				| simple_expression_term_operator_iterable ;
 simple_expression_term_operator_iterable: simple_expression_term_operator_iterable simple_expression_term_operator_list term
 										| term;
 simple_expression_term_operator_list: '+' | '-' | OR_TOKEN;
@@ -365,7 +365,7 @@ result_type: ordinal_type_identifier
 			| pointer_type_identifier;
 formal_parameter_list : '(' formal_parameter_list_iterable ')';
 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list
-							| formal_parameter_list_iterable_list
+							| formal_parameter_list_iterable_list;
 formal_parameter_list_iterable_list: parameter_declaration
 									| procedure_heading	
 									| function_heading;

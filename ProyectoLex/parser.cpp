@@ -1838,6 +1838,16 @@ yyreduce:
     {printf("Successful program");;}
     break;
 
+  case 4:
+
+    {printf("regla program1\n");}
+    break;
+
+  case 5:
+
+    {printf("regla program2\n");}
+    break;
+
   case 15:
 
     {		
