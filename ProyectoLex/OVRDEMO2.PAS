@@ -12,12 +12,12 @@ unit OvrDemo2;
 interface
 
 procedure Write2;
-
+;
 implementation
 
 procedure Write2;
 begin
-
+  Writeln('Two...');
 end;
 
 end.

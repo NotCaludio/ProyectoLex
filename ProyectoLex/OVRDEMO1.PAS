@@ -12,14 +12,12 @@ unit OvrDemo1;
 interface
 
 procedure Write1;
-
-forward;
-
+;
 implementation
 
 procedure Write1;
 begin
-
+  Writeln('One...');
 end;
 
 end.

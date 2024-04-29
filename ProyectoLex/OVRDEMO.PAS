@@ -45,6 +45,7 @@ begin
   OvrInit('OVRDEMO.OVR');       { init overlay system, reserve heap space }
   if OvrResult <> 0 then
   begin
+    Writeln('Overlay error: ', OvrResult);
     Halt(1);
   end;
   repeat
