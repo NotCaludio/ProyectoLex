@@ -72,7 +72,6 @@ begin
   TextColor(White);
   Write(' Ins-InsLine  ',
         'Del-DelLine  ',
-        #27#24#25#26'-Cursor  ',
         'Alt-W-Window  ',
         'Alt-R-Random  ',
         'Esc-Exit');
@@ -124,27 +123,27 @@ begin { program body }
   repeat
     Ch:=ReadKey;
     case Ch of
-      #0:                               { Function keys }
+      0:                               { Function keys }
       begin
         Ch:=ReadKey;
         case Ch of
-          #17: MakeWindow;              { Alt-W }
-          #19: RandomText;              { Alt-R }
-          #45: Done:=True;              { Alt-X }
-          #72: GotoXY(WhereX,WhereY-1); { Up }
-          #75: GotoXY(WhereX-1,WhereY); { Left }
-          #77: GotoXY(WhereX+1,WhereY); { Right }
-          #80: GotoXY(WhereX,WhereY+1); { Down }
-          #82: InsLine;                 { Ins }
-          #83: DelLine;                 { Del }
+          17: MakeWindow;              { Alt-W }
+          19: RandomText;              { Alt-R }
+          45: Done:=True;              { Alt-X }
+          72: GotoXY(WhereX,WhereY-1); { Up }
+          75: GotoXY(WhereX-1,WhereY); { Left }
+          77: GotoXY(WhereX+1,WhereY); { Right }
+          80: GotoXY(WhereX,WhereY+1); { Down }
+          82: InsLine;                 { Ins }
+          83: DelLine;                 { Del }
         end;
       end;
-      #3: Done:=True;                   { Ctrl-C }
-      #13: WriteLn;                     { Enter }
-      #27: Done:=True;                  { Esc }
-    else
+      3: Done:=True;                   { Ctrl-C }
+      13: WriteLn;                     { Enter }
+      27: Done:=True;                  { Esc }
+    otherwise
       Write(Ch);
     end;
   until Done;
   TextMode(OrigMode);
-end.
+end

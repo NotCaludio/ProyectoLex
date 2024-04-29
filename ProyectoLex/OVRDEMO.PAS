@@ -52,4 +52,4 @@ begin
     Write1;
     Write2;
   until KeyPressed;
-end.
+end

@@ -33,7 +33,7 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    
    extern unsigned int columna;
    extern unsigned int fila;
-   extern int yylex();
+   extern int yylex(void);
    int yyerror(const char *s);
    extern FILE *yyin;
       
@@ -45,8 +45,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %%
 
 /*PROGRAMS CHAPTER 8 */
-pascal: program {printf("Successful program");}
-		| regular_unit {printf("Successful program");};
+pascal: program {printf("Successful program\n");}
+		| regular_unit {printf("Successful program\n");};
 
 program: program_heading ';' block		{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  {printf("regla program2\n")} ;
@@ -62,12 +62,13 @@ uses_clause: USES_TOKEN identifier_list {printf("regla uses_clause\n")};
 
 /*Chapter 1*/
 
-block : label_declaration_part
+block :  label_declaration_part
         constant_declaration_part
         type_declaration_part
         variable_declaration_part
         procedure_and_function_declaration_part
-        statement_part{printf("regla block1\n")};
+        statement_part {printf("regla block1\n")}
+		 ;
 
 
 
@@ -91,9 +92,7 @@ constant_declaration_list: constant_declaration_list  constant_declaration{print
 constant_declaration: IDENTIFIER '=' constant ';'{printf("regla constant_declaration1\n")}; 
 constant: constant_identifier{ /*constant_identifier este es cualquier constante identifier*/	}{printf("regla constant1\n")}
 		| sign constant_identifier{printf("regla constant2\n")} /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
-		| DECIMAL_INT{printf("regla constant3\n")}
-		| HEXADECIMAL{printf("regla constant4\n")}
-		| REAL_DECIMAL{printf("regla constant5\n")}
+		| signed_number{printf("regla constant3\n")}
 		| QUOTED_STRING{printf("regla constant6\n")}
 		| QUOTED_CHAR{printf("regla constant7\n")};
 
@@ -153,7 +152,11 @@ ordinal_type_identifier: INTEGER_TOKEN {printf("regla ordinal_type_identifier1\n
 | WORD_TOKEN{printf("regla ordinal_type_identifier2\n")}
  | LONGINT_TOKEN{printf("regla ordinal_type_identifier2\n")}
   | CHAR_TOKEN {printf("regla ordinal_type_identifier3\n")}
-  | BOOLEAN_TOKEN{printf("regla ordinal_type_identifier4\n")};
+  | BOOLEAN_TOKEN{printf("regla ordinal_type_identifier4\n")}
+  | function_call{printf("regla ordinal_type_identifier5\n")}; /*super modificado para que sirva en dirdemo*/
+
+type_boolean: TRUE_TOKEN {printf("regla type_boolean1\n")}
+			| FALSE_TOKEN {printf("regla type_boolean2\n")};
 
 enumerated_type: '(' identifier_list ')'{printf("regla enumerated_type1\n")};
 
@@ -226,7 +229,16 @@ pointer_type: '^' base_type{printf("regla pointer_type1\n")}
 			
 pointer_type_identifier: NIL_TOKEN{printf("regla pointer_type_identifier1\n")};
 
-base_type: IDENTIFIER{printf("regla base_type1\n")}; 
+base_type: INTEGER_TOKEN{printf("regla base_type1\n")}
+		|  LONGINT_TOKEN{printf("regla base_type2\n")} 
+		|  CHAR_TOKEN{printf("regla base_type3\n")}
+		|  BOOLEAN_TOKEN{printf("regla base_type4\n")} 
+		|  STRING_TOKEN{printf("regla base_type5\n")} 
+		|  RECORD_TOKEN{printf("regla base_type6\n")} 
+		|  FILE_TOKEN{printf("regla base_type7\n")} 
+		|  ARRAY_TOKEN{printf("regla base_type9\n")} 
+		|  IDENTIFIER{printf("regla base_type10\n")} 
+		|  FUNCTION_TOKEN{printf("regla base_type11\n")}; 
 
 /*identifier del tipo type, osea la base char int etc*/
 
@@ -259,12 +271,15 @@ pointer_object_symbol: '^'{printf("regla pointer_object_symbol\n")};
 
 unsigned_constant: unsigned_number{printf("regla unsigned_constant1\n")}
 				| QUOTED_STRING{printf("regla unsigned_constant2\n")}
+				| QUOTED_CHAR {printf("regla unsigned_constant3\n")}
 				/*| constant_identifier*/
-				| NIL_TOKEN{printf("regla unsigned_constant3\n")};
+				| NIL_TOKEN{printf("regla unsigned_constant4\n")};
 
 unsigned_number: DECIMAL_INT	{printf("regla unsigned_number1\n")}
 				| HEXADECIMAL{printf("regla unsigned_number2\n")}
 				| REAL_DECIMAL{printf("regla unsigned_number3\n")};
+signed_number: sign unsigned_number {printf("regla signed_number1\n")}
+			 |  unsigned_number {printf("regla signed_number2\n")};
 /*en todos verificar que sea positivo porque sino no es unsigned*/
 			
 
@@ -275,7 +290,8 @@ factor: variable_reference{printf("regla factor1\n")}
 		| set_constructor{printf("regla factor5\n")}
 		| '(' expression ')'{printf("regla factor6\n")}
 		| NOT_TOKEN factor{printf("regla factor7\n")}
-		| IDENTIFIER{printf("regla factor8\n")}; 
+		| IDENTIFIER{printf("regla factor8\n")} 
+		| type_boolean{printf("regla factor9\n")}; 
 
 term: term term_operator_list  factor{printf("regla term1\n")}
 	| factor{printf("regla term2\n")};
@@ -313,7 +329,8 @@ relational_operator: '='{printf("regla relational_operator1\n")}
 function_call: /*function_identifier
 			|*/ function_identifier actual_parameter_list{printf("regla function_call1\n")};
 
-function_identifier: IDENTIFIER{printf("regla function_identifier1\n")};
+function_identifier: FUNCTION_TOKEN{printf("regla function_identifier1\n")} /*agregado por los ejemplos de pascal*/
+					| IDENTIFIER;
  /*nada mas es su nombre de la funcion dbe existir*/
 
 actual_parameter_list: '(' actual_parameter_iterable ')'{printf("regla actual_parameter_list1\n")};
@@ -330,7 +347,7 @@ procedure_identifier: WRITE_TOKEN {printf("regla procedure_identifier1\n")}
 					| WRITELN_TOKEN {printf("regla procedure_identifier2\n")}
 					| READ_TOKEN {printf("regla procedure_identifier3\n")}
 					| READLN_TOKEN {printf("regla procedure_identifier4\n")}
-					;//| IDENTIFIER;/*solo el nombre*/
+					;//| IDENTIFIER {printf("regla procedure_identifier5\n")};/*solo el nombre*/
 
 set_constructor: '[' ']'{printf("regla set_constructor1\n")}
 				| '[' member_group_list ']'{printf("regla set_constructor2\n")};
@@ -353,7 +370,8 @@ statement: /*al parecer es vacio pero no estoy seguro*/
 		| label ':' simple_statement{printf("regla statement2\n")}
 		| label ':' structured_statement{printf("regla statement3\n")}
 		| simple_statement{printf("regla statement4\n")}
-		| structured_statement{printf("regla statement5\n")};
+		| structured_statement{printf("regla statement5\n")}
+		| IDENTIFIER{printf("regla statement6\n")}; /*añadido no de la original*/
 
 /******************************* SIMPLE STATEMENT ****************************************************/
 simple_statement: assignment_statement{printf("regla simple_statement1\n")}
@@ -365,7 +383,8 @@ assignment_statement: variable_reference ASSIGN expression{printf("regla assignm
 
 /**************************** PROCEDURE STATEMENT **************************************************/
 procedure_statement: procedure_identifier{printf("regla procedure_statement1\n")}
-					| procedure_identifier actual_parameter_list{printf("regla procedure_statement2\n")};
+					| procedure_identifier actual_parameter_list{printf("regla procedure_statement2\n")}
+					| IDENTIFIER actual_parameter_list{printf("regla procedure_statement3\n")}; /*no de la original*/
 
 /**************************** GOTO STATEMENT **************************************************/
 goto_statement: GOTO_TOKEN label{printf("regla goto_statement1\n")};
@@ -395,7 +414,7 @@ case_statement: CASE_TOKEN expression OF_TOKEN case_list END_TOKEN{printf("regla
 				| CASE_TOKEN expression OF_TOKEN case_list otherwise_clause END_TOKEN{printf("regla case_statement2\n")}
 				| CASE_TOKEN expression OF_TOKEN case_list otherwise_clause ';' END_TOKEN{printf("regla case_statement3\n")};
 				| CASE_TOKEN expression OF_TOKEN case_list ';' END_TOKEN{printf("regla case_statement4\n")};
-case_list: case_list ',' case{printf("regla case_list1\n")}
+case_list: case_list ';' case{printf("regla case_list1\n")}
 		| case{printf("regla case_list2\n")};
 case: constant_list ':' statement{printf("regla case1\n")};
 otherwise_clause: ';' OTHERWISE_TOKEN statement{printf("regla otherwise_clause1\n")};
@@ -441,8 +460,8 @@ function_body: block{printf("regla function_body1\n")}
 			|	FORWARD_TOKEN{printf("regla function_body2\n")}
 			| EXTERNAL_TOKEN{printf("regla function_body3\n")};
 
-function_heading: FUNCTION_TOKEN IDENTIFIER ':' IDENTIFIER{printf("regla function_heading1\n")}/*result_type*/
-				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' IDENTIFIER/*result_type*/{printf("regla function_heading2\n")};
+function_heading: FUNCTION_TOKEN IDENTIFIER ':' type{printf("regla function_heading1\n")}/*result_type*/
+				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' type/*result_type*/{printf("regla function_heading2\n")};
 
 result_type: ordinal_type_identifier{printf("regla result_type1\n")}
 			| real_type_identifier{printf	("regla result_type2\n")}
@@ -490,7 +509,6 @@ implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part type_declara
 
 int yyerror(const char *s) 
 {
-
    char mensaje[100];
 
    if ( !strcmp( s, "parse error" ) )
