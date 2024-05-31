@@ -2128,7 +2128,7 @@ int regresar_numero_token_palabra()
 	return 0;
 }
 
-int yywrap(void) 
+/*int yywrap(void) 
 {
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
@@ -2206,7 +2206,7 @@ int yywrap(void)
 	}
    return 1;
 }
-
+*/
 
 /*
 int main(int argc, char * argv[])

@@ -67,7 +67,7 @@ DIGITOS [0-9]
 SIGNO 	(\+|-)
 NUMERO_ENTERO_SIN_SIGNO {NO_CERO}{DIGITOS}*
 ENTERO_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})
-HEXADECIMAL \$(0|[1-9A-F][0-9A-F]*)]
+HEXADECIMAL \$(0|[1-9A-F][0-9A-F]*)
 FACTOR		([eE](\+|-)?{NUMERO_ENTERO_SIN_SIGNO})
 REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 
@@ -429,7 +429,7 @@ int regresar_numero_token_palabra()
 	return 0;
 }
 
-int yywrap(void) 
+/*int yywrap(void) 
 {
 	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
@@ -507,7 +507,7 @@ int yywrap(void)
 	}
    return 1;
 }
-
+*/
 
 /*
 int main(int argc, char * argv[])
