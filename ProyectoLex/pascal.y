@@ -49,8 +49,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 pascal: program {printf("Successful program\n");}
 		| regular_unit {printf("Successful program\n");};
 
-program: program_heading ';' block		{printf("regla program1\n")}
-		| program_heading ';' uses_clause ';' block  {printf("regla program2\n")} ;
+program: program_heading ';' block	'.'	{printf("regla program1\n")}
+		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
 
 /* tenia el punto y coma extra lo quite (miranda)*/
 program_heading: PROGRAM_TOKEN IDENTIFIER{printf("regla program_heading1\n")}
@@ -66,8 +66,8 @@ uses_clause: USES_TOKEN identifier_list {printf("regla uses_clause\n")};
 block :  label_declaration_part
         constant_declaration_part
         type_declaration_part
-        variable_declaration_part
-        procedure_and_function_declaration_part
+        variable_declaration_part  {printf("regla variable_declaration_part_block1\n")}
+        procedure_and_function_declaration_part  {printf("regla procedure_and_function_declaration_part_block1\n")}
         statement_part {printf("regla block1\n")}
 		 ;
 
@@ -334,7 +334,10 @@ function_identifier: FUNCTION_TOKEN{printf("regla function_identifier1\n")} /*ag
 					| IDENTIFIER;
  /*nada mas es su nombre de la funcion dbe existir*/
 
-actual_parameter_list: '(' actual_parameter_iterable ')'{printf("regla actual_parameter_list1\n")};
+actual_parameter_list: '(' actual_parameter_iterable ')'{printf("regla actual_parameter_list1\n")}
+						| '(' ')'{printf("regla actual_parameter_list2\n")}
+						| '(' actual_parameter_iterable ':' type ')'{printf("regla actual_parameter_list3\n")};
+						/*que sea posible meter tipos en llamadas a funcion ig, intento 1*/
 
 
 actual_parameter_iterable: actual_parameter_iterable ',' actual_parameter{printf("regla actual_parameter1\n")}

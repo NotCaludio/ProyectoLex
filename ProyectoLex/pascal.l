@@ -29,27 +29,32 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 %%
 
 {ENTERO_DECIMAL}	{
+						//printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						columna += yyleng;
 						yylval.intVal = atoi(yytext);
 						return DECIMAL_INT;
 					}
 
 {HEXADECIMAL}		{
+						//printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
 						columna += yyleng;
 						return HEXADECIMAL;
 					}
 					
 {REAL_DECIMAL}		{
+						//printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						columna += yyleng;
 						yylval.floatVal = atof(yytext);
 						return REAL_DECIMAL;
 					}
 
 [ \t]+				{
+						//printf("(%d,%d) Espacios en blanco o tabuladores encontrados: %d\n",fila,columna,yyleng);
 						columna += yyleng;
 						
 					}
 [\n]+				{
+						//printf("(%d,%d) Saltos de linea encontrados: %d\n",fila, columna,yyleng);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -57,19 +62,23 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 "@"|"#"|"+"|"-"|"*"|"."					|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
 ")"|"["|"]"|":"|"$"					{
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return *yytext;
 									}
 ":="|".."|"<>"|"<="|">="			{
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return regresar_numero_token_operador();
 									}
 (\'[^\\\'\n]?\')				|
 (\'([^\\\'\n]|\\.|\'\')\') 	{
+								//printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
 								columna+=yyleng;
 								return QUOTED_CHAR;
 							}
 (\'([^\\\'\n]|\\.|\'\')*\') 	{
+								//printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								columna+=yyleng;
 								return QUOTED_STRING;
 							}
@@ -85,17 +94,20 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 "for"|"to"|"downto"|"with"|"nil"|"read"			|
 "readln"|"write"|"writeln"|"in"|"or"|"div"		|
 "mod"|"and"|"not"		{
+							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							columna+=yyleng;
 							return regresar_numero_token_palabra();
 						}
 
 [a-z][0-9a-z_]*		{
+						//printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						columna+=yyleng;
 						return IDENTIFIER;
 					}
 
 
 \{					{
+						//printf("(%d,%d) Comentario:",fila,columna);
 						BEGIN(COMENTARIO_LLAVE);
 						columna++;
 					} 
@@ -111,6 +123,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 
 <COMENTARIO_LLAVE>{
 \{						{
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -120,16 +133,19 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 							columna++;
 						}
 [\n]+				{
+						//printf("%s",yytext);
 						fila+= yyleng;
 						columna=1;
 					}
 [^\{|\}\n]*				{
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 
 }
 <COMENTARIO_PARENTESIS>{
 \(\*					{
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -139,12 +155,12 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 							columna++;
 						}
 [\n]+				{
-
+						//printf("%s",yytext);
 						fila+=yyleng;
 						columna=1;
 					}
 [^\(\*|\*\)\n]*			{
-
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 

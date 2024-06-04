@@ -787,6 +787,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						columna += yyleng;
 						yylval.intVal = atoi(yytext);
 						return DECIMAL_INT;
@@ -795,6 +796,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
 						columna += yyleng;
 						return HEXADECIMAL;
 					}
@@ -802,6 +804,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						columna += yyleng;
 						yylval.floatVal = atof(yytext);
 						return REAL_DECIMAL;
@@ -810,6 +813,7 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Espacios en blanco o tabuladores encontrados: %d\n",fila,columna,yyleng);
 						columna += yyleng;
 						
 					}
@@ -817,6 +821,7 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Saltos de linea encontrados: %d\n",fila, columna,yyleng);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -826,6 +831,7 @@ case 7:
 case 8:
 YY_RULE_SETUP
 {
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return *yytext;
 									}
@@ -833,6 +839,7 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 {
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return regresar_numero_token_operador();
 									}
@@ -841,6 +848,7 @@ case 10:
 case 11:
 YY_RULE_SETUP
 {
+								//printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
 								columna+=yyleng;
 								return QUOTED_CHAR;
 							}
@@ -848,6 +856,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 {
+								//printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
 								columna+=yyleng;
 								return QUOTED_STRING;
 							}
@@ -865,6 +874,7 @@ case 22:
 case 23:
 YY_RULE_SETUP
 {
+							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
 							columna+=yyleng;
 							return regresar_numero_token_palabra();
 						}
@@ -872,6 +882,7 @@ YY_RULE_SETUP
 case 24:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						columna+=yyleng;
 						return IDENTIFIER;
 					}
@@ -879,6 +890,7 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 {
+						//printf("(%d,%d) Comentario:",fila,columna);
 						BEGIN(COMENTARIO_LLAVE);
 						columna++;
 					} 
@@ -900,6 +912,7 @@ YY_RULE_SETUP
 case 28:
 YY_RULE_SETUP
 {
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -915,6 +928,7 @@ YY_RULE_SETUP
 case 30:
 YY_RULE_SETUP
 {
+						//printf("%s",yytext);
 						fila+= yyleng;
 						columna=1;
 					}
@@ -922,6 +936,7 @@ YY_RULE_SETUP
 case 31:
 YY_RULE_SETUP
 {
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 	YY_BREAK
@@ -930,6 +945,7 @@ YY_RULE_SETUP
 case 32:
 YY_RULE_SETUP
 {
+							//printf("No se puede abrir comentario dentro de un comentario\n");
 							yyterminate();
 							
 						}
@@ -945,7 +961,7 @@ YY_RULE_SETUP
 case 34:
 YY_RULE_SETUP
 {
-
+						//printf("%s",yytext);
 						fila+=yyleng;
 						columna=1;
 					}
@@ -953,7 +969,7 @@ YY_RULE_SETUP
 case 35:
 YY_RULE_SETUP
 {
-
+							//printf("%s",yytext);
 							columna+=yyleng;
 						}
 	YY_BREAK
