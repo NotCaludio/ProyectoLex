@@ -126,11 +126,11 @@ Grammar
    59             | ordinal_type_identifier
 
    60 ordinal_type_identifier: "integer"
-   61                        | "word"
-   62                        | "longint"
-   63                        | "char"
-   64                        | "boolean"
-   65                        | function_call
+   61                        | "longint"
+   62                        | "char"
+   63                        | "boolean"
+   64                        | function_call
+   65                        | "word"
 
    66 type_boolean: "true"
    67             | "false"
@@ -460,10 +460,10 @@ QUOTED_CHAR (263) 26 131
 "type" (272) 28
 "real" (273) 71
 "integer" (274) 60 108
-"longint" (275) 62 109
-"word" (276) 61
-"char" (277) 63 110
-"boolean" (278) 64 111
+"longint" (275) 61 109
+"word" (276) 65
+"char" (277) 62 110
+"boolean" (278) 63 111
 "true" (279) 66
 "false" (280) 67
 "string" (281) 72 112
@@ -672,7 +672,7 @@ expression (165)
 relational_operator (166)
     on left: 163 164 165 166 167 168 169, on right: 162
 function_call (167)
-    on left: 170, on right: 65 141
+    on left: 170, on right: 64 141
 function_identifier (168)
     on left: 171 172, on right: 170 199
 actual_parameter_list (169)
@@ -1694,30 +1694,30 @@ state 96
 
 state 97
 
-   62 ordinal_type_identifier: "longint" .
-
-    $default  reduce using rule 62 (ordinal_type_identifier)
-
-
-state 98
-
-   61 ordinal_type_identifier: "word" .
+   61 ordinal_type_identifier: "longint" .
 
     $default  reduce using rule 61 (ordinal_type_identifier)
 
 
+state 98
+
+   65 ordinal_type_identifier: "word" .
+
+    $default  reduce using rule 65 (ordinal_type_identifier)
+
+
 state 99
 
-   63 ordinal_type_identifier: "char" .
+   62 ordinal_type_identifier: "char" .
 
-    $default  reduce using rule 63 (ordinal_type_identifier)
+    $default  reduce using rule 62 (ordinal_type_identifier)
 
 
 state 100
 
-   64 ordinal_type_identifier: "boolean" .
+   63 ordinal_type_identifier: "boolean" .
 
-    $default  reduce using rule 64 (ordinal_type_identifier)
+    $default  reduce using rule 63 (ordinal_type_identifier)
 
 
 state 101
@@ -2006,9 +2006,9 @@ state 129
 
 state 130
 
-   65 ordinal_type_identifier: function_call .
+   64 ordinal_type_identifier: function_call .
 
-    $default  reduce using rule 65 (ordinal_type_identifier)
+    $default  reduce using rule 64 (ordinal_type_identifier)
 
 
 state 131
