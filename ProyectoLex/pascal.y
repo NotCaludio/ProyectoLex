@@ -42,6 +42,7 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %output "parser.cpp"
 /*el sufijo list significa que itera o que es una lista de opcinoes*/
 /*en algunas reglas salte unos no terminales que derivan directo en identificadores*/
+/*RE es una regla extra que se añadio para quitar los reduce reduce*/
 %%
 
 /*PROGRAMS CHAPTER 8 */
@@ -134,7 +135,7 @@ identifier_list: identifier_list ',' IDENTIFIER{printf("regla identifier_list1\n
 type: simple_type{printf("regla type1\n")}
 	| structured_type{printf("regla type2\n")}
 	| pointer_type{printf("regla type3\n")}
-	| IDENTIFIER{printf("regla type4\n")};
+	| IDENTIFIER{printf("regla type4\n")}; /*RE*/
 
 /**********************************SIMPLE TYPE*****************************/
 simple_type: ordinal_type{printf("regla simple_type1\n")}
@@ -149,11 +150,11 @@ ordinal_type: subrange_type{printf("regla ordinal_type1\n")}
 							lo iba a modificar para que type tenga solo identifier pero veo que otras reglas usan esta gramatica entonces la dejo asi
 							va a provocar un problema reduce reduce*/
 ordinal_type_identifier: INTEGER_TOKEN {printf("regla ordinal_type_identifier1\n")}
-| WORD_TOKEN{printf("regla ordinal_type_identifier2\n")}
  | LONGINT_TOKEN{printf("regla ordinal_type_identifier2\n")}
   | CHAR_TOKEN {printf("regla ordinal_type_identifier3\n")}
   | BOOLEAN_TOKEN{printf("regla ordinal_type_identifier4\n")}
-  | function_call{printf("regla ordinal_type_identifier5\n")}; /*super modificado para que sirva en dirdemo*/
+  | function_call{printf("regla ordinal_type_identifier5\n")} /*super modificado para que sirva en dirdemo*/
+ | WORD_TOKEN{printf("regla ordinal_type_identifier6\n")};
 
 type_boolean: TRUE_TOKEN {printf("regla type_boolean1\n")}
 			| FALSE_TOKEN {printf("regla type_boolean2\n")};
@@ -165,7 +166,7 @@ subrange_type: constant SUBRANGE constant{printf("regla subrange_type1\n")}; /*v
 real_type: real_type_identifier{printf("regla real_type1\n")}; /*tipo real*/
 real_type_identifier: REAL_TOKEN {printf("regla real_type_identifier1\n")}; /*tipo real*/
 
-string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {printf("regla string_type1\n")}
+string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {printf("regla string_type1\n")} /*1byte de size*/
 /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
 			/*| IDENTIFIER*/; /*tipo string*/
 

@@ -429,9 +429,9 @@ int regresar_numero_token_palabra()
 	return 0;
 }
 
-/*int yywrap(void) 
+int yywrap(void) 
 {
-	FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
+	/*FILE * palabras_reservadas = fopen("palabras_reservadas.csv", "wt");
 	if (!palabras_reservadas)
 		printf("No se pudo abrir el archivo de palabras_reservadas");
 	else
@@ -504,10 +504,9 @@ int regresar_numero_token_palabra()
 		else
 			break;
 		fclose(identificadores);
-	}
+	}*/
    return 1;
 }
-*/
 
 /*
 int main(int argc, char * argv[])
