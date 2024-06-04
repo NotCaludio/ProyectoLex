@@ -468,7 +468,8 @@ result_type: ordinal_type_identifier{printf("regla result_type1\n")}
 			| real_type_identifier{printf	("regla result_type2\n")}
 			| pointer_type_identifier{printf("regla result_type3\n")};
 
-formal_parameter_list : '(' formal_parameter_list_iterable ')'{printf("regla formal_parameter_list1\n")};
+formal_parameter_list : '(' formal_parameter_list_iterable ')'{printf("regla formal_parameter_list1\n")}
+						| '(' ')'{printf("regla formal_parameter_list2\n")};
 
 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list{printf("regla formal_parameter_list_iterable1\n")}
 							| formal_parameter_list_iterable_list{printf("regla formal_parameter_list_iterable2\n")};
@@ -479,7 +480,9 @@ formal_parameter_list_iterable_list: parameter_declaration{printf("regla formal_
 
 parameter_declaration: VAR_TOKEN identifier_list ':' type_identifier{printf("regla parameter_declaration1\n")}
 					| identifier_list ':' type_identifier{printf("regla parameter_declaration2\n")};
-type_identifier: IDENTIFIER{printf("regla type_identifier1\n")}; /*del tipo type 
+					/*var: variable paramenteres, E: value parameters*/
+					
+type_identifier: type {printf("regla type_identifier1\n")}; /*del tipo type 
 							type charray = array [ O •• 255] of Char; 
 							charray es un identifier del tipo array char */
 
