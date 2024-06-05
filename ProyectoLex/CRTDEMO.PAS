@@ -72,7 +72,6 @@ begin
   TextColor(White);
   Write(' Ins-InsLine  ',
         'Del-DelLine  ',
-        #27#24#25#26'-Cursor  ',
         'Alt-W-Window  ',
         'Alt-R-Random  ',
         'Esc-Exit');
@@ -142,7 +141,7 @@ begin { program body }
       #3: Done:=True;                   { Ctrl-C }
       #13: WriteLn;                     { Enter }
       #27: Done:=True;                  { Esc }
-    else
+    otherwise
       Write(Ch);
     end;
   until Done;
