@@ -94,8 +94,9 @@ constant_declaration: IDENTIFIER '=' constant ';'{printf("regla constant_declara
 constant: constant_identifier{ /*constant_identifier este es cualquier constante identifier*/	}{printf("regla constant1\n")}
 		| sign constant_identifier{printf("regla constant2\n")} /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
 		| signed_number{printf("regla constant3\n")}
-		| QUOTED_STRING{printf("regla constant6\n")}
-		| QUOTED_CHAR{printf("regla constant7\n")};
+		| '#' signed_number{printf("regla constant4\n")}
+		| QUOTED_STRING{printf("regla constant5\n")}
+		| QUOTED_CHAR{printf("regla constant6\n")};
 
 constant_identifier: IDENTIFIER{printf("regla constant_identifier1\n")};/*como mas reglas usan constant identifier, poner un lugar para verificar identifier*/
 
@@ -144,11 +145,12 @@ simple_type: ordinal_type{printf("regla simple_type1\n")}
 
 ordinal_type: subrange_type{printf("regla ordinal_type1\n")}
 			| enumerated_type{printf("regla ordinal_type2\n")}
-			| ordinal_type_identifier{printf("regla ordinal_type3\n")};  
-
+			| ordinal_type_identifier{printf("regla ordinal_type3\n")};
+			
 			/*tipo ordinal
 							lo iba a modificar para que type tenga solo identifier pero veo que otras reglas usan esta gramatica entonces la dejo asi
 							va a provocar un problema reduce reduce*/
+
 ordinal_type_identifier: INTEGER_TOKEN {printf("regla ordinal_type_identifier1\n")}
  | LONGINT_TOKEN{printf("regla ordinal_type_identifier2\n")}
   | CHAR_TOKEN {printf("regla ordinal_type_identifier3\n")}
@@ -167,6 +169,7 @@ real_type: real_type_identifier{printf("regla real_type1\n")}; /*tipo real*/
 real_type_identifier: REAL_TOKEN {printf("regla real_type_identifier1\n")}; /*tipo real*/
 
 string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {printf("regla string_type1\n")} /*1byte de size*/
+			| STRING_TOKEN '[' IDENTIFIER ']'{printf("regla string_type2\n")} /*hay variables que son int*/
 /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
 			/*| IDENTIFIER*/; /*tipo string*/
 
@@ -182,9 +185,17 @@ type_list: array_type{printf("regla type_list1\n")}
 
 
 array_type: ARRAY_TOKEN '[' index_type_list ']' OF_TOKEN type{printf("regla array_type\n")}; /*que pueda haber varios indices es para un array de arrays*/
-index_type_list: index_type_list ',' ordinal_type {printf("regla index_type_list1\n")}/* tiene que ser orden ascendente y no mayor a int*/
-				| ordinal_type{printf("regla index_type_list2\n")};
+index_type_list: index_type_list ',' ordinal_type_expression {printf("regla index_type_list1\n")}/* tiene que ser orden ascendente y no mayor a int*/
+				| ordinal_type_expression{printf("regla index_type_list2\n")};
 
+ordinal_type_expression: ordinal_type{printf("regla ordinal_type_expression1\n")}
+						| ordinal_type term_operator_list signed_number_expression_list{printf("regla ordinal_type_expression2\n")}
+						| ordinal_type sign unsigned_number_expression_list{printf("regla ordinal_type_expression3\n")}; /*agregado para las operaciones*/
+
+signed_number_expression_list: signed_number_expression_list  term_operator_list signed_number {printf("regla signed_number_expression_list1\n")}
+						| signed_number {printf("regla signed_number_expression_list2\n")};		/*agregado para que pueda hacer sumas y restas*/
+unsigned_number_expression_list: unsigned_number_expression_list sign unsigned_number{printf("regla unsigned_number_expression_list1\n")}
+								| unsigned_number{printf("regla signed_number_expression_list2\n")};
 
 record_type: RECORD_TOKEN END_TOKEN{printf("regla record_type1\n")}
 			| RECORD_TOKEN field_list END_TOKEN{printf("regla record_type2\n")}; /*son los tipos de datos como el union de bison*/
@@ -239,7 +250,9 @@ base_type: INTEGER_TOKEN{printf("regla base_type1\n")}
 		|  FILE_TOKEN{printf("regla base_type7\n")} 
 		|  ARRAY_TOKEN{printf("regla base_type9\n")} 
 		|  IDENTIFIER{printf("regla base_type10\n")} 
-		|  FUNCTION_TOKEN{printf("regla base_type11\n")}; 
+		|  FUNCTION_TOKEN{printf("regla base_type11\n")}
+		|  unsigned_number{printf("regla base_type12\n")}
+		/*se puso para que el tipo tambien sea de tipo numero*/; 
 
 /*identifier del tipo type, osea la base char int etc*/
 
@@ -263,7 +276,9 @@ index: '[' expression_list ']'{printf("regla index1\n")};
 expression_list: expression_list ',' expression{printf("regla expression_list1\n")}
 				| expression{printf("regla expression_list2\n")};
 
-field_designator: '.' IDENTIFIER{printf("regla field_designator1\n")};
+field_designator: '.' IDENTIFIER{printf("regla field_designator1\n")}
+				| '.' function_call{printf("regla field_designator2\n")};
+				/*puede crear problemas checar*/
 file_buffer_symbol: '^'{printf("regla file_buffer_symbol\n")};
 pointer_object_symbol: '^'{printf("regla pointer_object_symbol\n")};
  /*esto me va a ocasionar un problema reduce reduce*/
@@ -328,7 +343,9 @@ relational_operator: '='{printf("regla relational_operator1\n")}
 
 
 function_call: /*function_identifier
-			|*/ function_identifier actual_parameter_list{printf("regla function_call1\n")};
+			|*/ function_identifier actual_parameter_list{printf("regla function_call1\n")}
+			| function_identifier actual_parameter_list ':' base_type{printf("regla function_call2\n")
+			/*Se puso para que a la hora de hacer un function call pueda haber un tipo*/};
 
 function_identifier: FUNCTION_TOKEN{printf("regla function_identifier1\n")} /*agregado por los ejemplos de pascal*/
 					| IDENTIFIER;
@@ -336,7 +353,7 @@ function_identifier: FUNCTION_TOKEN{printf("regla function_identifier1\n")} /*ag
 
 actual_parameter_list: '(' actual_parameter_iterable ')'{printf("regla actual_parameter_list1\n")}
 						| '(' ')'{printf("regla actual_parameter_list2\n")}
-						| '(' actual_parameter_iterable ':' type ')'{printf("regla actual_parameter_list3\n")};
+						| '(' actual_parameter_iterable ':' base_type ')'{printf("regla actual_parameter_list3\n")};
 						/*que sea posible meter tipos en llamadas a funcion ig, intento 1*/
 
 
@@ -344,7 +361,6 @@ actual_parameter_iterable: actual_parameter_iterable ',' actual_parameter{printf
 						| actual_parameter{printf("regla actual_parameter2\n")};
 
 actual_parameter: expression{printf("regla actual_parameter1\n")}
-				/*| variable_reference*/
 				| procedure_identifier{printf("regla actual_parameter3\n")}/*
 				| function_identifier*/;
 procedure_identifier: WRITE_TOKEN {printf("regla procedure_identifier1\n")}
@@ -375,7 +391,8 @@ statement: /*al parecer es vacio pero no estoy seguro*/
 		| label ':' structured_statement{printf("regla statement3\n")}
 		| simple_statement{printf("regla statement4\n")}
 		| structured_statement{printf("regla statement5\n")}
-		| IDENTIFIER{printf("regla statement6\n")}; /*añadido no de la original*/
+		| IDENTIFIER{printf("regla statement6\n")} /*añadido no de la original*/
+		| variable_reference{printf("regla statement7\n")}; /*añadido no de la original es para que haya llamadas a funcion en statement*/
 
 /******************************* SIMPLE STATEMENT ****************************************************/
 simple_statement: assignment_statement{printf("regla simple_statement1\n")}
@@ -464,8 +481,8 @@ function_body: block{printf("regla function_body1\n")}
 			|	FORWARD_TOKEN{printf("regla function_body2\n")}
 			| EXTERNAL_TOKEN{printf("regla function_body3\n")};
 
-function_heading: FUNCTION_TOKEN IDENTIFIER ':' type{printf("regla function_heading1\n")}/*result_type*/
-				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' type/*result_type*/{printf("regla function_heading2\n")};
+function_heading: FUNCTION_TOKEN IDENTIFIER ':' base_type{printf("regla function_heading1\n")}/*result_type*/
+				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' base_type/*result_type*/{printf("regla function_heading2\n")};
 
 result_type: ordinal_type_identifier{printf("regla result_type1\n")}
 			| real_type_identifier{printf	("regla result_type2\n")}
@@ -491,7 +508,7 @@ type_identifier: type {printf("regla type_identifier1\n")}; /*del tipo type
 
 /*UNIT CHAPTER 9*/
 
-regular_unit: unit_heading ';' interface_part implementation_part END_TOKEN '.'{printf("regla regular_unit1\n")};
+regular_unit: unit_heading ';' interface_part {printf("regla interface_part_regular_unit1\n")} implementation_part END_TOKEN '.'{printf("regla regular_unit1\n")};
 unit_heading: UNIT_TOKEN IDENTIFIER{printf("regla unit_heading1\n")};
 interface_part: INTERFACE_TOKEN uses_clause_empty constant_declaration_part
  type_declaration_part variable_declaration_part procedure_and_function_declaration_part{printf("regla interface_part1\n")};

@@ -831,7 +831,7 @@ case 7:
 case 8:
 YY_RULE_SETUP
 {
-										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return *yytext;
 									}

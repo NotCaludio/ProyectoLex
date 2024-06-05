@@ -62,7 +62,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 "@"|"#"|"+"|"-"|"*"|"."					|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
 ")"|"["|"]"|":"|"$"					{
-										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
 										columna+=yyleng;
 										return *yytext;
 									}

@@ -11,8 +11,8 @@ unit OvrDemo1;
 
 interface
 
-procedure Write1;
-;
+procedure Write1;;
+
 implementation
 
 procedure Write1;
