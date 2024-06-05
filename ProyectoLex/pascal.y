@@ -41,6 +41,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    extern int yylex(void);
    int yyerror(const char *s);
    extern FILE *yyin;
+
+   std::string currentScope = "";
       
    enum types
    {
@@ -82,7 +84,7 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 
    struct node symbolsTable[127];
    int hash_function(char* symbol);
-   void push_symbol(char* symbol,/* char* scope, int definition_line, int line_of_use,*/ std::string type );
+   void push_symbol(char* symbol, std::string scope, int definition_line, int line_of_use, std::string type );
 
 %}
 
@@ -100,8 +102,13 @@ program: program_heading ';' block	'.'	{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
 
 /* tenia el punto y coma extra lo quite (miranda)*/
-program_heading: PROGRAM_TOKEN IDENTIFIER  {  push_symbol($2, "program"); printf("regla program_heading1\n")}
-				| PROGRAM_TOKEN IDENTIFIER '(' program_parameters ')'{printf("regla program_heading2\n")};
+program_heading: PROGRAM_TOKEN IDENTIFIER  {  currentScope = std::string($2);
+											push_symbol($2, currentScope, fila, 0, "program");
+											 printf("regla program_heading1\n")}
+				| PROGRAM_TOKEN IDENTIFIER '(' program_parameters ')'{
+					currentScope = std::string($2);
+					push_symbol($2, currentScope, fila, 0, "program");
+					printf("regla program_heading2\n")};
 
 
 program_parameters: identifier_list{printf("regla program_parameters1\n")};
@@ -124,12 +131,8 @@ label_declaration_part: LABEL_TOKEN label_list ';'{printf("regla label_declarati
 					| /*empty*/ {printf("regla label_declaration_part2\n")};
 label_list: label_list ',' label{printf("regla label_list1\n")}
 			| label{printf("regla label_list2\n")};
-label: DECIMAL_INT {		
-						if ($1 < 0 || $1 > 9999) {
-                			yyerror("Label debe estar entre 0 y 9999");
-            			}
-            			// $<unsignedIntVal>$ = $1;
-					}{printf("regla label1\n")};
+label: DECIMAL_INT {printf("regla label1\n")};
+
 
 constant_declaration_part: CONST_TOKEN constant_declaration_list{printf("regla constant_declaration_part1\n")}
 						| /*empty*/{printf("regla constant_declaration_part2\n")};
@@ -137,15 +140,15 @@ constant_declaration_list: constant_declaration_list  constant_declaration{print
 						| constant_declaration{printf("regla constant_declaration_list2\n")} ;
 
 
-constant_declaration: IDENTIFIER '=' constant ';'{hash_function($1);printf("regla constant_declaration1\n")}; 
-constant: constant_identifier{ /*constant_identifier este es cualquier constante identifier*/	}{printf("regla constant1\n")}
-		| sign constant_identifier{printf("regla constant2\n")} /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
-		| signed_number{printf("regla constant3\n")}
-		| '#' signed_number{printf("regla constant4\n")}
-		| QUOTED_STRING{printf("regla constant5\n")}
-		| QUOTED_CHAR{printf("regla constant6\n")};
+constant_declaration: IDENTIFIER  '=' constant ';'{push_symbol($1, currentScope, fila, 0, std::string($<pCharVal>3));printf("regla constant_declaration1\n")}; 
+constant: constant_identifier{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla constant1\n")}
+		| sign constant_identifier{$<pCharVal>$ = strdup($<pCharVal>2);printf("regla constant2\n")} /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
+		| signed_number{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla constant3\n")}
+		| '#' signed_number{$<pCharVal>$ = strdup($<pCharVal>2);printf("regla constant4\n")}
+		| QUOTED_STRING{$<pCharVal>$ = strdup("string");printf("regla constant5\n")}
+		| QUOTED_CHAR{$<pCharVal>$ = strdup("char"); printf("regla constant6\n")};
 
-constant_identifier: IDENTIFIER{printf("regla constant_identifier1\n")};/*como mas reglas usan constant identifier, poner un lugar para verificar identifier*/
+constant_identifier: IDENTIFIER{$<pCharVal>$ = strdup($1);printf("regla constant_identifier1\n")};/*como mas reglas usan constant identifier, poner un lugar para verificar identifier*/
 
 type_declaration_part: TYPE_TOKEN type_declaration_list{printf("regla type_declaration_part1\n")}
 					| /*empty*/{printf("regla type_declaration_part2\n")};
@@ -339,11 +342,11 @@ unsigned_constant: unsigned_number{printf("regla unsigned_constant1\n")}
 				/*| constant_identifier*/
 				| NIL_TOKEN{printf("regla unsigned_constant4\n")};
 
-unsigned_number: DECIMAL_INT	{printf("regla unsigned_number1\n")}
-				| HEXADECIMAL{printf("regla unsigned_number2\n")}
-				| REAL_DECIMAL{printf("regla unsigned_number3\n")};
-signed_number: sign unsigned_number {printf("regla signed_number1\n")}
-			 |  unsigned_number {printf("regla signed_number2\n")};
+unsigned_number: DECIMAL_INT	{$<pCharVal>$ = strdup("integer");printf("regla unsigned_number1\n")}
+				| HEXADECIMAL{$<pCharVal>$ = strdup("hexadecimal");printf("regla unsigned_number2\n")}
+				| REAL_DECIMAL{$<pCharVal>$ = strdup("real");printf("regla unsigned_number3\n")};
+signed_number: sign unsigned_number {$<pCharVal>$ = strdup($<pCharVal>2);printf("regla signed_number1\n")}
+			 |  unsigned_number {$<pCharVal>$ = strdup($<pCharVal>1);printf("regla signed_number2\n")};
 /*en todos verificar que sea positivo porque sino no es unsigned*/
 			
 
@@ -591,21 +594,63 @@ int hash_function(char* symbol)
 	}
 	return total_value%127;
 }
-void push_symbol(char* symbol,std::string type )
+void push_symbol(char* symbol,std::string scope,int definition_line, int line_of_use,std::string type )
 {
 	int hashvalue = hash_function(symbol);
 	struct node* auxiliarPointer = NULL;
 	if (symbolsTable[hashvalue].symbol != "")
 	{
-		auxiliarPointer = symbolsTable[hashvalue].next;
-		while (auxiliarPointer)
+		if(symbolsTable[hashvalue].symbol == std::string(symbol)) /*si es el mismo simbolo*/
 		{
-			auxiliarPointer = symbolsTable[hashvalue].next;
-			/*
-			if(symbolsTable[hashvalue].next ==NULL)
-				symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));*/
+			if(line_of_use)
+				for(int i = 0; i < SIZE_LINES_OF_USE; i++)
+					if (!symbolsTable[hashvalue].lines_of_use[i])
+					{
+						symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
+						break;
+					}
+			if(definition_line)
+				yyerror("redefinicion de simbolo");
 		}
+		else
+		{
+			
+
+			auxiliarPointer = symbolsTable[hashvalue].next;
+
+			if(symbolsTable[hashvalue].next == NULL)
+			{
+				symbolsTable[hashvalue].next = new(struct node);
+			}
+
+
+			while (auxiliarPointer)
+			{
+				auxiliarPointer = auxiliarPointer->next;
+				/*
+				if(symbolsTable[hashvalue].next ==NULL)
+					symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));*/
+			}
+			
+				
+		}
+			
 		
+	}
+	else
+	{
+		symbolsTable[hashvalue].symbol = std::string(symbol);
+		symbolsTable[hashvalue].scope = scope;
+		if(definition_line && !symbolsTable[hashvalue].definition_line)
+			symbolsTable[hashvalue].definition_line = definition_line;
+		if(line_of_use)
+			for(int i = 0; i < SIZE_LINES_OF_USE; i++)
+				if (!symbolsTable[hashvalue].lines_of_use[i])
+				{
+					symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
+					break;
+				}
+		symbolsTable[hashvalue].type = type;
 	}
 		
 }

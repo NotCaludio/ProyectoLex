@@ -38,6 +38,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 
 {HEXADECIMAL}		{
 						//printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
+						yylval.pCharVal = strdup(yytext);
 						columna += yyleng;
 						return HEXADECIMAL;
 					}
@@ -63,23 +64,27 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 "@"|"#"|"+"|"-"|"*"|"."					|
 "/"|"<"|">"|"^"|";"|"="|","|"("     |
 ")"|"["|"]"|":"|"$"					{
-										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										yylval.pCharVal = strdup(yytext);
 										columna+=yyleng;
 										return *yytext;
 									}
 ":="|".."|"<>"|"<="|">="			{
 										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										yylval.pCharVal = strdup(yytext);
 										columna+=yyleng;
 										return regresar_numero_token_operador();
 									}
 (\'[^\\\'\n]?\')				|
 (\'([^\\\'\n]|\\.|\'\')\') 	{
 								//printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
+								yylval.pCharVal = strdup(yytext);
 								columna+=yyleng;
 								return QUOTED_CHAR;
 							}
 (\'([^\\\'\n]|\\.|\'\')*\') 	{
 								//printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
+								yylval.pCharVal = strdup(yytext);
 								columna+=yyleng;
 								return QUOTED_STRING;
 							}
@@ -95,7 +100,8 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 "for"|"to"|"downto"|"with"|"nil"|"read"			|
 "readln"|"write"|"writeln"|"in"|"or"|"div"		|
 "mod"|"and"|"not"		{
-							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
+							//printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
+							yylval.pCharVal = strdup(yytext);
 							columna+=yyleng;
 							return regresar_numero_token_palabra();
 						}

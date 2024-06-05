@@ -798,6 +798,7 @@ case 2:
 YY_RULE_SETUP
 {
 						//printf("(%d,%d) Hexadecimal: %s\n",fila,columna,yytext);
+						yylval.pCharVal = strdup(yytext);
 						columna += yyleng;
 						return HEXADECIMAL;
 					}
@@ -832,7 +833,8 @@ case 7:
 case 8:
 YY_RULE_SETUP
 {
-										printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										yylval.pCharVal = strdup(yytext);
 										columna+=yyleng;
 										return *yytext;
 									}
@@ -841,6 +843,7 @@ case 9:
 YY_RULE_SETUP
 {
 										//printf("(%d,%d) Operador: %s\n",fila, columna,yytext);
+										yylval.pCharVal = strdup(yytext);
 										columna+=yyleng;
 										return regresar_numero_token_operador();
 									}
@@ -850,6 +853,7 @@ case 11:
 YY_RULE_SETUP
 {
 								//printf("(%d,%d) Cadena Char: %s\n",fila, columna,yytext);
+								yylval.pCharVal = strdup(yytext);
 								columna+=yyleng;
 								return QUOTED_CHAR;
 							}
@@ -858,6 +862,7 @@ case 12:
 YY_RULE_SETUP
 {
 								//printf("(%d,%d) Cadena: %s\n",fila, columna,yytext);
+								yylval.pCharVal = strdup(yytext);
 								columna+=yyleng;
 								return QUOTED_STRING;
 							}
@@ -875,7 +880,8 @@ case 22:
 case 23:
 YY_RULE_SETUP
 {
-							printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
+							//printf("(%d,%d) Reservada: %s\n",fila,columna,yytext);
+							yylval.pCharVal = strdup(yytext);
 							columna+=yyleng;
 							return regresar_numero_token_palabra();
 						}
