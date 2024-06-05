@@ -121,7 +121,7 @@ typedef union YYSTYPE
 	unsigned int unsignedIntVal;
     int intVal;
     float floatVal;
-    char *pCharVal;
+	char* pCharVal;
 
 
 

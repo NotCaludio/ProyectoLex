@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "parser.hpp"
+#include <string>
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
 
 unsigned int columna =1;
@@ -102,6 +103,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 [a-z][0-9a-z_]*		{
 						//printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						columna+=yyleng;
+						yylval.pCharVal = strdup(yytext);
 						return IDENTIFIER;
 					}
 

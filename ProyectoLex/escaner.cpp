@@ -537,6 +537,7 @@ char *yytext;
 #define INITIAL 0
 #include <stdio.h>
 #include "parser.hpp"
+#include <string>
 #pragma warning(disable: 4996 6385 6011 4267 4244 4013 4312 4273 28251)
 
 unsigned int columna =1;
@@ -884,6 +885,7 @@ YY_RULE_SETUP
 {
 						//printf("(%d,%d) Identificador: %s\n",fila,columna,yytext);
 						columna+=yyleng;
+						yylval.pCharVal = strdup(yytext);
 						return IDENTIFIER;
 					}
 	YY_BREAK

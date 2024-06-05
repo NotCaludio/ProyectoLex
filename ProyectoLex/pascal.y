@@ -2,9 +2,9 @@
 	unsigned int unsignedIntVal;
     int intVal;
     float floatVal;
-    char *pCharVal;
+	char* pCharVal;
 }
-%token <intVal>DECIMAL_INT HEXADECIMAL REAL_DECIMAL IDENTIFIER QUOTED_STRING QUOTED_CHAR
+%token <intVal>DECIMAL_INT HEXADECIMAL REAL_DECIMAL <pCharVal>IDENTIFIER QUOTED_STRING QUOTED_CHAR
 PROGRAM_TOKEN"program" BEGIN_TOKEN"begin" USES_TOKEN"uses" UNIT_TOKEN"unit" INTERFACE_TOKEN"interface"		
 IMPLEMENTATION_TOKEN"implementation" LABEL_TOKEN"label" CONST_TOKEN"const" TYPE_TOKEN"type" REAL_TOKEN"real"
 	
@@ -26,17 +26,64 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %left '@' "not"
 %left NEGATIVE POSITIVE
 
+
+%destructor {printf("Se borra %s\n\n\n\n\n",$$);} IDENTIFIER
+
 %{
    #include <stdio.h>
    #include <string.h>
+   #include <string>
    #pragma warning(disable: 4996 6385 4273 4013 4065)
-   
+   #define SIZE_LINES_OF_USE 500
+
    extern unsigned int columna;
    extern unsigned int fila;
    extern int yylex(void);
    int yyerror(const char *s);
    extern FILE *yyin;
       
+   enum types
+   {
+	notype,
+	integer,
+	real,
+	longinteger,
+	string,
+	char_,
+	boolean,
+	longint,
+	word,
+	function,
+	array,
+	file,
+	record,
+	program
+
+   };
+   struct node{
+	std::string symbol;
+	std::string scope;
+	int definition_line;
+	int lines_of_use[SIZE_LINES_OF_USE];
+	std::string type;
+	struct node* next;
+
+	node()
+	{
+		symbol = "";
+		scope = "";
+		definition_line = 0;
+		for(int i = 0; i< SIZE_LINES_OF_USE; i++)
+			lines_of_use[i]= 0;
+		type = "";
+		next = NULL;
+	}
+   } ;
+
+   struct node symbolsTable[127];
+   int hash_function(char* symbol);
+   void push_symbol(char* symbol,/* char* scope, int definition_line, int line_of_use,*/ std::string type );
+
 %}
 
 %output "parser.cpp"
@@ -53,7 +100,7 @@ program: program_heading ';' block	'.'	{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
 
 /* tenia el punto y coma extra lo quite (miranda)*/
-program_heading: PROGRAM_TOKEN IDENTIFIER{printf("regla program_heading1\n")}
+program_heading: PROGRAM_TOKEN IDENTIFIER  {  push_symbol($2, "program"); printf("regla program_heading1\n")}
 				| PROGRAM_TOKEN IDENTIFIER '(' program_parameters ')'{printf("regla program_heading2\n")};
 
 
@@ -90,7 +137,7 @@ constant_declaration_list: constant_declaration_list  constant_declaration{print
 						| constant_declaration{printf("regla constant_declaration_list2\n")} ;
 
 
-constant_declaration: IDENTIFIER '=' constant ';'{printf("regla constant_declaration1\n")}; 
+constant_declaration: IDENTIFIER '=' constant ';'{hash_function($1);printf("regla constant_declaration1\n")}; 
 constant: constant_identifier{ /*constant_identifier este es cualquier constante identifier*/	}{printf("regla constant1\n")}
 		| sign constant_identifier{printf("regla constant2\n")} /*constant_identifier verificar el tipo de identifier int longint real con una accion semantica*/
 		| signed_number{printf("regla constant3\n")}
@@ -251,7 +298,8 @@ base_type: INTEGER_TOKEN{printf("regla base_type1\n")}
 		|  ARRAY_TOKEN{printf("regla base_type9\n")} 
 		|  IDENTIFIER{printf("regla base_type10\n")} 
 		|  FUNCTION_TOKEN{printf("regla base_type11\n")}
-		|  unsigned_number{printf("regla base_type12\n")}
+		|  REAL_TOKEN{printf("regla base_type12\n")}
+		|  unsigned_number{printf("regla base_type13\n")}
 		/*se puso para que el tipo tambien sea de tipo numero*/; 
 
 /*identifier del tipo type, osea la base char int etc*/
@@ -530,6 +578,37 @@ implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part type_declara
 
 
 %%
+
+int hash_function(char* symbol)
+{
+
+	int total_value= 0; 
+	char* pointerChar = symbol;
+	while(pointerChar && *pointerChar != '\0')
+	{
+		total_value += *pointerChar;
+		pointerChar++;
+	}
+	return total_value%127;
+}
+void push_symbol(char* symbol,std::string type )
+{
+	int hashvalue = hash_function(symbol);
+	struct node* auxiliarPointer = NULL;
+	if (symbolsTable[hashvalue].symbol != "")
+	{
+		auxiliarPointer = symbolsTable[hashvalue].next;
+		while (auxiliarPointer)
+		{
+			auxiliarPointer = symbolsTable[hashvalue].next;
+			/*
+			if(symbolsTable[hashvalue].next ==NULL)
+				symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));*/
+		}
+		
+	}
+		
+}
 
 int yyerror(const char *s) 
 {
