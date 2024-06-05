@@ -26,6 +26,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %left '@' "not"
 %left NEGATIVE POSITIVE
 
+%destructor {free ($$); } IDENTIFIER
+
 %{
    #include <stdio.h>
    #include <string.h>
