@@ -36,6 +36,8 @@
 
 
 	#define IDENTIFIERS_LIMIT 10
+	#define LABELS_LIMIT 256
+	#define CONSTANTS_LIST_LIMIT 256
 
 
 
@@ -127,6 +129,7 @@ typedef union YYSTYPE
 
 	unsigned int unsignedIntVal;
     int intVal;
+	int intValArray[LABELS_LIMIT];
     float floatVal;
 	char* pCharVal;
 	char* pcharValArray[IDENTIFIERS_LIMIT];

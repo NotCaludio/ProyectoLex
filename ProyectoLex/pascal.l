@@ -32,7 +32,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 {ENTERO_DECIMAL}	{
 						//printf("(%d,%d) Entero: %s\n",fila,columna,yytext);
 						columna += yyleng;
-						yylval.intVal = atoi(yytext);
+						yylval.pCharVal = strdup(yytext);
 						return DECIMAL_INT;
 					}
 
@@ -46,7 +46,7 @@ REAL_DECIMAL (0|{NUMERO_ENTERO_SIN_SIGNO})({FACTOR}|\.[0-9]+{FACTOR}?)
 {REAL_DECIMAL}		{
 						//printf("(%d,%d) Real: %s\n",fila,columna ,yytext);
 						columna += yyleng;
-						yylval.floatVal = atof(yytext);
+						yylval.pCharVal = strdup(yytext);
 						return REAL_DECIMAL;
 					}
 

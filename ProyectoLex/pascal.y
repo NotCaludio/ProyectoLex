@@ -1,6 +1,7 @@
 %union {
 	unsigned int unsignedIntVal;
     int intVal;
+	int intValArray[LABELS_LIMIT];
     float floatVal;
 	char* pCharVal;
 	char* pcharValArray[IDENTIFIERS_LIMIT];
@@ -32,11 +33,15 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 
 %code requires {
 	#define IDENTIFIERS_LIMIT 10
+	#define LABELS_LIMIT 256
+	#define CONSTANTS_LIST_LIMIT 256
 }
 %{
    #include <stdio.h>
    #include <string.h>
    #include <string>
+   #include <iostream>
+   #include <iomanip>
    #pragma warning(disable: 4996 6385 4273 4013 4065)
    #define SIZE_LINES_OF_USE 500
 
@@ -47,6 +52,10 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    extern FILE *yyin;
 
    std::string currentScope = "";
+
+   std::string margin = "  ";  
+	int table_width = 90;  
+
       
    enum types
    {
@@ -90,6 +99,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    int hash_function(char* symbol);
    void push_symbol(char* symbol, std::string scope, int definition_line, int line_of_use, std::string type );
 	std::string removeRightmostWord(std::string str);
+	void print_symbol_table( int size = 17) ;
+	void print_border(int width) ;
 %}
 
 %output "parser.cpp"
@@ -101,8 +112,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %%
 
 /*PROGRAMS CHAPTER 8 */
-pascal: program {printf("Successful program\n");}
-		| regular_unit {printf("Successful program\n");};
+pascal: program {print_symbol_table(); printf("Successful program\n");}
+		| regular_unit {print_symbol_table(); printf("Successful program\n");};
 
 program: program_heading ';' block	'.'	{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
@@ -133,11 +144,34 @@ block :  label_declaration_part
 
 
 
-label_declaration_part: LABEL_TOKEN label_list ';'{printf("regla label_declaration_part1\n")}
+label_declaration_part: LABEL_TOKEN label_list ';'{
+	for(int i = 0; i < LABELS_LIMIT; i++)
+		if ($<pcharValArray>2[i])
+			push_symbol($<pcharValArray>2[i], currentScope, fila, 0, "label");
+	printf("regla label_declaration_part1\n")}
 					| /*empty*/ {printf("regla label_declaration_part2\n")};
-label_list: label_list ',' label{printf("regla label_list1\n")}
-			| label{printf("regla label_list2\n")};
-label: DECIMAL_INT {printf("regla label1\n")};
+label_list: label_list ',' label{
+					for(int i = 0; i < LABELS_LIMIT; i++)
+						if (!$<pcharValArray>1[i])
+						{
+							$<pcharValArray>1[i] = $<pCharVal>3;
+							break;
+						}
+					for(int i = 0; i < LABELS_LIMIT; i++)
+						if (!$<pcharValArray>$[i] && $<pcharValArray>1[i])
+						{
+							$<pcharValArray>$[i] = $<pcharValArray>1[i];
+						}
+	printf("regla label_list1\n")}
+			| label{
+				for(int i = 0; i < LABELS_LIMIT; i++)
+						if (!$<pcharValArray>$[i])
+						{
+							$<pcharValArray>1[i] =  $<pCharVal>1;
+							break;
+						}
+				printf("regla label_list2\n")};
+label: DECIMAL_INT {$<pCharVal>$ = $<pCharVal>1;printf("regla label1\n")};
 
 
 constant_declaration_part: CONST_TOKEN constant_declaration_list{printf("regla constant_declaration_part1\n")}
@@ -320,8 +354,27 @@ variant: constant_list ':' '(' ')'{printf("regla variant1\n")}
 		| constant_list ':' '(' field_list ')'{printf("regla variant2\n")};
 
 
-constant_list: constant_list ',' constant{printf("regla constant_list1\n")}
-			| constant{printf("regla constant_list2\n")};
+constant_list: constant_list ',' constant{
+					for(int i = 0; i < CONSTANTS_LIST_LIMIT; i++)
+						if (!$<pcharValArray>1[i])
+						{
+							$<pcharValArray>1[i] = strdup($<pCharVal>3);
+							break;
+						}
+					for(int i = 0; i < CONSTANTS_LIST_LIMIT; i++)
+						if (!$<pcharValArray>$[i] && $<pcharValArray>1[i])
+						{
+							$<pcharValArray>$[i] = strdup($<pcharValArray>1[i]);
+						}
+	printf("regla constant_list1\n")}
+			| constant{
+				for(int i = 0; i < CONSTANTS_LIST_LIMIT; i++)
+						if (!$<pcharValArray>$[i])
+						{
+							$<pcharValArray>1[i] = strdup($<pCharVal>1);
+							break;
+						}
+				printf("regla constant_list2\n")};
 
 tag_field_type: IDENTIFIER{printf("regla tag_field_type1\n")}; /*ordinal type*/
 
@@ -391,9 +444,9 @@ base_type: INTEGER_TOKEN{$<pCharVal>$ = strdup("integer");printf("regla base_typ
 
 /*CHAPTER 4 VARIABLES*/
 
-variable_reference: variable_identifier qualifier_list{printf("regla variable_reference1\n")}
+variable_reference: variable_identifier qualifier_list{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla variable_reference1\n")}
 				/*| variable_identifier*/;
-variable_identifier: IDENTIFIER{printf("regla variable_identifier1\n")};  /*identifier sin mas*/
+variable_identifier: IDENTIFIER{$<pCharVal>$ = strdup($1);printf("regla variable_identifier1\n")};  /*identifier sin mas*/
 					
 qualifier_list: qualifier_list qualifier{printf("regla qualifier_list1\n")}
 				| qualifier{printf("regla qualifier_list2\n")};
@@ -432,14 +485,14 @@ signed_number: sign unsigned_number {$<pCharVal>$ = strdup($<pCharVal>2);printf(
 /*en todos verificar que sea positivo porque sino no es unsigned*/
 			
 
-factor: variable_reference{printf("regla factor1\n")}
-		| '@' variable_reference{printf("regla factor2\n")}
+factor: variable_reference{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla factor1\n")}
+		| '@' variable_reference{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla factor2\n")}
 		| unsigned_constant{printf("regla factor3\n")}
-		| function_call{printf	("regla factor4\n")}
+		| function_call{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf	("regla factor4\n")}
 		| set_constructor{printf("regla factor5\n")}
 		| '(' expression ')'{printf("regla factor6\n")}
 		| NOT_TOKEN factor{printf("regla factor7\n")}
-		| IDENTIFIER{printf("regla factor8\n")} 
+		| IDENTIFIER{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla factor8\n")} 
 		| type_boolean{printf("regla factor9\n")}; 
 
 term: term term_operator_list  factor{printf("regla term1\n")}
@@ -476,12 +529,12 @@ relational_operator: '='{printf("regla relational_operator1\n")}
 
 
 function_call: /*function_identifier
-			|*/ function_identifier actual_parameter_list{printf("regla function_call1\n")}
-			| function_identifier actual_parameter_list ':' base_type{printf("regla function_call2\n")
+			|*/ function_identifier actual_parameter_list{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla function_call1\n")}
+			| function_identifier actual_parameter_list ':' base_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla function_call2\n")
 			/*Se puso para que a la hora de hacer un function call pueda haber un tipo*/};
 
-function_identifier: FUNCTION_TOKEN{printf("regla function_identifier1\n")} /*agregado por los ejemplos de pascal*/
-					| IDENTIFIER;
+function_identifier: FUNCTION_TOKEN{$<pCharVal>$ = strdup("function");printf("regla function_identifier1\n")} /*agregado por los ejemplos de pascal*/
+					| IDENTIFIER{$<pCharVal>$ = strdup($1);};
  /*nada mas es su nombre de la funcion dbe existir*/
 
 actual_parameter_list: '(' actual_parameter_iterable ')'{printf("regla actual_parameter_list1\n")}
@@ -496,10 +549,10 @@ actual_parameter_iterable: actual_parameter_iterable ',' actual_parameter{printf
 actual_parameter: expression{printf("regla actual_parameter1\n")}
 				| procedure_identifier{printf("regla actual_parameter3\n")}/*
 				| function_identifier*/;
-procedure_identifier: WRITE_TOKEN {printf("regla procedure_identifier1\n")}
-					| WRITELN_TOKEN {printf("regla procedure_identifier2\n")}
-					| READ_TOKEN {printf("regla procedure_identifier3\n")}
-					| READLN_TOKEN {printf("regla procedure_identifier4\n")}
+procedure_identifier: WRITE_TOKEN {$<pCharVal>$ = strdup("write");printf("regla procedure_identifier1\n")}
+					| WRITELN_TOKEN {$<pCharVal>$ = strdup("writeln");printf("regla procedure_identifier2\n")}
+					| READ_TOKEN {$<pCharVal>$ = strdup("read");printf("regla procedure_identifier3\n")}
+					| READLN_TOKEN {$<pCharVal>$ = strdup("readln");printf("regla procedure_identifier4\n")}
 					;//| IDENTIFIER {printf("regla procedure_identifier5\n")};/*solo el nombre*/
 
 set_constructor: '[' ']'{printf("regla set_constructor1\n")}
@@ -524,24 +577,28 @@ statement: /*al parecer es vacio pero no estoy seguro*/
 		| label ':' structured_statement{printf("regla statement3\n")}
 		| simple_statement{printf("regla statement4\n")}
 		| structured_statement{printf("regla statement5\n")}
-		| IDENTIFIER{printf("regla statement6\n")} /*añadido no de la original*/
-		| variable_reference{printf("regla statement7\n")}; /*añadido no de la original es para que haya llamadas a funcion en statement*/
+		| IDENTIFIER{push_symbol($1, currentScope, 0, fila, "");printf("regla statement6\n")} /*añadido no de la original*/
+		| variable_reference{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla statement7\n")}; /*añadido no de la original es para que haya llamadas a funcion en statement*/
 
 /******************************* SIMPLE STATEMENT ****************************************************/
 simple_statement: assignment_statement{printf("regla simple_statement1\n")}
 				| procedure_statement{printf("regla simple_statement2\n")}
 				| goto_statement{printf("regla simple_statement3\n")};
 /**************************** ASSIGNMENT STATEMENT **************************************************/
-assignment_statement: variable_reference ASSIGN expression{printf("regla assignment_statement1\n")}
-					| function_identifier ASSIGN expression{printf("regla assignment_statement2\n")};
+assignment_statement: variable_reference ASSIGN expression{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla assignment_statement1\n")}
+					| function_identifier ASSIGN expression{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla assignment_statement2\n")};
 
 /**************************** PROCEDURE STATEMENT **************************************************/
-procedure_statement: procedure_identifier{printf("regla procedure_statement1\n")}
-					| procedure_identifier actual_parameter_list{printf("regla procedure_statement2\n")}
-					| IDENTIFIER actual_parameter_list{printf("regla procedure_statement3\n")}; /*no de la original*/
+procedure_statement: procedure_identifier{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla procedure_statement1\n")}
+					| procedure_identifier actual_parameter_list{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla procedure_statement2\n")}
+					| IDENTIFIER actual_parameter_list{push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla procedure_statement3\n")}; /*no de la original*/
 
 /**************************** GOTO STATEMENT **************************************************/
-goto_statement: GOTO_TOKEN label{printf("regla goto_statement1\n")};
+goto_statement: GOTO_TOKEN label{
+	for(int i = 0; i < LABELS_LIMIT; i++)
+		if ($<pcharValArray>2[i])
+			push_symbol($<pcharValArray>2[i], currentScope, 0, fila, "");
+	printf("regla goto_statement1\n")};
 
 /**************************** STRUCTURED STATEMENT ********************************************/
 structured_statement: compound_statement{printf("regla structured_statement1\n")}
@@ -551,7 +608,7 @@ structured_statement: compound_statement{printf("regla structured_statement1\n")
 
 /*compound statement*/
 
-compound_statement: BEGIN_TOKEN statement_list END_TOKEN {printf("regla compound_statement\n")};
+compound_statement: BEGIN_TOKEN statement_list END_TOKEN{currentScope = removeRightmostWord(currentScope);printf("regla compound_statement\n")};
 statement_list: statement_list ';' statement{printf("regla statement_list1\n")}
 			| statement{printf("regla statement_list2\n")};
 
@@ -570,7 +627,11 @@ case_statement: CASE_TOKEN expression OF_TOKEN case_list END_TOKEN{printf("regla
 				| CASE_TOKEN expression OF_TOKEN case_list ';' END_TOKEN{printf("regla case_statement4\n")};
 case_list: case_list ';' case{printf("regla case_list1\n")}
 		| case{printf("regla case_list2\n")};
-case: constant_list ':' statement{printf("regla case1\n")};
+case: constant_list ':' statement{
+	for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if ($<pcharValArray>1[i])
+							push_symbol($<pcharValArray>1[i], currentScope, 0, fila, $<pCharVal>3);
+	printf("regla case1\n")};
 otherwise_clause: ';' OTHERWISE_TOKEN statement{printf("regla otherwise_clause1\n")};
 
 repetitive_statement: repeat_statement{printf("regla repetitive_statement1\n")}
@@ -583,9 +644,9 @@ repeat_statement: REPEAT_TOKEN statement_list UNTIL_TOKEN expression{printf("reg
 /************************ WHILE_STATEMENT **********************************************/
 while_statement: WHILE_TOKEN expression DO_TOKEN statement{printf("regla while_statement\n")};
 /************************ FPR_STATEMENT **********************************************/
-for_statement: FOR_TOKEN control_variable ASSIGN initial_value TO_TOKEN final_value DO_TOKEN statement{printf("regla for_statement1\n")}
-			| FOR_TOKEN control_variable ASSIGN initial_value DOWNTO_TOKEN final_value DO_TOKEN statement{printf("regla for_statement2\n")};
-control_variable: IDENTIFIER{printf("regla control_variable\n")}; /*variable identifier*/
+for_statement: FOR_TOKEN control_variable ASSIGN initial_value TO_TOKEN final_value DO_TOKEN statement{push_symbol($<pCharVal>2, currentScope, 0, fila, "");printf("regla for_statement1\n")}
+			| FOR_TOKEN control_variable ASSIGN initial_value DOWNTO_TOKEN final_value DO_TOKEN statement{push_symbol($<pCharVal>2, currentScope, 0, fila, "");printf("regla for_statement2\n")};
+control_variable: IDENTIFIER{$<pCharVal>$ = strdup($1);printf("regla control_variable\n")}; /*variable identifier*/
 initial_value: expression{printf("regla initial_value\n")};
 final_value: expression{printf("regla final_value\n")};
 
@@ -593,7 +654,9 @@ final_value: expression{printf("regla final_value\n")};
 with_statement: WITH_TOKEN record_variable_reference_list DO_TOKEN statement{printf("regla with_statement\n")};
 
 record_variable_reference_list: record_variable_reference_list ',' variable_reference{printf("regla record_variable_reference_list1\n")}/*of type record*/
-								| variable_reference{printf("regla record_variable_reference_list2\n")};
+								| variable_reference{
+									push_symbol($<pCharVal>1, currentScope, 0, fila, "");
+									printf("regla record_variable_reference_list2\n")};
 
 
 /*PROCEDURES AND FUNCTIONS CHAPTER 7*/
@@ -616,22 +679,7 @@ function_body: block{printf("regla function_body1\n")}
 			|	FORWARD_TOKEN{printf("regla function_body2\n")}
 			| EXTERNAL_TOKEN{printf("regla function_body3\n")};
 
-function_heading: FUNCTION_TOKEN IDENTIFIER ':' base_type{
-											const char* functionSymbol = "Function";
-											char* typeFunction = strdup($<pCharVal>4);
-											char* auxiliarPointer = typeFunction;
-											short size = 0;
-											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
-											char* newString= new char[size + 9];
-											if(typeFunction)
-											strcpy(newString,typeFunction);
-											strcat(newString,functionSymbol);
-											currentScope = currentScope + "." + std::string($2);
-											push_symbol($2, currentScope, fila, 0, "function");
-											delete[](newString);		
-											free(typeFunction);
-											printf("regla function_heading1\n")}/*result_type*/
-				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' base_type/*result_type*/{
+function_heading: FUNCTION_TOKEN IDENTIFIER {currentScope = currentScope + "." + std::string($2);} ':' base_type{
 											const char* functionSymbol = "Function";
 											char* typeFunction = strdup($<pCharVal>5);
 											char* auxiliarPointer = typeFunction;
@@ -641,8 +689,23 @@ function_heading: FUNCTION_TOKEN IDENTIFIER ':' base_type{
 											if(typeFunction)
 											strcpy(newString,typeFunction);
 											strcat(newString,functionSymbol);
+											
+											push_symbol($2, currentScope, fila, 0, std::string(newString));
+											delete[](newString);		
+											free(typeFunction);
+											printf("regla function_heading1\n")}/*result_type*/
+				| FUNCTION_TOKEN IDENTIFIER {currentScope = currentScope + "." + std::string($2);} formal_parameter_list ':' base_type/*result_type*/{
+											const char* functionSymbol = "Function";
+											char* typeFunction = strdup($<pCharVal>6);
+											char* auxiliarPointer = typeFunction;
+											short size = 0;
+											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
+											char* newString= new char[size + 9];
+											if(typeFunction)
+											strcpy(newString,typeFunction);
+											strcat(newString,functionSymbol);
 											currentScope = currentScope + "." + std::string($2);
-											push_symbol($2, currentScope, fila, 0, "function");
+											push_symbol($2, currentScope, fila, 0, std::string(newString));
 											delete[](newString);		
 											free(typeFunction);printf("regla function_heading2\n")};
 
@@ -660,8 +723,16 @@ formal_parameter_list_iterable_list: parameter_declaration{printf("regla formal_
 									| procedure_heading{printf("regla formal_parameter_list_iterable_list2\n")}	
 									| function_heading{printf("regla formal_parameter_list_iterable_list3\n")};
 
-parameter_declaration: VAR_TOKEN identifier_list ':' type_identifier{printf("regla parameter_declaration1\n")}
-					| identifier_list ':' type_identifier{printf("regla parameter_declaration2\n")};
+parameter_declaration: VAR_TOKEN identifier_list ':' type_identifier{
+	for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+		if ($<pcharValArray>2[i])
+			push_symbol($<pcharValArray>2[i], currentScope, fila, 0, std::string($<pCharVal>4));
+	printf("regla parameter_declaration1\n")}
+					| identifier_list ':' type_identifier{
+						for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+		if ($<pcharValArray>2[i])
+			push_symbol($<pcharValArray>1[i], currentScope, fila, 0, std::string($<pCharVal>3));
+						printf("regla parameter_declaration2\n")};
 					/*var: variable paramenteres, E: value parameters*/
 					
 type_identifier: type {printf("regla type_identifier1\n")}; /*del tipo type 
@@ -726,8 +797,6 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 						symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
 						break;
 					}
-			if(definition_line)
-				yyerror("redefinicion de simbolo");
 		}
 		else
 		{
@@ -772,6 +841,45 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 		
 }
 
+
+void print_border(int width) {
+    std::cout << margin << "+";
+    for (int i = 0; i < width; i++) std::cout << "-";
+    std::cout << "+" << std::endl;
+}
+
+
+void print_symbol_table( int size ) {
+     std::string margin = "  ";  
+	 
+     int table_width = 90;  
+
+     auto print_border = [&](int width) {
+        std::cout << margin << "+";
+        for (int i = 0; i < width; i++) std::cout << "-";
+        std::cout << "+" << std::endl;
+    };
+    print_border(table_width);
+
+    std::cout << margin << "| " << std::left << std::setw(15) << "Symbol" << "| " << std::setw(15) << "Scope" << "| " << std::setw(20) << "Definition Line" << "| " << std::setw(19) << "Lines of Use" << "| " << std::setw(10) << "Type" << " |" << std::endl;
+    
+    print_border(table_width);
+
+    for (int i = 0; i < size; i++) {
+        std::cout << margin << "| " << std::left << std::setw(15) << symbolsTable[i].symbol << "| " << std::setw(15) << symbolsTable[i].scope << "| " << std::setw(20) << symbolsTable[i].definition_line << "| ";
+
+        for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
+            if (symbolsTable[i].lines_of_use[j] != 0) {
+                std::cout << symbolsTable[i].lines_of_use[j] << " ";
+            } else {
+                std::cout << " ";
+            }
+        }
+        std::cout << std::string(22 - (SIZE_LINES_OF_USE * 2), ' ') << "| " << std::setw(10) << symbolsTable[i].type << " |" << std::endl;
+    }
+    print_border(table_width);
+}
+
 int yyerror(const char *s) 
 {
    char mensaje[100];
@@ -783,6 +891,7 @@ int yyerror(const char *s)
 
    printf("Error en linea %d columna %d: %s\n", fila,columna, mensaje);
    exit( 1 ); /* Sale del programa */
+   print_symbol_table();
 
    return 0;
 }

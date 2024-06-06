@@ -7,7 +7,7 @@ Type    b = ^function; }
 Var     a: Array [1..1000, 1..1000] Of LONGINT;
         lux: Array [1..1000, 1..1000] Of CHAR;
         m, n: LONGINT;
-Function readFile() : longint;
+Function readFile(w: Longint) : longint;
 Begin
         Assign(INPUT, fi); Reset(INPUT);
         Readln(n);
