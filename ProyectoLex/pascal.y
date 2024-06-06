@@ -112,8 +112,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %%
 
 /*PROGRAMS CHAPTER 8 */
-pascal: program {print_symbol_table(); printf("Successful program\n");}
-		| regular_unit {print_symbol_table(); printf("Successful program\n");};
+pascal: program { printf("Successful program\n");}
+		| regular_unit {printf("Successful program\n");};
 
 program: program_heading ';' block	'.'	{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
@@ -283,7 +283,9 @@ real_type: real_type_identifier{$<pCharVal>$ = strdup($<pCharVal>1);printf("regl
 real_type_identifier: REAL_TOKEN {$<pCharVal>$ = strdup("real");printf("regla real_type_identifier1\n")}; /*tipo real*/
 
 string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {$<pCharVal>$ = strdup("string");printf("regla string_type1\n")} /*1byte de size*/
-			| STRING_TOKEN '[' IDENTIFIER ']'{$<pCharVal>$ = strdup("string");printf("regla string_type2\n")} /*hay variables que son int*/
+			| STRING_TOKEN '[' IDENTIFIER ']'{$<pCharVal>$ = strdup("string");
+			push_symbol($<pCharVal>3, currentScope, 0, fila, "");
+			printf("regla string_type2\n")} /*hay variables que son int*/
 /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
 			/*| IDENTIFIER*/; /*tipo string*/
 
@@ -345,7 +347,9 @@ fixed_part: fixed_part ';' field_declaration{printf("regla fixed_part1\n")}
 field_declaration: identifier_list ':' type{printf("regla field_declaration1\n")};
 
 variant_part: CASE_TOKEN tag_field_type OF_TOKEN variant_list {printf("regla variant_part1\n")}/*para crear casos de tipos de dato*/
-			| CASE_TOKEN IDENTIFIER ':' tag_field_type OF_TOKEN variant_list{printf("regla variant_part2\n")};
+			| CASE_TOKEN IDENTIFIER ':' tag_field_type OF_TOKEN variant_list{
+				push_symbol($<pCharVal>2, currentScope, 0, fila, "");
+				printf("regla variant_part2\n")};
 
 variant_list: variant_list ';' variant{printf("regla variant_list1\n")}
 			| variant{printf("regla variant_list2\n")};
@@ -376,7 +380,7 @@ constant_list: constant_list ',' constant{
 						}
 				printf("regla constant_list2\n")};
 
-tag_field_type: IDENTIFIER{printf("regla tag_field_type1\n")}; /*ordinal type*/
+tag_field_type: IDENTIFIER{ push_symbol($<pCharVal>1, currentScope, 0, fila, "");printf("regla tag_field_type1\n")}; /*ordinal type*/
 
 
 set_type: SET_TOKEN OF_TOKEN ordinal_type{
@@ -462,7 +466,7 @@ index: '[' expression_list ']'{printf("regla index1\n")};
 expression_list: expression_list ',' expression{printf("regla expression_list1\n")}
 				| expression{printf("regla expression_list2\n")};
 
-field_designator: '.' IDENTIFIER{printf("regla field_designator1\n")}
+field_designator: '.' IDENTIFIER{push_symbol($<pCharVal>2, currentScope, 0, fila, "");printf("regla field_designator1\n")}
 				| '.' function_call{printf("regla field_designator2\n")};
 				/*puede crear problemas checar*/
 file_buffer_symbol: '^'{printf("regla file_buffer_symbol\n")};
@@ -742,7 +746,8 @@ type_identifier: type {printf("regla type_identifier1\n")}; /*del tipo type
 /*UNIT CHAPTER 9*/
 
 regular_unit: unit_heading ';' interface_part {printf("regla interface_part_regular_unit1\n")} implementation_part END_TOKEN '.'{printf("regla regular_unit1\n")};
-unit_heading: UNIT_TOKEN IDENTIFIER{printf("regla unit_heading1\n")};
+unit_heading: UNIT_TOKEN IDENTIFIER{ currentScope = std::string($2);
+	push_symbol($<pCharVal>2, currentScope, fila, 0, "unit");printf("regla unit_heading1\n")};
 interface_part: INTERFACE_TOKEN uses_clause_empty constant_declaration_part
  type_declaration_part variable_declaration_part procedure_and_function_declaration_part{printf("regla interface_part1\n")};
 
@@ -788,7 +793,10 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 	struct node* auxiliarPointer = NULL;
 	if (symbolsTable[hashvalue].symbol != "")
 	{
-		if(symbolsTable[hashvalue].symbol == std::string(symbol)) /*si es el mismo simbolo*/
+
+
+
+		if(symbolsTable[hashvalue].symbol == std::string(symbol)   ) /*si es el mismo simbolo*/
 		{
 			if(line_of_use)
 				for(int i = 0; i < SIZE_LINES_OF_USE; i++)
@@ -800,23 +808,26 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 		}
 		else
 		{
-			
-
-			auxiliarPointer = symbolsTable[hashvalue].next;
-
-			if(symbolsTable[hashvalue].next == NULL)
-			{
-				symbolsTable[hashvalue].next = new(struct node);
-			}
-
-
-			while (auxiliarPointer)
-			{
-				auxiliarPointer = auxiliarPointer->next;
-				/*
-				if(symbolsTable[hashvalue].next ==NULL)
-					symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));*/
-			}
+		    node* newNode = new node;
+    		newNode->symbol = symbol;
+    		newNode->scope = scope;
+    		newNode->definition_line = definition_line;
+    		newNode->type = type;
+    		newNode->next = nullptr;
+		
+    		// If the index is empty, insert the new node directly
+    		if (symbolsTable[hashvalue].symbol.empty()) {
+    		    symbolsTable[hashvalue] = *newNode;
+    		}
+    		else {
+    		    // Traverse the linked list to find the last node
+    		    node* current = &symbolsTable[hashvalue];
+    		    while (current->next != nullptr) {
+    		        current = current->next;
+    		    }
+    		    // Append the new node at the end
+    		    current->next = newNode;
+    		}			
 			
 				
 		}
@@ -891,7 +902,6 @@ int yyerror(const char *s)
 
    printf("Error en linea %d columna %d: %s\n", fila,columna, mensaje);
    exit( 1 ); /* Sale del programa */
-   print_symbol_table();
 
    return 0;
 }

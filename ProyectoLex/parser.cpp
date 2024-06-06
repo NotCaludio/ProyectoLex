@@ -671,28 +671,28 @@ static const yytype_uint16 yyrline[] =
      213,   214,   215,   216,   217,   218,   220,   221,   223,   224,
      226,   239,   250,   251,   252,   253,   256,   257,   258,   260,
      261,   262,   268,   269,   270,   271,   272,   273,   275,   276,
-     278,   280,   282,   283,   285,   286,   292,   293,   295,   296,
-     297,   298,   301,   320,   321,   323,   324,   325,   327,   328,
-     329,   330,   332,   333,   335,   336,   337,   338,   339,   340,
-     343,   344,   345,   347,   348,   350,   351,   353,   354,   357,
-     370,   379,   382,   401,   402,   406,   425,   427,   429,   430,
-     431,   432,   433,   434,   435,   436,   437,   438,   439,   440,
-     447,   449,   451,   452,   454,   455,   456,   460,   462,   463,
-     465,   466,   474,   475,   476,   478,   480,   481,   482,   483,
-     484,   488,   489,   490,   491,   492,   493,   494,   495,   496,
-     498,   499,   500,   501,   502,   503,   504,   507,   508,   510,
-     512,   514,   515,   516,   519,   520,   522,   523,   524,   525,
-     526,   527,   528,   532,   533,   536,   537,   540,   541,   542,
-     546,   547,   549,   550,   552,   553,   554,   555,   558,   559,
-     562,   563,   569,   570,   574,   575,   576,   577,   578,   579,
-     580,   581,   584,   585,   586,   588,   589,   592,   593,   594,
-     597,   604,   605,   606,   607,   611,   612,   613,   616,   617,
-     621,   622,   624,   625,   626,   627,   628,   629,   630,   635,
-     637,   638,   639,   642,   645,   647,   648,   649,   650,   651,
-     654,   656,   657,   665,   667,   668,   669,   671,   673,   677,
-     678,   679,   680,   682,   682,   697,   697,   716,   717,   719,
-     720,   722,   723,   724,   726,   731,   738,   744,   744,   745,
-     746,   749,   750,   753
+     278,   280,   282,   283,   285,   286,   294,   295,   297,   298,
+     299,   300,   303,   322,   323,   325,   326,   327,   329,   330,
+     331,   332,   334,   335,   337,   338,   339,   340,   341,   342,
+     345,   346,   347,   349,   350,   354,   355,   357,   358,   361,
+     374,   383,   386,   405,   406,   410,   429,   431,   433,   434,
+     435,   436,   437,   438,   439,   440,   441,   442,   443,   444,
+     451,   453,   455,   456,   458,   459,   460,   464,   466,   467,
+     469,   470,   478,   479,   480,   482,   484,   485,   486,   487,
+     488,   492,   493,   494,   495,   496,   497,   498,   499,   500,
+     502,   503,   504,   505,   506,   507,   508,   511,   512,   514,
+     516,   518,   519,   520,   523,   524,   526,   527,   528,   529,
+     530,   531,   532,   536,   537,   540,   541,   544,   545,   546,
+     550,   551,   553,   554,   556,   557,   558,   559,   562,   563,
+     566,   567,   573,   574,   578,   579,   580,   581,   582,   583,
+     584,   585,   588,   589,   590,   592,   593,   596,   597,   598,
+     601,   608,   609,   610,   611,   615,   616,   617,   620,   621,
+     625,   626,   628,   629,   630,   631,   632,   633,   634,   639,
+     641,   642,   643,   646,   649,   651,   652,   653,   654,   655,
+     658,   660,   661,   669,   671,   672,   673,   675,   677,   681,
+     682,   683,   684,   686,   686,   701,   701,   720,   721,   723,
+     724,   726,   727,   728,   730,   735,   742,   748,   748,   749,
+     751,   754,   755,   758
 };
 #endif
 
@@ -2023,12 +2023,12 @@ yyreduce:
     {
         case 2:
 
-    {print_symbol_table(); printf("Successful program\n");;}
+    { printf("Successful program\n");;}
     break;
 
   case 3:
 
-    {print_symbol_table(); printf("Successful program\n");;}
+    {printf("Successful program\n");;}
     break;
 
   case 4:
@@ -2440,7 +2440,9 @@ yyreduce:
 
   case 75:
 
-    {(yyval.pCharVal) = strdup("string");printf("regla string_type2\n");}
+    {(yyval.pCharVal) = strdup("string");
+			push_symbol((yyvsp[(3) - (4)].pCharVal), currentScope, 0, fila, "");
+			printf("regla string_type2\n");}
     break;
 
   case 76:
@@ -2603,7 +2605,9 @@ yyreduce:
 
   case 104:
 
-    {printf("regla variant_part2\n");}
+    {
+				push_symbol((yyvsp[(2) - (6)].pCharVal), currentScope, 0, fila, "");
+				printf("regla variant_part2\n");}
     break;
 
   case 105:
@@ -2657,7 +2661,7 @@ yyreduce:
 
   case 111:
 
-    {printf("regla tag_field_type1\n");}
+    { push_symbol((yyvsp[(1) - (1)].pCharVal), currentScope, 0, fila, "");printf("regla tag_field_type1\n");}
     break;
 
   case 112:
@@ -2836,7 +2840,7 @@ yyreduce:
 
   case 140:
 
-    {printf("regla field_designator1\n");}
+    {push_symbol((yyvsp[(2) - (2)].pCharVal), currentScope, 0, fila, "");printf("regla field_designator1\n");}
     break;
 
   case 141:
@@ -3564,7 +3568,8 @@ yyreduce:
 
   case 279:
 
-    {printf("regla unit_heading1\n");}
+    { currentScope = std::string((yyvsp[(2) - (2)].pCharVal));
+	push_symbol((yyvsp[(2) - (2)].pCharVal), currentScope, fila, 0, "unit");printf("regla unit_heading1\n");}
     break;
 
   case 280:
@@ -3825,6 +3830,9 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 	struct node* auxiliarPointer = NULL;
 	if (symbolsTable[hashvalue].symbol != "")
 	{
+
+
+
 		if(symbolsTable[hashvalue].symbol == std::string(symbol)) /*si es el mismo simbolo*/
 		{
 			if(line_of_use)
@@ -3837,7 +3845,27 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 		}
 		else
 		{
-			
+		    node* newNode = new node;
+    		newNode->symbol = symbol;
+    		newNode->scope = scope;
+    		newNode->definition_line = definition_line;
+    		newNode->type = type;
+    		newNode->next = nullptr;
+		
+    		// If the index is empty, insert the new node directly
+    		if (symbolsTable[hashvalue].symbol.empty()) {
+    		    symbolsTable[hashvalue] = *newNode;
+    		}
+    		else {
+    		    // Traverse the linked list to find the last node
+    		    node* current = &symbolsTable[hashvalue];
+    		    while (current->next != nullptr) {
+    		        current = current->next;
+    		    }
+    		    // Append the new node at the end
+    		    current->next = newNode;
+    		}			
+			/*
 
 			auxiliarPointer = symbolsTable[hashvalue].next;
 
@@ -3852,8 +3880,8 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 				auxiliarPointer = auxiliarPointer->next;
 				/*
 				if(symbolsTable[hashvalue].next ==NULL)
-					symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));*/
-			}
+					symbolsTable[hashvalue].next = (struct node*)(malloc(sizeof(struct node)));
+			}*/
 			
 				
 		}
@@ -3928,7 +3956,6 @@ int yyerror(const char *s)
 
    printf("Error en linea %d columna %d: %s\n", fila,columna, mensaje);
    exit( 1 ); /* Sale del programa */
-   print_symbol_table();
 
    return 0;
 }
