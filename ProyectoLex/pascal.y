@@ -3,6 +3,7 @@
     int intVal;
     float floatVal;
 	char* pCharVal;
+	char* pcharValArray[IDENTIFIERS_LIMIT];
 }
 %token <intVal>DECIMAL_INT HEXADECIMAL REAL_DECIMAL <pCharVal>IDENTIFIER QUOTED_STRING QUOTED_CHAR
 PROGRAM_TOKEN"program" BEGIN_TOKEN"begin" USES_TOKEN"uses" UNIT_TOKEN"unit" INTERFACE_TOKEN"interface"		
@@ -29,6 +30,9 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 
 %destructor {printf("Se borra %s\n\n\n\n\n",$$);} IDENTIFIER
 
+%code requires {
+	#define IDENTIFIERS_LIMIT 10
+}
 %{
    #include <stdio.h>
    #include <string.h>
@@ -85,13 +89,15 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    struct node symbolsTable[127];
    int hash_function(char* symbol);
    void push_symbol(char* symbol, std::string scope, int definition_line, int line_of_use, std::string type );
-
+	std::string removeRightmostWord(std::string str);
 %}
 
 %output "parser.cpp"
 /*el sufijo list significa que itera o que es una lista de opcinoes*/
 /*en algunas reglas salte unos no terminales que derivan directo en identificadores*/
 /*RE es una regla extra que se añadio para quitar los reduce reduce*/
+
+/*checar simbolos de tipo record*/
 %%
 
 /*PROGRAMS CHAPTER 8 */
@@ -156,14 +162,19 @@ type_declaration_list: type_declaration_list  type_declaration{printf("regla typ
 					|type_declaration{printf("regla type_declaration_list2\n")};
 
 
-type_declaration: IDENTIFIER '=' type ';'{printf("regla type_declaration1\n")};
+type_declaration: IDENTIFIER '=' type ';'{push_symbol($1, currentScope, fila, 0, std::string($<pCharVal>3));printf("regla type_declaration1\n")};
 	
 variable_declaration_part: VAR_TOKEN variable_declaration_list {printf("regla variable_declaration_part1\n")}/*verificar que no se hayan  usado los identificadores antes*/
 						| /*emmpty*/{printf("regla variable_declaration_part2\n")};
 variable_declaration_list: variable_declaration_list variable_declaration{printf("regla variable_declaration_list1\n")}
 						| variable_declaration{printf("regla variable_declaration_list2\n")};
 						
-variable_declaration: identifier_list ':' type ';'{printf("regla variable_declaration1\n")};
+variable_declaration: identifier_list ':' type ';'{
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if ($<pcharValArray>1[i])
+							push_symbol($<pcharValArray>1[i], currentScope, fila, 0, $<pCharVal>3);
+					
+					printf("regla variable_declaration1\n")};
 
 procedure_and_function_declaration_part: procedure_and_function_declaration_list{printf("regla procedure_and_function_declaration_part1\n")}
 										| /*empty*/{printf("regla procedure_and_function_declaration_part2\n")};
@@ -178,63 +189,100 @@ statement_part: compound_statement{printf("regla statement_part1\n")}
 sign: '+'{printf("regla sign1\n")}
 	| '-'{printf("regla sign2\n")};
 
-identifier_list: identifier_list ',' IDENTIFIER{printf("regla identifier_list1\n")}
-				| IDENTIFIER{printf("regla identifier_list2\n")};
+identifier_list: identifier_list ',' IDENTIFIER{
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!$<pcharValArray>1[i])
+						{
+							$<pcharValArray>1[i] = strdup($3);
+							break;
+						}
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!$<pcharValArray>$[i] && $<pcharValArray>1[i])
+						{
+							$<pcharValArray>$[i] = strdup($<pcharValArray>1[i]);
+						}
+					printf("regla identifier_list1\n")}
+				| IDENTIFIER{
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!$<pcharValArray>$[i])
+						{
+							$<pcharValArray>1[i] = strdup($1);
+							break;
+						}
+						printf("regla identifier_list2\n")};
 
 /*Chapter 3 Data types*/
 
-type: simple_type{printf("regla type1\n")}
-	| structured_type{printf("regla type2\n")}
-	| pointer_type{printf("regla type3\n")}
-	| IDENTIFIER{printf("regla type4\n")}; /*RE*/
+type: simple_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type1\n")}
+	| structured_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type2\n")}
+	| pointer_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type3\n")}
+	| IDENTIFIER{$<pCharVal>$ = strdup($1);printf("regla type4\n")}; /*RE*/
 
 /**********************************SIMPLE TYPE*****************************/
-simple_type: ordinal_type{printf("regla simple_type1\n")}
-			| real_type{printf("regla simple_type2\n")}
-			| string_type{printf("regla simple_type3\n")}; 
+simple_type: ordinal_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla simple_type1\n")}
+			| real_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla simple_type2\n")}
+			| string_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla simple_type3\n")}; 
 
-ordinal_type: subrange_type{printf("regla ordinal_type1\n")}
-			| enumerated_type{printf("regla ordinal_type2\n")}
-			| ordinal_type_identifier{printf("regla ordinal_type3\n")};
+ordinal_type: subrange_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla ordinal_type1\n")}
+			| enumerated_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla ordinal_type2\n")}
+			| ordinal_type_identifier{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla ordinal_type3\n")};
 			
 			/*tipo ordinal
 							lo iba a modificar para que type tenga solo identifier pero veo que otras reglas usan esta gramatica entonces la dejo asi
 							va a provocar un problema reduce reduce*/
 
-ordinal_type_identifier: INTEGER_TOKEN {printf("regla ordinal_type_identifier1\n")}
- | LONGINT_TOKEN{printf("regla ordinal_type_identifier2\n")}
-  | CHAR_TOKEN {printf("regla ordinal_type_identifier3\n")}
-  | BOOLEAN_TOKEN{printf("regla ordinal_type_identifier4\n")}
-  | function_call{printf("regla ordinal_type_identifier5\n")} /*super modificado para que sirva en dirdemo*/
- | WORD_TOKEN{printf("regla ordinal_type_identifier6\n")};
+ordinal_type_identifier: INTEGER_TOKEN {$<pCharVal>$ = strdup("integer");printf("regla ordinal_type_identifier1\n")}
+ | LONGINT_TOKEN{$<pCharVal>$ = strdup("longint");printf("regla ordinal_type_identifier2\n")}
+  | CHAR_TOKEN {$<pCharVal>$ = strdup("char");printf("regla ordinal_type_identifier3\n")}
+  | BOOLEAN_TOKEN{$<pCharVal>$ = strdup("boolean");printf("regla ordinal_type_identifier4\n")}
+  | function_call{$<pCharVal>$ = strdup("function");printf("regla ordinal_type_identifier5\n")} /*super modificado para que sirva en dirdemo*/
+ | WORD_TOKEN{$<pCharVal>$ = strdup("word");printf("regla ordinal_type_identifier6\n")};
 
 type_boolean: TRUE_TOKEN {printf("regla type_boolean1\n")}
 			| FALSE_TOKEN {printf("regla type_boolean2\n")};
 
-enumerated_type: '(' identifier_list ')'{printf("regla enumerated_type1\n")};
+enumerated_type: '(' identifier_list ')'{$<pCharVal>$ = strdup("enumerated");printf("regla enumerated_type1\n")};
 
-subrange_type: constant SUBRANGE constant{printf("regla subrange_type1\n")}; /*verificar que estan en orden ascendente S/R1*/
+subrange_type: constant SUBRANGE constant{$<pCharVal>$ = strdup("subrange");printf("regla subrange_type1\n")}; /*verificar que estan en orden ascendente S/R1*/
 
-real_type: real_type_identifier{printf("regla real_type1\n")}; /*tipo real*/
-real_type_identifier: REAL_TOKEN {printf("regla real_type_identifier1\n")}; /*tipo real*/
+real_type: real_type_identifier{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla real_type1\n")}; /*tipo real*/
+real_type_identifier: REAL_TOKEN {$<pCharVal>$ = strdup("real");printf("regla real_type_identifier1\n")}; /*tipo real*/
 
-string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {printf("regla string_type1\n")} /*1byte de size*/
-			| STRING_TOKEN '[' IDENTIFIER ']'{printf("regla string_type2\n")} /*hay variables que son int*/
+string_type: STRING_TOKEN '[' DECIMAL_INT ']'  {$<pCharVal>$ = strdup("string");printf("regla string_type1\n")} /*1byte de size*/
+			| STRING_TOKEN '[' IDENTIFIER ']'{$<pCharVal>$ = strdup("string");printf("regla string_type2\n")} /*hay variables que son int*/
 /*verificar que decimal int no tenga signo UNSIGNED-INTEGER*/
 			/*| IDENTIFIER*/; /*tipo string*/
 
 /***************************e**** STRUCTURED TYPE **************************/
 
-structured_type: PACKED_TOKEN  type_list {printf("regla structured_type1\n")}/*packed no afecta a file ni set*/
-				| type_list				{printf("regla structured_type2\n")}	/*| IDENTIFIER*/;	/*de tipo estructurado*/
+structured_type: PACKED_TOKEN  type_list {$<pCharVal>$ = strdup($<pCharVal>2);printf("regla structured_type1\n")}/*packed no afecta a file ni set*/
+				| type_list				{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla structured_type2\n")}	/*| IDENTIFIER*/;	/*de tipo estructurado*/
 
-type_list: array_type{printf("regla type_list1\n")}
-		| set_type{printf("regla type_list2\n")}
-		| file_type{printf("regla type_list3\n")}
-		| record_type{printf("regla type_list4\n")};
+type_list: array_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type_list1\n")}
+		| set_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type_list2\n")}
+		| file_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type_list3\n")}
+		| record_type{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla type_list4\n")};
 
 
-array_type: ARRAY_TOKEN '[' index_type_list ']' OF_TOKEN type{printf("regla array_type\n")}; /*que pueda haber varios indices es para un array de arrays*/
+array_type: ARRAY_TOKEN '[' index_type_list ']' OF_TOKEN type{
+	const char* arraySymbol = "Array";
+	char* typeArray = strdup($<pCharVal>6);
+	char* auxiliarPointer = typeArray;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 6];
+	if(typeArray)
+	strcpy(newString,typeArray);
+	strcat(newString,arraySymbol);
+	$<pCharVal>$ = strdup(newString);
+	free(typeArray);
+	delete[](newString);
+	
+	printf("regla array_type\n")}; /*que pueda haber varios indices es para un array de arrays*/
 index_type_list: index_type_list ',' ordinal_type_expression {printf("regla index_type_list1\n")}/* tiene que ser orden ascendente y no mayor a int*/
 				| ordinal_type_expression{printf("regla index_type_list2\n")};
 
@@ -247,8 +295,8 @@ signed_number_expression_list: signed_number_expression_list  term_operator_list
 unsigned_number_expression_list: unsigned_number_expression_list sign unsigned_number{printf("regla unsigned_number_expression_list1\n")}
 								| unsigned_number{printf("regla signed_number_expression_list2\n")};
 
-record_type: RECORD_TOKEN END_TOKEN{printf("regla record_type1\n")}
-			| RECORD_TOKEN field_list END_TOKEN{printf("regla record_type2\n")}; /*son los tipos de datos como el union de bison*/
+record_type: RECORD_TOKEN END_TOKEN{$<pCharVal>$ = strdup("record");printf("regla record_type1\n")}
+			| RECORD_TOKEN field_list END_TOKEN{$<pCharVal>$ = strdup("record");printf("regla record_type2\n")}; /*son los tipos de datos como el union de bison*/
 
 field_list: fixed_part{printf("regla field_list1\n")}
 			| fixed_part ';'{printf("regla field_list2\n")}
@@ -278,31 +326,65 @@ constant_list: constant_list ',' constant{printf("regla constant_list1\n")}
 tag_field_type: IDENTIFIER{printf("regla tag_field_type1\n")}; /*ordinal type*/
 
 
-set_type: SET_TOKEN OF_TOKEN ordinal_type{printf("regla set_type\n")}; /*que no sea mayor a 4088 o 0..4087*/
+set_type: SET_TOKEN OF_TOKEN ordinal_type{
+	const char* setSymbol = "Set";
+	char* typeSet = strdup($<pCharVal>3);
+	char* auxiliarPointer = typeSet;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 4];
+	if(typeSet)
+	strcpy(newString,typeSet);
+	strcat(newString,setSymbol);
+	$<pCharVal>$ = strdup(newString);
+	free(typeSet);
+	delete[](newString);
+	printf("regla set_type\n")}; /*que no sea mayor a 4088 o 0..4087*/
 
-file_type: FILE_TOKEN{printf("regla file_type1\n")}
-		| OF_TOKEN type{printf("regla file_type2\n")}; 
+file_type: FILE_TOKEN{$<pCharVal>$ = strdup("file"); printf("regla file_type1\n")}
+		| OF_TOKEN type{$<pCharVal>$ = strdup($<pCharVal>2);printf("regla file_type2\n")}; 
 
 /**************************************POINTER TYPE *************************/
 
-pointer_type: '^' base_type{printf("regla pointer_type1\n")}
+pointer_type: '^' base_type{
+	const char* pointerSymbol = "*";
+	char* pointerType = strdup($<pCharVal>2);
+	char* auxiliarPointer = pointerType;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 2];
+	if(pointerType)
+	strcpy(newString,pointerType);
+	strcat(newString,pointerSymbol);
+	$<pCharVal>$ = strdup(newString);
+	free(pointerType);
+	delete[](newString);
+	printf("regla pointer_type1\n")}
 /*un identificaodr base_type: type_identifier*/
-			| pointer_type_identifier{printf("regla pointer_type2\n")}; /*un identificador del tipo puntero*/
+			| pointer_type_identifier{$<pCharVal>$ = strdup("nil");printf("regla pointer_type2\n")}; /*un identificador del tipo puntero*/
 			
 pointer_type_identifier: NIL_TOKEN{printf("regla pointer_type_identifier1\n")};
 
-base_type: INTEGER_TOKEN{printf("regla base_type1\n")}
-		|  LONGINT_TOKEN{printf("regla base_type2\n")} 
-		|  CHAR_TOKEN{printf("regla base_type3\n")}
-		|  BOOLEAN_TOKEN{printf("regla base_type4\n")} 
-		|  STRING_TOKEN{printf("regla base_type5\n")} 
-		|  RECORD_TOKEN{printf("regla base_type6\n")} 
-		|  FILE_TOKEN{printf("regla base_type7\n")} 
-		|  ARRAY_TOKEN{printf("regla base_type9\n")} 
-		|  IDENTIFIER{printf("regla base_type10\n")} 
-		|  FUNCTION_TOKEN{printf("regla base_type11\n")}
-		|  REAL_TOKEN{printf("regla base_type12\n")}
-		|  unsigned_number{printf("regla base_type13\n")}
+base_type: INTEGER_TOKEN{$<pCharVal>$ = strdup("integer");printf("regla base_type1\n")}
+		|  LONGINT_TOKEN{$<pCharVal>$ = strdup("longint");printf("regla base_type2\n")} 
+		|  CHAR_TOKEN{$<pCharVal>$ = strdup("char");printf("regla base_type3\n")}
+		|  BOOLEAN_TOKEN{$<pCharVal>$ = strdup("bool");printf("regla base_type4\n")} 
+		|  STRING_TOKEN{$<pCharVal>$ = strdup("string");printf("regla base_type5\n")} 
+		|  RECORD_TOKEN{$<pCharVal>$ = strdup("record");printf("regla base_type6\n")} 
+		|  FILE_TOKEN{$<pCharVal>$ = strdup("file");printf("regla base_type7\n")} 
+		|  ARRAY_TOKEN{$<pCharVal>$ = strdup("array");printf("regla base_type9\n")} 
+		|  IDENTIFIER{$<pCharVal>$ = strdup($1);printf("regla base_type10\n")} 
+		|  FUNCTION_TOKEN{$<pCharVal>$ = strdup("function");printf("regla base_type11\n")}
+		|  REAL_TOKEN{$<pCharVal>$ = strdup("real");printf("regla base_type12\n")}
+		|  unsigned_number{$<pCharVal>$ = strdup($<pCharVal>1);printf("regla base_type13\n")}
 		/*se puso para que el tipo tambien sea de tipo numero*/; 
 
 /*identifier del tipo type, osea la base char int etc*/
@@ -523,8 +605,10 @@ procedure_body: block{printf("regla procedure_body1\n")}
 				| FORWARD_TOKEN{printf("regla procedure_body2\n")}
 				| EXTERNAL_TOKEN{printf("regla procedure_body3\n")};
 				
-procedure_heading: PROCEDURE_TOKEN IDENTIFIER{printf("regla procedure_heading1\n")}
-				| PROCEDURE_TOKEN IDENTIFIER formal_parameter_list{printf("regla procedure_heading2\n")};
+procedure_heading: PROCEDURE_TOKEN IDENTIFIER{currentScope = currentScope + "." + std::string($2);
+											push_symbol($2, currentScope, fila, 0, "procedure");printf("regla procedure_heading1\n")}
+				| PROCEDURE_TOKEN IDENTIFIER formal_parameter_list{currentScope = currentScope + "." + std::string($2);
+											push_symbol($2, currentScope, fila, 0, "procedure");printf("regla procedure_heading2\n")};
 
 /******************************* FUNCTION DECLARATION **************************************************/
 function_declaration: function_heading ';' function_body ';'{printf("regla function_declaration1\n")};
@@ -532,8 +616,35 @@ function_body: block{printf("regla function_body1\n")}
 			|	FORWARD_TOKEN{printf("regla function_body2\n")}
 			| EXTERNAL_TOKEN{printf("regla function_body3\n")};
 
-function_heading: FUNCTION_TOKEN IDENTIFIER ':' base_type{printf("regla function_heading1\n")}/*result_type*/
-				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' base_type/*result_type*/{printf("regla function_heading2\n")};
+function_heading: FUNCTION_TOKEN IDENTIFIER ':' base_type{
+											const char* functionSymbol = "Function";
+											char* typeFunction = strdup($<pCharVal>4);
+											char* auxiliarPointer = typeFunction;
+											short size = 0;
+											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
+											char* newString= new char[size + 9];
+											if(typeFunction)
+											strcpy(newString,typeFunction);
+											strcat(newString,functionSymbol);
+											currentScope = currentScope + "." + std::string($2);
+											push_symbol($2, currentScope, fila, 0, "function");
+											delete[](newString);		
+											free(typeFunction);
+											printf("regla function_heading1\n")}/*result_type*/
+				| FUNCTION_TOKEN IDENTIFIER formal_parameter_list ':' base_type/*result_type*/{
+											const char* functionSymbol = "Function";
+											char* typeFunction = strdup($<pCharVal>5);
+											char* auxiliarPointer = typeFunction;
+											short size = 0;
+											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
+											char* newString= new char[size + 9];
+											if(typeFunction)
+											strcpy(newString,typeFunction);
+											strcat(newString,functionSymbol);
+											currentScope = currentScope + "." + std::string($2);
+											push_symbol($2, currentScope, fila, 0, "function");
+											delete[](newString);		
+											free(typeFunction);printf("regla function_heading2\n")};
 
 result_type: ordinal_type_identifier{printf("regla result_type1\n")}
 			| real_type_identifier{printf	("regla result_type2\n")}
@@ -581,7 +692,13 @@ implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part type_declara
 
 
 %%
-
+std::string removeRightmostWord(std::string str) {
+    size_t lastDotPos = str.rfind('.');
+    if (lastDotPos != std::string::npos) {
+        str = str.substr(0, lastDotPos);
+    }
+    return str;
+}
 int hash_function(char* symbol)
 {
 

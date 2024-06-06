@@ -87,6 +87,13 @@
 # define YYTOKEN_TABLE 0
 #endif
 
+/* "%code requires" blocks.  */
+
+
+	#define IDENTIFIERS_LIMIT 10
+
+
+
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -177,6 +184,7 @@ typedef union YYSTYPE
     int intVal;
     float floatVal;
 	char* pCharVal;
+	char* pcharValArray[IDENTIFIERS_LIMIT];
 
 
 
@@ -245,7 +253,7 @@ typedef union YYSTYPE
    struct node symbolsTable[127];
    int hash_function(char* symbol);
    void push_symbol(char* symbol, std::string scope, int definition_line, int line_of_use, std::string type );
-
+	std::string removeRightmostWord(std::string str);
 
 
 
@@ -644,35 +652,35 @@ static const yytype_int16 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    98,    98,    99,   101,   102,   105,   108,   114,   116,
-     123,   124,   120,   130,   131,   132,   133,   134,   137,   138,
-     139,   140,   143,   144,   145,   146,   147,   148,   149,   151,
-     153,   154,   155,   156,   159,   161,   162,   163,   164,   166,
-     168,   169,   170,   171,   172,   173,   175,   176,   178,   179,
-     181,   182,   186,   187,   188,   189,   192,   193,   194,   196,
-     197,   198,   204,   205,   206,   207,   208,   209,   211,   212,
-     214,   216,   218,   219,   221,   222,   228,   229,   231,   232,
-     233,   234,   237,   238,   239,   241,   242,   243,   245,   246,
-     247,   248,   250,   251,   253,   254,   255,   256,   257,   258,
-     261,   262,   263,   265,   266,   268,   269,   271,   272,   275,
-     276,   278,   281,   283,   284,   288,   290,   292,   294,   295,
-     296,   297,   298,   299,   300,   301,   302,   303,   304,   305,
-     312,   314,   316,   317,   319,   320,   321,   325,   327,   328,
-     330,   331,   339,   340,   341,   343,   345,   346,   347,   348,
-     349,   353,   354,   355,   356,   357,   358,   359,   360,   361,
-     363,   364,   365,   366,   367,   368,   369,   372,   373,   375,
-     377,   379,   380,   381,   384,   385,   387,   388,   389,   390,
-     391,   392,   393,   397,   398,   401,   402,   405,   406,   407,
-     411,   412,   414,   415,   417,   418,   419,   420,   423,   424,
-     427,   428,   434,   435,   439,   440,   441,   442,   443,   444,
-     445,   446,   449,   450,   451,   453,   454,   457,   458,   459,
-     462,   465,   466,   467,   468,   472,   473,   474,   477,   478,
-     482,   483,   485,   486,   487,   488,   489,   490,   491,   492,
-     494,   495,   496,   499,   502,   504,   505,   506,   507,   508,
-     511,   513,   514,   520,   522,   523,   524,   526,   527,   530,
-     531,   532,   533,   535,   536,   542,   543,   545,   546,   548,
-     549,   550,   552,   553,   556,   562,   562,   563,   564,   567,
-     568,   571
+       0,   104,   104,   105,   107,   108,   111,   114,   120,   122,
+     129,   130,   126,   136,   137,   138,   139,   140,   143,   144,
+     145,   146,   149,   150,   151,   152,   153,   154,   155,   157,
+     159,   160,   161,   162,   165,   167,   168,   169,   170,   172,
+     179,   180,   181,   182,   183,   184,   186,   187,   189,   190,
+     192,   205,   216,   217,   218,   219,   222,   223,   224,   226,
+     227,   228,   234,   235,   236,   237,   238,   239,   241,   242,
+     244,   246,   248,   249,   251,   252,   258,   259,   261,   262,
+     263,   264,   267,   286,   287,   289,   290,   291,   293,   294,
+     295,   296,   298,   299,   301,   302,   303,   304,   305,   306,
+     309,   310,   311,   313,   314,   316,   317,   319,   320,   323,
+     324,   326,   329,   348,   349,   353,   372,   374,   376,   377,
+     378,   379,   380,   381,   382,   383,   384,   385,   386,   387,
+     394,   396,   398,   399,   401,   402,   403,   407,   409,   410,
+     412,   413,   421,   422,   423,   425,   427,   428,   429,   430,
+     431,   435,   436,   437,   438,   439,   440,   441,   442,   443,
+     445,   446,   447,   448,   449,   450,   451,   454,   455,   457,
+     459,   461,   462,   463,   466,   467,   469,   470,   471,   472,
+     473,   474,   475,   479,   480,   483,   484,   487,   488,   489,
+     493,   494,   496,   497,   499,   500,   501,   502,   505,   506,
+     509,   510,   516,   517,   521,   522,   523,   524,   525,   526,
+     527,   528,   531,   532,   533,   535,   536,   539,   540,   541,
+     544,   547,   548,   549,   550,   554,   555,   556,   559,   560,
+     564,   565,   567,   568,   569,   570,   571,   572,   573,   574,
+     576,   577,   578,   581,   584,   586,   587,   588,   589,   590,
+     593,   595,   596,   602,   604,   605,   606,   608,   610,   614,
+     615,   616,   617,   619,   634,   653,   654,   656,   657,   659,
+     660,   661,   663,   664,   667,   673,   673,   674,   675,   678,
+     679,   682
 };
 #endif
 
@@ -2168,7 +2176,7 @@ yyreduce:
 
   case 34:
 
-    {printf("regla type_declaration1\n");}
+    {push_symbol((yyvsp[(1) - (4)].pCharVal), currentScope, fila, 0, std::string((yyvsp[(3) - (4)].pCharVal)));printf("regla type_declaration1\n");}
     break;
 
   case 35:
@@ -2193,7 +2201,12 @@ yyreduce:
 
   case 39:
 
-    {printf("regla variable_declaration1\n");}
+    {
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if ((yyvsp[(1) - (4)].pcharValArray)[i])
+							push_symbol((yyvsp[(1) - (4)].pcharValArray)[i], currentScope, fila, 0, (yyvsp[(3) - (4)].pCharVal));
+					
+					printf("regla variable_declaration1\n");}
     break;
 
   case 40:
@@ -2248,92 +2261,111 @@ yyreduce:
 
   case 50:
 
-    {printf("regla identifier_list1\n");}
+    {
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!(yyvsp[(1) - (3)].pcharValArray)[i])
+						{
+							(yyvsp[(1) - (3)].pcharValArray)[i] = strdup((yyvsp[(3) - (3)].pCharVal));
+							break;
+						}
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!(yyval.pcharValArray)[i] && (yyvsp[(1) - (3)].pcharValArray)[i])
+						{
+							(yyval.pcharValArray)[i] = strdup((yyvsp[(1) - (3)].pcharValArray)[i]);
+						}
+					printf("regla identifier_list1\n");}
     break;
 
   case 51:
 
-    {printf("regla identifier_list2\n");}
+    {
+					for(int i = 0; i < IDENTIFIERS_LIMIT; i++)
+						if (!(yyval.pcharValArray)[i])
+						{
+							(yyvsp[(1) - (1)].pcharValArray)[i] = strdup((yyvsp[(1) - (1)].pCharVal));
+							break;
+						}
+						printf("regla identifier_list2\n");}
     break;
 
   case 52:
 
-    {printf("regla type1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type1\n");}
     break;
 
   case 53:
 
-    {printf("regla type2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type2\n");}
     break;
 
   case 54:
 
-    {printf("regla type3\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type3\n");}
     break;
 
   case 55:
 
-    {printf("regla type4\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type4\n");}
     break;
 
   case 56:
 
-    {printf("regla simple_type1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla simple_type1\n");}
     break;
 
   case 57:
 
-    {printf("regla simple_type2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla simple_type2\n");}
     break;
 
   case 58:
 
-    {printf("regla simple_type3\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla simple_type3\n");}
     break;
 
   case 59:
 
-    {printf("regla ordinal_type1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla ordinal_type1\n");}
     break;
 
   case 60:
 
-    {printf("regla ordinal_type2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla ordinal_type2\n");}
     break;
 
   case 61:
 
-    {printf("regla ordinal_type3\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla ordinal_type3\n");}
     break;
 
   case 62:
 
-    {printf("regla ordinal_type_identifier1\n");}
+    {(yyval.pCharVal) = strdup("integer");printf("regla ordinal_type_identifier1\n");}
     break;
 
   case 63:
 
-    {printf("regla ordinal_type_identifier2\n");}
+    {(yyval.pCharVal) = strdup("longint");printf("regla ordinal_type_identifier2\n");}
     break;
 
   case 64:
 
-    {printf("regla ordinal_type_identifier3\n");}
+    {(yyval.pCharVal) = strdup("char");printf("regla ordinal_type_identifier3\n");}
     break;
 
   case 65:
 
-    {printf("regla ordinal_type_identifier4\n");}
+    {(yyval.pCharVal) = strdup("boolean");printf("regla ordinal_type_identifier4\n");}
     break;
 
   case 66:
 
-    {printf("regla ordinal_type_identifier5\n");}
+    {(yyval.pCharVal) = strdup("function");printf("regla ordinal_type_identifier5\n");}
     break;
 
   case 67:
 
-    {printf("regla ordinal_type_identifier6\n");}
+    {(yyval.pCharVal) = strdup("word");printf("regla ordinal_type_identifier6\n");}
     break;
 
   case 68:
@@ -2348,67 +2380,85 @@ yyreduce:
 
   case 70:
 
-    {printf("regla enumerated_type1\n");}
+    {(yyval.pCharVal) = strdup("enumerated");printf("regla enumerated_type1\n");}
     break;
 
   case 71:
 
-    {printf("regla subrange_type1\n");}
+    {(yyval.pCharVal) = strdup("subrange");printf("regla subrange_type1\n");}
     break;
 
   case 72:
 
-    {printf("regla real_type1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla real_type1\n");}
     break;
 
   case 73:
 
-    {printf("regla real_type_identifier1\n");}
+    {(yyval.pCharVal) = strdup("real");printf("regla real_type_identifier1\n");}
     break;
 
   case 74:
 
-    {printf("regla string_type1\n");}
+    {(yyval.pCharVal) = strdup("string");printf("regla string_type1\n");}
     break;
 
   case 75:
 
-    {printf("regla string_type2\n");}
+    {(yyval.pCharVal) = strdup("string");printf("regla string_type2\n");}
     break;
 
   case 76:
 
-    {printf("regla structured_type1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(2) - (2)].pCharVal));printf("regla structured_type1\n");}
     break;
 
   case 77:
 
-    {printf("regla structured_type2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla structured_type2\n");}
     break;
 
   case 78:
 
-    {printf("regla type_list1\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type_list1\n");}
     break;
 
   case 79:
 
-    {printf("regla type_list2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type_list2\n");}
     break;
 
   case 80:
 
-    {printf("regla type_list3\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type_list3\n");}
     break;
 
   case 81:
 
-    {printf("regla type_list4\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla type_list4\n");}
     break;
 
   case 82:
 
-    {printf("regla array_type\n");}
+    {
+	const char* arraySymbol = "Array";
+	char* typeArray = strdup((yyvsp[(6) - (6)].pCharVal));
+	char* auxiliarPointer = typeArray;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 6];
+	if(typeArray)
+	strcpy(newString,typeArray);
+	strcat(newString,arraySymbol);
+	(yyval.pCharVal) = strdup(newString);
+	free(typeArray);
+	delete[](newString);
+	
+	printf("regla array_type\n");}
     break;
 
   case 83:
@@ -2458,12 +2508,12 @@ yyreduce:
 
   case 92:
 
-    {printf("regla record_type1\n");}
+    {(yyval.pCharVal) = strdup("record");printf("regla record_type1\n");}
     break;
 
   case 93:
 
-    {printf("regla record_type2\n");}
+    {(yyval.pCharVal) = strdup("record");printf("regla record_type2\n");}
     break;
 
   case 94:
@@ -2558,27 +2608,61 @@ yyreduce:
 
   case 112:
 
-    {printf("regla set_type\n");}
+    {
+	const char* setSymbol = "Set";
+	char* typeSet = strdup((yyvsp[(3) - (3)].pCharVal));
+	char* auxiliarPointer = typeSet;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 4];
+	if(typeSet)
+	strcpy(newString,typeSet);
+	strcat(newString,setSymbol);
+	(yyval.pCharVal) = strdup(newString);
+	free(typeSet);
+	delete[](newString);
+	printf("regla set_type\n");}
     break;
 
   case 113:
 
-    {printf("regla file_type1\n");}
+    {(yyval.pCharVal) = strdup("file"); printf("regla file_type1\n");}
     break;
 
   case 114:
 
-    {printf("regla file_type2\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(2) - (2)].pCharVal));printf("regla file_type2\n");}
     break;
 
   case 115:
 
-    {printf("regla pointer_type1\n");}
+    {
+	const char* pointerSymbol = "*";
+	char* pointerType = strdup((yyvsp[(2) - (2)].pCharVal));
+	char* auxiliarPointer = pointerType;
+	short size = 0;
+	while(auxiliarPointer && *auxiliarPointer != '\0')
+	{
+		size++;
+		auxiliarPointer++;
+	}
+	char* newString= new char[size + 2];
+	if(pointerType)
+	strcpy(newString,pointerType);
+	strcat(newString,pointerSymbol);
+	(yyval.pCharVal) = strdup(newString);
+	free(pointerType);
+	delete[](newString);
+	printf("regla pointer_type1\n");}
     break;
 
   case 116:
 
-    {printf("regla pointer_type2\n");}
+    {(yyval.pCharVal) = strdup("nil");printf("regla pointer_type2\n");}
     break;
 
   case 117:
@@ -2588,62 +2672,62 @@ yyreduce:
 
   case 118:
 
-    {printf("regla base_type1\n");}
+    {(yyval.pCharVal) = strdup("integer");printf("regla base_type1\n");}
     break;
 
   case 119:
 
-    {printf("regla base_type2\n");}
+    {(yyval.pCharVal) = strdup("longint");printf("regla base_type2\n");}
     break;
 
   case 120:
 
-    {printf("regla base_type3\n");}
+    {(yyval.pCharVal) = strdup("char");printf("regla base_type3\n");}
     break;
 
   case 121:
 
-    {printf("regla base_type4\n");}
+    {(yyval.pCharVal) = strdup("bool");printf("regla base_type4\n");}
     break;
 
   case 122:
 
-    {printf("regla base_type5\n");}
+    {(yyval.pCharVal) = strdup("string");printf("regla base_type5\n");}
     break;
 
   case 123:
 
-    {printf("regla base_type6\n");}
+    {(yyval.pCharVal) = strdup("record");printf("regla base_type6\n");}
     break;
 
   case 124:
 
-    {printf("regla base_type7\n");}
+    {(yyval.pCharVal) = strdup("file");printf("regla base_type7\n");}
     break;
 
   case 125:
 
-    {printf("regla base_type9\n");}
+    {(yyval.pCharVal) = strdup("array");printf("regla base_type9\n");}
     break;
 
   case 126:
 
-    {printf("regla base_type10\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla base_type10\n");}
     break;
 
   case 127:
 
-    {printf("regla base_type11\n");}
+    {(yyval.pCharVal) = strdup("function");printf("regla base_type11\n");}
     break;
 
   case 128:
 
-    {printf("regla base_type12\n");}
+    {(yyval.pCharVal) = strdup("real");printf("regla base_type12\n");}
     break;
 
   case 129:
 
-    {printf("regla base_type13\n");}
+    {(yyval.pCharVal) = strdup((yyvsp[(1) - (1)].pCharVal));printf("regla base_type13\n");}
     break;
 
   case 130:
@@ -3264,12 +3348,14 @@ yyreduce:
 
   case 257:
 
-    {printf("regla procedure_heading1\n");}
+    {currentScope = currentScope + "." + std::string((yyvsp[(2) - (2)].pCharVal));
+											push_symbol((yyvsp[(2) - (2)].pCharVal), currentScope, fila, 0, "procedure");printf("regla procedure_heading1\n");}
     break;
 
   case 258:
 
-    {printf("regla procedure_heading2\n");}
+    {currentScope = currentScope + "." + std::string((yyvsp[(2) - (3)].pCharVal));
+											push_symbol((yyvsp[(2) - (3)].pCharVal), currentScope, fila, 0, "procedure");printf("regla procedure_heading2\n");}
     break;
 
   case 259:
@@ -3294,12 +3380,39 @@ yyreduce:
 
   case 263:
 
-    {printf("regla function_heading1\n");}
+    {
+											const char* functionSymbol = "Function";
+											char* typeFunction = strdup((yyvsp[(4) - (4)].pCharVal));
+											char* auxiliarPointer = typeFunction;
+											short size = 0;
+											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
+											char* newString= new char[size + 9];
+											if(typeFunction)
+											strcpy(newString,typeFunction);
+											strcat(newString,functionSymbol);
+											currentScope = currentScope + "." + std::string((yyvsp[(2) - (4)].pCharVal));
+											push_symbol((yyvsp[(2) - (4)].pCharVal), currentScope, fila, 0, "function");
+											delete[](newString);		
+											free(typeFunction);
+											printf("regla function_heading1\n");}
     break;
 
   case 264:
 
-    {printf("regla function_heading2\n");}
+    {
+											const char* functionSymbol = "Function";
+											char* typeFunction = strdup((yyvsp[(5) - (5)].pCharVal));
+											char* auxiliarPointer = typeFunction;
+											short size = 0;
+											while(auxiliarPointer && *auxiliarPointer != '\0'){size++;auxiliarPointer++;}
+											char* newString= new char[size + 9];
+											if(typeFunction)
+											strcpy(newString,typeFunction);
+											strcat(newString,functionSymbol);
+											currentScope = currentScope + "." + std::string((yyvsp[(2) - (5)].pCharVal));
+											push_symbol((yyvsp[(2) - (5)].pCharVal), currentScope, fila, 0, "function");
+											delete[](newString);		
+											free(typeFunction);printf("regla function_heading2\n");}
     break;
 
   case 265:
@@ -3600,7 +3713,13 @@ yyreturn:
 
 
 
-
+std::string removeRightmostWord(std::string str) {
+    size_t lastDotPos = str.rfind('.');
+    if (lastDotPos != std::string::npos) {
+        str = str.substr(0, lastDotPos);
+    }
+    return str;
+}
 int hash_function(char* symbol)
 {
 

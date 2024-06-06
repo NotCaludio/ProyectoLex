@@ -1,12 +1,13 @@
 program hola;
-
+{
 Const   fi = 'MAPHUONG.INP';
         fo = 'MAPHUONG.OUT';
         fa = 10.0;
+Type    b = ^function; }
 Var     a: Array [1..1000, 1..1000] Of LONGINT;
         lux: Array [1..1000, 1..1000] Of CHAR;
         m, n: LONGINT;
-Procedure readFile();
+Function readFile() : longint;
 Begin
         Assign(INPUT, fi); Reset(INPUT);
         Readln(n);

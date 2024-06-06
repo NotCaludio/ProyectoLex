@@ -32,6 +32,13 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* "%code requires" blocks.  */
+
+
+	#define IDENTIFIERS_LIMIT 10
+
+
+
 
 /* Tokens.  */
 #ifndef YYTOKENTYPE
@@ -122,6 +129,7 @@ typedef union YYSTYPE
     int intVal;
     float floatVal;
 	char* pCharVal;
+	char* pcharValArray[IDENTIFIERS_LIMIT];
 
 
 
