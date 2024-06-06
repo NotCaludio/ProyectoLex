@@ -100,6 +100,7 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
    void push_symbol(char* symbol, std::string scope, int definition_line, int line_of_use, std::string type );
 	std::string removeRightmostWord(std::string str);
 	void print_symbol_table( int size = 17) ;
+	void printSymbolsTable();
 	void print_border(int width) ;
 %}
 
@@ -112,8 +113,8 @@ MOD_TOKEN"mod" AND_TOKEN"and" NOT_TOKEN"not"
 %%
 
 /*PROGRAMS CHAPTER 8 */
-pascal: program { printf("Successful program\n");}
-		| regular_unit {printf("Successful program\n");};
+pascal: program {printSymbolsTable(); printf("Successful program\n");}
+		| regular_unit {printSymbolsTable();printf("Successful program\n");};
 
 program: program_heading ';' block	'.'	{printf("regla program1\n")}
 		| program_heading ';' uses_clause ';' block  '.' {printf("regla program2\n")} ;
@@ -612,7 +613,7 @@ structured_statement: compound_statement{printf("regla structured_statement1\n")
 
 /*compound statement*/
 
-compound_statement: BEGIN_TOKEN statement_list END_TOKEN{currentScope = removeRightmostWord(currentScope);printf("regla compound_statement\n")};
+compound_statement: BEGIN_TOKEN statement_list END_TOKEN{printf("regla compound_statement\n")};
 statement_list: statement_list ';' statement{printf("regla statement_list1\n")}
 			| statement{printf("regla statement_list2\n")};
 
@@ -666,7 +667,7 @@ record_variable_reference_list: record_variable_reference_list ',' variable_refe
 /*PROCEDURES AND FUNCTIONS CHAPTER 7*/
 
 /******************************* PROCEDURE DECLARATION **************************************************/
-procedure_declaration: procedure_heading ';' procedure_body ';'{printf("regla procedure_declaration1\n")};
+procedure_declaration: procedure_heading ';' procedure_body ';'{currentScope = removeRightmostWord(currentScope);printf("regla procedure_declaration1\n")};
 
 procedure_body: block{printf("regla procedure_body1\n")}
 				| FORWARD_TOKEN{printf("regla procedure_body2\n")}
@@ -674,11 +675,11 @@ procedure_body: block{printf("regla procedure_body1\n")}
 				
 procedure_heading: PROCEDURE_TOKEN IDENTIFIER{currentScope = currentScope + "." + std::string($2);
 											push_symbol($2, currentScope, fila, 0, "procedure");printf("regla procedure_heading1\n")}
-				| PROCEDURE_TOKEN IDENTIFIER formal_parameter_list{currentScope = currentScope + "." + std::string($2);
+				| PROCEDURE_TOKEN IDENTIFIER {currentScope = currentScope + "." + std::string($2);}formal_parameter_list{
 											push_symbol($2, currentScope, fila, 0, "procedure");printf("regla procedure_heading2\n")};
 
 /******************************* FUNCTION DECLARATION **************************************************/
-function_declaration: function_heading ';' function_body ';'{printf("regla function_declaration1\n")};
+function_declaration: function_heading ';' function_body ';'{currentScope = removeRightmostWord(currentScope);  printf("regla function_declaration1\n")};
 function_body: block{printf("regla function_body1\n")}
 			|	FORWARD_TOKEN{printf("regla function_body2\n")}
 			| EXTERNAL_TOKEN{printf("regla function_body3\n")};
@@ -708,7 +709,6 @@ function_heading: FUNCTION_TOKEN IDENTIFIER {currentScope = currentScope + "." +
 											if(typeFunction)
 											strcpy(newString,typeFunction);
 											strcat(newString,functionSymbol);
-											currentScope = currentScope + "." + std::string($2);
 											push_symbol($2, currentScope, fila, 0, std::string(newString));
 											delete[](newString);		
 											free(typeFunction);printf("regla function_heading2\n")};
@@ -768,6 +768,57 @@ implementation_part: IMPLEMENTATION_TOKEN constant_declaration_part type_declara
 
 
 %%
+
+void print_symbol_table(int size ) {
+    std::string margin = " ";
+
+    std::cout << margin << "Symbol          | Scope           | Definition Line      | Lines of Use         | Type          " << std::endl;
+    std::cout << margin << "-------------------------------------------------------------------------------" << std::endl;
+
+    for (int i = 0; i < size; i++) {
+        if (!symbolsTable[i].symbol.empty()) {
+            std::cout << margin << std::left << std::setw(15) << symbolsTable[i].symbol << " | ";
+            std::cout << std::left << std::setw(15) << symbolsTable[i].scope << " | ";
+            std::cout << std::right << std::setw(20) << symbolsTable[i].definition_line << " | ";
+
+            std::string lines_of_use;
+            for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
+                if (symbolsTable[i].lines_of_use[j] != 0) {
+                    lines_of_use += std::to_string(symbolsTable[i].lines_of_use[j]) + " ";
+                }
+            }
+            lines_of_use.resize(20, ' ');
+            std::cout << lines_of_use << "| ";
+
+            std::string type = symbolsTable[i].type;
+            type.resize(12, ' ');
+            std::cout << type << std::endl;
+
+            struct node* auxiliarPointer = symbolsTable[i].next;
+            while (auxiliarPointer != NULL) {
+                std::cout << margin << std::left << std::setw(15) << auxiliarPointer->symbol << " | ";
+                std::cout << std::left << std::setw(15) << auxiliarPointer->scope << " | ";
+                std::cout << std::right << std::setw(20) << auxiliarPointer->definition_line << " | ";
+
+                lines_of_use.clear();
+                for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
+                    if (auxiliarPointer->lines_of_use[j] != 0) {
+                        lines_of_use += std::to_string(auxiliarPointer->lines_of_use[j]) + " ";
+                    }
+                }
+                lines_of_use.resize(20, ' ');
+                std::cout << lines_of_use << "| ";
+
+                type = auxiliarPointer->type;
+                type.resize(12, ' ');
+                std::cout << type << std::endl;
+
+                auxiliarPointer = auxiliarPointer->next;
+            }
+		}
+	}
+}
+
 std::string removeRightmostWord(std::string str) {
     size_t lastDotPos = str.rfind('.');
     if (lastDotPos != std::string::npos) {
@@ -796,38 +847,51 @@ void push_symbol(char* symbol,std::string scope,int definition_line, int line_of
 
 
 
-		if(symbolsTable[hashvalue].symbol == std::string(symbol)   ) /*si es el mismo simbolo*/
+		if(symbolsTable[hashvalue].symbol != std::string(symbol) || (symbolsTable[hashvalue].symbol == std::string(symbol) && symbolsTable[hashvalue].scope != scope)  ) /*si es el mismo simbolo*/
 		{
-			if(line_of_use)
-				for(int i = 0; i < SIZE_LINES_OF_USE; i++)
-					if (!symbolsTable[hashvalue].lines_of_use[i])
-					{
-						symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
-						break;
-					}
-		}
-		else
-		{
-		    node* newNode = new node;
+			node* newNode = new node;
     		newNode->symbol = symbol;
     		newNode->scope = scope;
     		newNode->definition_line = definition_line;
     		newNode->type = type;
     		newNode->next = nullptr;
-		
-    		// If the index is empty, insert the new node directly
+			bool isAlready = false;
     		if (symbolsTable[hashvalue].symbol.empty()) {
     		    symbolsTable[hashvalue] = *newNode;
     		}
     		else {
-    		    // Traverse the linked list to find the last node
     		    node* current = &symbolsTable[hashvalue];
     		    while (current->next != nullptr) {
-    		        current = current->next;
+					current = current->next;
+					if(std::string(current->symbol) == std::string(symbol) && !definition_line)
+					{
+						for(int i = 0; i < SIZE_LINES_OF_USE; i++)
+						if (!symbolsTable[hashvalue].lines_of_use[i])
+						{
+							if(definition_line && scope  == symbolsTable[hashvalue].scope)
+								yyerror("redfinicion de simbolo");
+							symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
+							break;
+						}
+						isAlready = true;
+					}
     		    }
-    		    // Append the new node at the end
-    		    current->next = newNode;
-    		}			
+    		    if(!isAlready)
+				current->next = newNode;
+    		}
+			
+		}
+		else
+		{
+				if(definition_line && scope  == symbolsTable[hashvalue].scope)
+					yyerror("redfinicion de simbolo");
+		    	if(line_of_use)
+				for(int i = 0; i < SIZE_LINES_OF_USE; i++)
+					if (!symbolsTable[hashvalue].lines_of_use[i])
+					{
+						symbolsTable[hashvalue].lines_of_use[i] = line_of_use;
+						break;
+					}		
 			
 				
 		}
@@ -859,37 +923,56 @@ void print_border(int width) {
     std::cout << "+" << std::endl;
 }
 
+void printSymbolsTable() {
+    std::cout << "Symbol\t\tScope\t\tDefinition Line\tType\t\tLines of Use\n";
+    std::cout << "------\t\t-----\t\t---------------\t----\t\t------------\n";
 
-void print_symbol_table( int size ) {
-     std::string margin = "  ";  
-	 
-     int table_width = 90;  
+    for (int i = 0; i < 127; i++) {
+        if (!symbolsTable[i].symbol.empty()) {
+            // Print the contents of the node in the symbolsTable array
+            std::cout << symbolsTable[i].symbol << "\t\t"
+                      << symbolsTable[i].scope << "\t\t"
+                      << symbolsTable[i].definition_line << "\t\t"
+                      << symbolsTable[i].type << "\t\t";
 
-     auto print_border = [&](int width) {
-        std::cout << margin << "+";
-        for (int i = 0; i < width; i++) std::cout << "-";
-        std::cout << "+" << std::endl;
-    };
-    print_border(table_width);
+            // Print the lines of use array
+            std::cout << "[";
+            for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
+                if (symbolsTable[i].lines_of_use[j] != 0) {
+                    std::cout << symbolsTable[i].lines_of_use[j];
+                    if (j < SIZE_LINES_OF_USE - 1 && symbolsTable[i].lines_of_use[j + 1] != 0) {
+                        std::cout << ", ";
+                    }
+                }
+            }
+            std::cout << "]\n";
 
-    std::cout << margin << "| " << std::left << std::setw(15) << "Symbol" << "| " << std::setw(15) << "Scope" << "| " << std::setw(20) << "Definition Line" << "| " << std::setw(19) << "Lines of Use" << "| " << std::setw(10) << "Type" << " |" << std::endl;
-    
-    print_border(table_width);
+            // Print the contents of the linked nodes
+            node* current = symbolsTable[i].next;
+            while (current != nullptr) {
+                std::cout << current->symbol << "\t\t"
+                          << current->scope << "\t\t"
+                          << current->definition_line << "\t\t"
+                          << current->type << "\t\t";
 
-    for (int i = 0; i < size; i++) {
-        std::cout << margin << "| " << std::left << std::setw(15) << symbolsTable[i].symbol << "| " << std::setw(15) << symbolsTable[i].scope << "| " << std::setw(20) << symbolsTable[i].definition_line << "| ";
+                // Print the lines of use array for the linked node
+                std::cout << "[";
+                for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
+                    if (current->lines_of_use[j] != 0) {
+                        std::cout << current->lines_of_use[j];
+                        if (j < SIZE_LINES_OF_USE - 1 && current->lines_of_use[j + 1] != 0) {
+                            std::cout << ", ";
+                        }
+                    }
+                }
+                std::cout << "]\n";
 
-        for (int j = 0; j < SIZE_LINES_OF_USE; j++) {
-            if (symbolsTable[i].lines_of_use[j] != 0) {
-                std::cout << symbolsTable[i].lines_of_use[j] << " ";
-            } else {
-                std::cout << " ";
+                current = current->next;
             }
         }
-        std::cout << std::string(22 - (SIZE_LINES_OF_USE * 2), ' ') << "| " << std::setw(10) << symbolsTable[i].type << " |" << std::endl;
     }
-    print_border(table_width);
 }
+
 
 int yyerror(const char *s) 
 {
@@ -901,6 +984,7 @@ int yyerror(const char *s)
       strcpy( mensaje, s );
 
    printf("Error en linea %d columna %d: %s\n", fila,columna, mensaje);
+   printSymbolsTable();
    exit( 1 ); /* Sale del programa */
 
    return 0;

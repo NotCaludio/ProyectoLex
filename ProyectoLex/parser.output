@@ -17,18 +17,18 @@ Terminals unused in grammar
 
 Rules useless in grammar
 
-  283 file_buffer_symbol: '^'
+  284 file_buffer_symbol: '^'
 
-  284 pointer_object_symbol: '^'
+  285 pointer_object_symbol: '^'
 
-  285 result_type: ordinal_type_identifier
-  286            | real_type_identifier
-  287            | pointer_type_identifier
+  286 result_type: ordinal_type_identifier
+  287            | real_type_identifier
+  288            | pointer_type_identifier
 
 
 State 169 conflicts: 1 shift/reduce
-State 339 conflicts: 1 shift/reduce
-State 412 conflicts: 1 shift/reduce
+State 332 conflicts: 1 shift/reduce
+State 409 conflicts: 1 shift/reduce
 State 421 conflicts: 1 shift/reduce
 
 
@@ -403,66 +403,69 @@ Grammar
   255               | "external"
 
   256 procedure_heading: "procedure" IDENTIFIER
-  257                  | "procedure" IDENTIFIER formal_parameter_list
 
-  258 function_declaration: function_heading ';' function_body ';'
+  257 $@3: /* empty */
 
-  259 function_body: block
-  260              | "forward"
-  261              | "external"
+  258 procedure_heading: "procedure" IDENTIFIER $@3 formal_parameter_list
 
-  262 $@3: /* empty */
+  259 function_declaration: function_heading ';' function_body ';'
 
-  263 function_heading: "function" IDENTIFIER $@3 ':' base_type
+  260 function_body: block
+  261              | "forward"
+  262              | "external"
 
-  264 $@4: /* empty */
+  263 $@4: /* empty */
 
-  265 function_heading: "function" IDENTIFIER $@4 formal_parameter_list ':' base_type
+  264 function_heading: "function" IDENTIFIER $@4 ':' base_type
 
-  266 formal_parameter_list: '(' formal_parameter_list_iterable ')'
-  267                      | '(' ')'
+  265 $@5: /* empty */
 
-  268 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list
-  269                               | formal_parameter_list_iterable_list
+  266 function_heading: "function" IDENTIFIER $@5 formal_parameter_list ':' base_type
 
-  270 formal_parameter_list_iterable_list: parameter_declaration
-  271                                    | procedure_heading
-  272                                    | function_heading
+  267 formal_parameter_list: '(' formal_parameter_list_iterable ')'
+  268                      | '(' ')'
 
-  273 parameter_declaration: "var" identifier_list ':' type_identifier
-  274                      | identifier_list ':' type_identifier
+  269 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list
+  270                               | formal_parameter_list_iterable_list
 
-  275 type_identifier: type
+  271 formal_parameter_list_iterable_list: parameter_declaration
+  272                                    | procedure_heading
+  273                                    | function_heading
 
-  276 $@5: /* empty */
+  274 parameter_declaration: "var" identifier_list ':' type_identifier
+  275                      | identifier_list ':' type_identifier
 
-  277 regular_unit: unit_heading ';' interface_part $@5 implementation_part "end" '.'
+  276 type_identifier: type
 
-  278 unit_heading: "unit" IDENTIFIER
+  277 $@6: /* empty */
 
-  279 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  278 regular_unit: unit_heading ';' interface_part $@6 implementation_part "end" '.'
 
-  280 uses_clause_empty: uses_clause
-  281                  | /* empty */
+  279 unit_heading: "unit" IDENTIFIER
 
-  282 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  280 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+
+  281 uses_clause_empty: uses_clause
+  282                  | /* empty */
+
+  283 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 '#' (35) 25
-'(' (40) 6 69 106 107 155 186 187 188 266 267
-')' (41) 6 69 106 107 155 186 187 188 266 267
+'(' (40) 6 69 106 107 155 186 187 188 267 268
+')' (41) 6 69 106 107 155 186 187 188 267 268
 '*' (42) 161
 '+' (43) 47 170
 ',' (44) 14 49 82 108 137 189 199 250
 '-' (45) 48 171
-'.' (46) 3 4 139 140 277
+'.' (46) 3 4 139 140 278
 '/' (47) 162
-':' (58) 38 101 103 106 107 183 188 204 205 206 237 263 265 273 274
+':' (58) 38 101 103 106 107 183 188 204 205 206 237 264 266 274 275
 ';' (59) 3 4 12 21 33 38 94 95 96 98 99 104 225 233 234 235 238 252
-    258 268 277
+    259 269 278
 '<' (60) 176
 '=' (61) 21 33 175
 '>' (62) 177
@@ -475,15 +478,15 @@ DECIMAL_INT (258) 16 73 145
 HEXADECIMAL (259) 146
 REAL_DECIMAL (260) 147
 IDENTIFIER (261) 5 6 21 28 33 49 50 54 74 103 110 125 130 139 157 185
-    209 218 246 256 257 263 265 278
+    209 218 246 256 258 264 266 279
 QUOTED_STRING (262) 26 142
 QUOTED_CHAR (263) 27 143
 "program" (264) 5 6
 "begin" (265) 224
 "uses" (266) 8
-"unit" (267) 278
-"interface" (268) 279
-"implementation" (269) 282
+"unit" (267) 279
+"interface" (268) 280
+"implementation" (269) 283
 "label" (270) 12
 "const" (271) 17
 "type" (272) 29
@@ -499,16 +502,16 @@ QUOTED_CHAR (263) 27 143
 "packed" (282) 75
 "array" (283) 81 124
 "record" (284) 91 92 122
-"end" (285) 91 92 224 231 232 233 234 277
+"end" (285) 91 92 224 231 232 233 234 278
 "case" (286) 102 103 231 232 233 234
 "otherwise" (287) 238
 "of" (288) 81 102 103 111 113 231 232 233 234
 "set" (289) 111
-"var" (290) 34 273
-"forward" (291) 254 260
-"external" (292) 255 261
-"function" (293) 126 184 263 265
-"procedure" (294) 256 257
+"var" (290) 34 274
+"forward" (291) 254 261
+"external" (292) 255 262
+"function" (293) 126 184 264 266
+"procedure" (294) 256 258
 "file" (295) 112 123
 "goto" (296) 219
 "if" (297) 229 230
@@ -559,9 +562,9 @@ program_heading (96)
 program_parameters (97)
     on left: 7, on right: 6
 uses_clause (98)
-    on left: 8, on right: 4 280
+    on left: 8, on right: 4 281
 block (99)
-    on left: 11, on right: 3 4 253 259
+    on left: 11, on right: 3 4 253 260
 $@1 (100)
     on left: 9, on right: 11
 $@2 (101)
@@ -573,7 +576,7 @@ label_list (103)
 label (104)
     on left: 16, on right: 14 15 204 205 206 219
 constant_declaration_part (105)
-    on left: 17 18, on right: 11 279 282
+    on left: 17 18, on right: 11 280 283
 constant_declaration_list (106)
     on left: 19 20, on right: 17 19
 constant_declaration (107)
@@ -583,19 +586,19 @@ constant (108)
 constant_identifier (109)
     on left: 28, on right: 22 23
 type_declaration_part (110)
-    on left: 29 30, on right: 11 279 282
+    on left: 29 30, on right: 11 280 283
 type_declaration_list (111)
     on left: 31 32, on right: 29 31
 type_declaration (112)
     on left: 33, on right: 31 32
 variable_declaration_part (113)
-    on left: 34 35, on right: 11 279 282
+    on left: 34 35, on right: 11 280 283
 variable_declaration_list (114)
     on left: 36 37, on right: 34 36
 variable_declaration (115)
     on left: 38, on right: 36 37
 procedure_and_function_declaration_part (116)
-    on left: 39 40, on right: 11 279 282
+    on left: 39 40, on right: 11 280 283
 procedure_and_function_declaration_list (117)
     on left: 41 42, on right: 39 41
 procedure_and_function_declaration (118)
@@ -605,9 +608,9 @@ statement_part (119)
 sign (120)
     on left: 47 48, on right: 23 86 89 148 166
 identifier_list (121)
-    on left: 49 50, on right: 7 8 38 49 69 101 273 274
+    on left: 49 50, on right: 7 8 38 49 69 101 274 275
 type (122)
-    on left: 51 52 53 54, on right: 33 38 81 101 113 275
+    on left: 51 52 53 54, on right: 33 38 81 101 113 276
 simple_type (123)
     on left: 55 56 57, on right: 51
 ordinal_type (124)
@@ -668,7 +671,7 @@ pointer_type_identifier (151)
     on left: 116, on right: 115
 base_type (152)
     on left: 117 118 119 120 121 122 123 124 125 126 127 128, on right:
-    114 183 188 263 265
+    114 183 188 264 266
 variable_reference (153)
     on left: 129, on right: 150 151 210 214 250 251
 variable_identifier (154)
@@ -777,39 +780,41 @@ procedure_declaration (203)
 procedure_body (204)
     on left: 253 254 255, on right: 252
 procedure_heading (205)
-    on left: 256 257, on right: 252 271
-function_declaration (206)
-    on left: 258, on right: 44
-function_body (207)
-    on left: 259 260 261, on right: 258
-function_heading (208)
-    on left: 263 265, on right: 258 272
-$@3 (209)
-    on left: 262, on right: 263
+    on left: 256 258, on right: 252 272
+$@3 (206)
+    on left: 257, on right: 258
+function_declaration (207)
+    on left: 259, on right: 44
+function_body (208)
+    on left: 260 261 262, on right: 259
+function_heading (209)
+    on left: 264 266, on right: 259 273
 $@4 (210)
-    on left: 264, on right: 265
-formal_parameter_list (211)
-    on left: 266 267, on right: 257 265
-formal_parameter_list_iterable (212)
-    on left: 268 269, on right: 266 268
-formal_parameter_list_iterable_list (213)
-    on left: 270 271 272, on right: 268 269
-parameter_declaration (214)
-    on left: 273 274, on right: 270
-type_identifier (215)
-    on left: 275, on right: 273 274
-regular_unit (216)
-    on left: 277, on right: 2
-$@5 (217)
-    on left: 276, on right: 277
-unit_heading (218)
-    on left: 278, on right: 277
-interface_part (219)
-    on left: 279, on right: 277
-uses_clause_empty (220)
-    on left: 280 281, on right: 279
-implementation_part (221)
-    on left: 282, on right: 277
+    on left: 263, on right: 264
+$@5 (211)
+    on left: 265, on right: 266
+formal_parameter_list (212)
+    on left: 267 268, on right: 258 266
+formal_parameter_list_iterable (213)
+    on left: 269 270, on right: 267 269
+formal_parameter_list_iterable_list (214)
+    on left: 271 272 273, on right: 269 270
+parameter_declaration (215)
+    on left: 274 275, on right: 271
+type_identifier (216)
+    on left: 276, on right: 274 275
+regular_unit (217)
+    on left: 278, on right: 2
+$@6 (218)
+    on left: 277, on right: 278
+unit_heading (219)
+    on left: 279, on right: 278
+interface_part (220)
+    on left: 280, on right: 278
+uses_clause_empty (221)
+    on left: 281 282, on right: 280
+implementation_part (222)
+    on left: 283, on right: 278
 
 
 state 0
@@ -836,7 +841,7 @@ state 1
 
 state 2
 
-  278 unit_heading: "unit" . IDENTIFIER
+  279 unit_heading: "unit" . IDENTIFIER
 
     IDENTIFIER  shift, and go to state 9
 
@@ -872,7 +877,7 @@ state 6
 
 state 7
 
-  277 regular_unit: unit_heading . ';' interface_part $@5 implementation_part "end" '.'
+  278 regular_unit: unit_heading . ';' interface_part $@6 implementation_part "end" '.'
 
     ';'  shift, and go to state 12
 
@@ -889,9 +894,9 @@ state 8
 
 state 9
 
-  278 unit_heading: "unit" IDENTIFIER .
+  279 unit_heading: "unit" IDENTIFIER .
 
-    $default  reduce using rule 278 (unit_heading)
+    $default  reduce using rule 279 (unit_heading)
 
 
 state 10
@@ -918,7 +923,7 @@ state 11
 
 state 12
 
-  277 regular_unit: unit_heading ';' . interface_part $@5 implementation_part "end" '.'
+  278 regular_unit: unit_heading ';' . interface_part $@6 implementation_part "end" '.'
 
     "interface"  shift, and go to state 19
 
@@ -981,11 +986,11 @@ state 18
 
 state 19
 
-  279 interface_part: "interface" . uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  280 interface_part: "interface" . uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
     "uses"  shift, and go to state 14
 
-    $default  reduce using rule 281 (uses_clause_empty)
+    $default  reduce using rule 282 (uses_clause_empty)
 
     uses_clause        go to state 32
     uses_clause_empty  go to state 33
@@ -993,11 +998,11 @@ state 19
 
 state 20
 
-  277 regular_unit: unit_heading ';' interface_part . $@5 implementation_part "end" '.'
+  278 regular_unit: unit_heading ';' interface_part . $@6 implementation_part "end" '.'
 
-    $default  reduce using rule 276 ($@5)
+    $default  reduce using rule 277 ($@6)
 
-    $@5  go to state 34
+    $@6  go to state 34
 
 
 state 21
@@ -1099,14 +1104,14 @@ state 31
 
 state 32
 
-  280 uses_clause_empty: uses_clause .
+  281 uses_clause_empty: uses_clause .
 
-    $default  reduce using rule 280 (uses_clause_empty)
+    $default  reduce using rule 281 (uses_clause_empty)
 
 
 state 33
 
-  279 interface_part: "interface" uses_clause_empty . constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  280 interface_part: "interface" uses_clause_empty . constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
     "const"  shift, and go to state 30
 
@@ -1117,7 +1122,7 @@ state 33
 
 state 34
 
-  277 regular_unit: unit_heading ';' interface_part $@5 . implementation_part "end" '.'
+  278 regular_unit: unit_heading ';' interface_part $@6 . implementation_part "end" '.'
 
     "implementation"  shift, and go to state 46
 
@@ -1210,7 +1215,7 @@ state 44
 
 state 45
 
-  279 interface_part: "interface" uses_clause_empty constant_declaration_part . type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  280 interface_part: "interface" uses_clause_empty constant_declaration_part . type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
     "type"  shift, and go to state 43
 
@@ -1221,7 +1226,7 @@ state 45
 
 state 46
 
-  282 implementation_part: "implementation" . constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  283 implementation_part: "implementation" . constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
     "const"  shift, and go to state 30
 
@@ -1232,7 +1237,7 @@ state 46
 
 state 47
 
-  277 regular_unit: unit_heading ';' interface_part $@5 implementation_part . "end" '.'
+  278 regular_unit: unit_heading ';' interface_part $@6 implementation_part . "end" '.'
 
     "end"  shift, and go to state 60
 
@@ -1334,7 +1339,7 @@ state 57
 
 state 58
 
-  279 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part . variable_declaration_part procedure_and_function_declaration_part
+  280 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part . variable_declaration_part procedure_and_function_declaration_part
 
     "var"  shift, and go to state 56
 
@@ -1345,7 +1350,7 @@ state 58
 
 state 59
 
-  282 implementation_part: "implementation" constant_declaration_part . type_declaration_part variable_declaration_part procedure_and_function_declaration_part
+  283 implementation_part: "implementation" constant_declaration_part . type_declaration_part variable_declaration_part procedure_and_function_declaration_part
 
     "type"  shift, and go to state 43
 
@@ -1356,7 +1361,7 @@ state 59
 
 state 60
 
-  277 regular_unit: unit_heading ';' interface_part $@5 implementation_part "end" . '.'
+  278 regular_unit: unit_heading ';' interface_part $@6 implementation_part "end" . '.'
 
     '.'  shift, and go to state 83
 
@@ -1587,7 +1592,7 @@ state 80
 
 state 81
 
-  279 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part . procedure_and_function_declaration_part
+  280 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part . procedure_and_function_declaration_part
 
     "function"   shift, and go to state 129
     "procedure"  shift, and go to state 130
@@ -1605,7 +1610,7 @@ state 81
 
 state 82
 
-  282 implementation_part: "implementation" constant_declaration_part type_declaration_part . variable_declaration_part procedure_and_function_declaration_part
+  283 implementation_part: "implementation" constant_declaration_part type_declaration_part . variable_declaration_part procedure_and_function_declaration_part
 
     "var"  shift, and go to state 56
 
@@ -1616,9 +1621,9 @@ state 82
 
 state 83
 
-  277 regular_unit: unit_heading ';' interface_part $@5 implementation_part "end" '.' .
+  278 regular_unit: unit_heading ';' interface_part $@6 implementation_part "end" '.' .
 
-    $default  reduce using rule 277 (regular_unit)
+    $default  reduce using rule 278 (regular_unit)
 
 
 state 84
@@ -2087,8 +2092,8 @@ state 128
 
 state 129
 
-  263 function_heading: "function" . IDENTIFIER $@3 ':' base_type
-  265                 | "function" . IDENTIFIER $@4 formal_parameter_list ':' base_type
+  264 function_heading: "function" . IDENTIFIER $@4 ':' base_type
+  266                 | "function" . IDENTIFIER $@5 formal_parameter_list ':' base_type
 
     IDENTIFIER  shift, and go to state 171
 
@@ -2096,7 +2101,7 @@ state 129
 state 130
 
   256 procedure_heading: "procedure" . IDENTIFIER
-  257                  | "procedure" . IDENTIFIER formal_parameter_list
+  258                  | "procedure" . IDENTIFIER $@3 formal_parameter_list
 
     IDENTIFIER  shift, and go to state 172
 
@@ -2157,21 +2162,21 @@ state 136
 
 state 137
 
-  258 function_declaration: function_heading . ';' function_body ';'
+  259 function_declaration: function_heading . ';' function_body ';'
 
     ';'  shift, and go to state 176
 
 
 state 138
 
-  279 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part .
+  280 interface_part: "interface" uses_clause_empty constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part .
 
-    $default  reduce using rule 279 (interface_part)
+    $default  reduce using rule 280 (interface_part)
 
 
 state 139
 
-  282 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part . procedure_and_function_declaration_part
+  283 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part . procedure_and_function_declaration_part
 
     "function"   shift, and go to state 129
     "procedure"  shift, and go to state 130
@@ -2538,38 +2543,37 @@ state 170
 
 state 171
 
-  263 function_heading: "function" IDENTIFIER . $@3 ':' base_type
-  265                 | "function" IDENTIFIER . $@4 formal_parameter_list ':' base_type
+  264 function_heading: "function" IDENTIFIER . $@4 ':' base_type
+  266                 | "function" IDENTIFIER . $@5 formal_parameter_list ':' base_type
 
-    '('       reduce using rule 264 ($@4)
-    $default  reduce using rule 262 ($@3)
+    '('       reduce using rule 265 ($@5)
+    $default  reduce using rule 263 ($@4)
 
-    $@3  go to state 226
-    $@4  go to state 227
+    $@4  go to state 226
+    $@5  go to state 227
 
 
 state 172
 
   256 procedure_heading: "procedure" IDENTIFIER .
-  257                  | "procedure" IDENTIFIER . formal_parameter_list
+  258                  | "procedure" IDENTIFIER . $@3 formal_parameter_list
 
-    '('  shift, and go to state 228
-
+    '('       reduce using rule 257 ($@3)
     $default  reduce using rule 256 (procedure_heading)
 
-    formal_parameter_list  go to state 229
+    $@3  go to state 228
 
 
 state 173
 
    11 block: label_declaration_part constant_declaration_part type_declaration_part variable_declaration_part $@1 procedure_and_function_declaration_part $@2 . statement_part
 
-    "begin"  shift, and go to state 230
+    "begin"  shift, and go to state 229
 
     $default  reduce using rule 46 (statement_part)
 
-    statement_part      go to state 231
-    compound_statement  go to state 232
+    statement_part      go to state 230
+    compound_statement  go to state 231
 
 
 state 174
@@ -2584,50 +2588,50 @@ state 175
   252 procedure_declaration: procedure_heading ';' . procedure_body ';'
 
     "label"     shift, and go to state 15
-    "forward"   shift, and go to state 233
-    "external"  shift, and go to state 234
+    "forward"   shift, and go to state 232
+    "external"  shift, and go to state 233
 
     $default  reduce using rule 13 (label_declaration_part)
 
-    block                   go to state 235
+    block                   go to state 234
     label_declaration_part  go to state 18
-    procedure_body          go to state 236
+    procedure_body          go to state 235
 
 
 state 176
 
-  258 function_declaration: function_heading ';' . function_body ';'
+  259 function_declaration: function_heading ';' . function_body ';'
 
     "label"     shift, and go to state 15
-    "forward"   shift, and go to state 237
-    "external"  shift, and go to state 238
+    "forward"   shift, and go to state 236
+    "external"  shift, and go to state 237
 
     $default  reduce using rule 13 (label_declaration_part)
 
-    block                   go to state 239
+    block                   go to state 238
     label_declaration_part  go to state 18
-    function_body           go to state 240
+    function_body           go to state 239
 
 
 state 177
 
-  282 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part .
+  283 implementation_part: "implementation" constant_declaration_part type_declaration_part variable_declaration_part procedure_and_function_declaration_part .
 
-    $default  reduce using rule 282 (implementation_part)
+    $default  reduce using rule 283 (implementation_part)
 
 
 state 178
 
    73 string_type: "string" '[' DECIMAL_INT . ']'
 
-    ']'  shift, and go to state 241
+    ']'  shift, and go to state 240
 
 
 state 179
 
    74 string_type: "string" '[' IDENTIFIER . ']'
 
-    ']'  shift, and go to state 242
+    ']'  shift, and go to state 241
 
 
 state 180
@@ -2645,18 +2649,18 @@ state 181
    85                        | ordinal_type . term_operator_list signed_number_expression_list
    86                        | ordinal_type . sign unsigned_number_expression_list
 
-    "div"  shift, and go to state 243
-    "mod"  shift, and go to state 244
-    "and"  shift, and go to state 245
+    "div"  shift, and go to state 242
+    "mod"  shift, and go to state 243
+    "and"  shift, and go to state 244
     '+'    shift, and go to state 67
     '-'    shift, and go to state 68
-    '*'    shift, and go to state 246
-    '/'    shift, and go to state 247
+    '*'    shift, and go to state 245
+    '/'    shift, and go to state 246
 
     $default  reduce using rule 84 (ordinal_type_expression)
 
-    sign                go to state 248
-    term_operator_list  go to state 249
+    sign                go to state 247
+    term_operator_list  go to state 248
 
 
 state 182
@@ -2664,8 +2668,8 @@ state 182
    81 array_type: "array" '[' index_type_list . ']' "of" type
    82 index_type_list: index_type_list . ',' ordinal_type_expression
 
-    ','  shift, and go to state 250
-    ']'  shift, and go to state 251
+    ','  shift, and go to state 249
+    ']'  shift, and go to state 250
 
 
 state 183
@@ -2680,7 +2684,7 @@ state 184
   103 variant_part: "case" IDENTIFIER . ':' tag_field_type "of" variant_list
   110 tag_field_type: IDENTIFIER .
 
-    ':'  shift, and go to state 252
+    ':'  shift, and go to state 251
 
     $default  reduce using rule 110 (tag_field_type)
 
@@ -2689,7 +2693,7 @@ state 185
 
   102 variant_part: "case" tag_field_type . "of" variant_list
 
-    "of"  shift, and go to state 253
+    "of"  shift, and go to state 252
 
 
 state 186
@@ -2726,7 +2730,7 @@ state 186
     constant                 go to state 107
     constant_identifier      go to state 71
     sign                     go to state 72
-    type                     go to state 254
+    type                     go to state 253
     simple_type              go to state 109
     ordinal_type             go to state 110
     ordinal_type_identifier  go to state 111
@@ -2769,8 +2773,8 @@ state 188
     $default  reduce using rule 94 (field_list)
 
     identifier_list    go to state 145
-    field_declaration  go to state 255
-    variant_part       go to state 256
+    field_declaration  go to state 254
+    variant_part       go to state 255
 
 
 state 189
@@ -2901,7 +2905,7 @@ state 203
     variable_identifier  go to state 211
     unsigned_constant    go to state 212
     unsigned_number      go to state 213
-    factor               go to state 257
+    factor               go to state 256
     function_call        go to state 219
     function_identifier  go to state 126
     set_constructor      go to state 223
@@ -2911,9 +2915,9 @@ state 204
 
   151 factor: '@' . variable_reference
 
-    IDENTIFIER  shift, and go to state 258
+    IDENTIFIER  shift, and go to state 257
 
-    variable_reference   go to state 259
+    variable_reference   go to state 258
     variable_identifier  go to state 211
 
 
@@ -2948,7 +2952,7 @@ state 205
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 260
+    expression                                go to state 259
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
@@ -2982,7 +2986,7 @@ state 207
     '@'            shift, and go to state 204
     '('            shift, and go to state 205
     '['            shift, and go to state 207
-    ']'            shift, and go to state 261
+    ']'            shift, and go to state 260
 
     sign                                      go to state 208
     type_boolean                              go to state 209
@@ -2994,12 +2998,12 @@ state 207
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 262
+    expression                                go to state 261
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
-    member_group_list                         go to state 263
-    member_group                              go to state 264
+    member_group_list                         go to state 262
+    member_group                              go to state 263
 
 
 state 208
@@ -3028,7 +3032,7 @@ state 208
     unsigned_number                           go to state 213
     factor                                    go to state 214
     term                                      go to state 215
-    simple_expression_term_operator_iterable  go to state 265
+    simple_expression_term_operator_iterable  go to state 264
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
@@ -3052,14 +3056,14 @@ state 211
 
   129 variable_reference: variable_identifier . qualifier_list
 
-    '.'  shift, and go to state 266
-    '['  shift, and go to state 267
-    '^'  shift, and go to state 268
+    '.'  shift, and go to state 265
+    '['  shift, and go to state 266
+    '^'  shift, and go to state 267
 
-    qualifier_list    go to state 269
-    qualifier         go to state 270
-    index             go to state 271
-    field_designator  go to state 272
+    qualifier_list    go to state 268
+    qualifier         go to state 269
+    index             go to state 270
+    field_designator  go to state 271
 
 
 state 212
@@ -3088,15 +3092,15 @@ state 215
   159 term: term . term_operator_list factor
   169 simple_expression_term_operator_iterable: term .
 
-    "div"  shift, and go to state 243
-    "mod"  shift, and go to state 244
-    "and"  shift, and go to state 245
-    '*'    shift, and go to state 246
-    '/'    shift, and go to state 247
+    "div"  shift, and go to state 242
+    "mod"  shift, and go to state 243
+    "and"  shift, and go to state 244
+    '*'    shift, and go to state 245
+    '/'    shift, and go to state 246
 
     $default  reduce using rule 169 (simple_expression_term_operator_iterable)
 
-    term_operator_list  go to state 273
+    term_operator_list  go to state 272
 
 
 state 216
@@ -3104,17 +3108,17 @@ state 216
   173 expression: simple_expression .
   174           | simple_expression . relational_operator simple_expression
 
-    "in"      shift, and go to state 274
-    '='       shift, and go to state 275
-    '<'       shift, and go to state 276
-    '>'       shift, and go to state 277
-    RE        shift, and go to state 278
-    LE        shift, and go to state 279
-    NOTEQUAL  shift, and go to state 280
+    "in"      shift, and go to state 273
+    '='       shift, and go to state 274
+    '<'       shift, and go to state 275
+    '>'       shift, and go to state 276
+    RE        shift, and go to state 277
+    LE        shift, and go to state 278
+    NOTEQUAL  shift, and go to state 279
 
     $default  reduce using rule 173 (expression)
 
-    relational_operator  go to state 281
+    relational_operator  go to state 280
 
 
 state 217
@@ -3122,13 +3126,13 @@ state 217
   167 simple_expression: simple_expression_term_operator_iterable .
   168 simple_expression_term_operator_iterable: simple_expression_term_operator_iterable . simple_expression_term_operator_list term
 
-    "or"  shift, and go to state 282
-    '+'   shift, and go to state 283
-    '-'   shift, and go to state 284
+    "or"  shift, and go to state 281
+    '+'   shift, and go to state 282
+    '-'   shift, and go to state 283
 
     $default  reduce using rule 167 (simple_expression)
 
-    simple_expression_term_operator_list  go to state 285
+    simple_expression_term_operator_list  go to state 284
 
 
 state 218
@@ -3151,9 +3155,9 @@ state 220
   188                      | '(' actual_parameter_iterable . ':' base_type ')'
   189 actual_parameter_iterable: actual_parameter_iterable . ',' actual_parameter
 
-    ')'  shift, and go to state 286
-    ','  shift, and go to state 287
-    ':'  shift, and go to state 288
+    ')'  shift, and go to state 285
+    ','  shift, and go to state 286
+    ':'  shift, and go to state 287
 
 
 state 221
@@ -3196,7 +3200,7 @@ state 224
     "function"    shift, and go to state 162
     "file"        shift, and go to state 163
 
-    base_type        go to state 289
+    base_type        go to state 288
     unsigned_number  go to state 165
 
 
@@ -3209,61 +3213,44 @@ state 225
 
 state 226
 
-  263 function_heading: "function" IDENTIFIER $@3 . ':' base_type
+  264 function_heading: "function" IDENTIFIER $@4 . ':' base_type
 
-    ':'  shift, and go to state 290
+    ':'  shift, and go to state 289
 
 
 state 227
 
-  265 function_heading: "function" IDENTIFIER $@4 . formal_parameter_list ':' base_type
+  266 function_heading: "function" IDENTIFIER $@5 . formal_parameter_list ':' base_type
 
-    '('  shift, and go to state 228
+    '('  shift, and go to state 290
 
     formal_parameter_list  go to state 291
 
 
 state 228
 
-  266 formal_parameter_list: '(' . formal_parameter_list_iterable ')'
-  267                      | '(' . ')'
+  258 procedure_heading: "procedure" IDENTIFIER $@3 . formal_parameter_list
 
-    IDENTIFIER   shift, and go to state 21
-    "var"        shift, and go to state 292
-    "function"   shift, and go to state 129
-    "procedure"  shift, and go to state 130
-    ')'          shift, and go to state 293
+    '('  shift, and go to state 290
 
-    identifier_list                      go to state 294
-    procedure_heading                    go to state 295
-    function_heading                     go to state 296
-    formal_parameter_list_iterable       go to state 297
-    formal_parameter_list_iterable_list  go to state 298
-    parameter_declaration                go to state 299
+    formal_parameter_list  go to state 292
 
 
 state 229
 
-  257 procedure_heading: "procedure" IDENTIFIER formal_parameter_list .
-
-    $default  reduce using rule 257 (procedure_heading)
-
-
-state 230
-
   224 compound_statement: "begin" . statement_list "end"
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -3271,149 +3258,149 @@ state 230
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 312
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    statement_list         go to state 319
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 305
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    statement_list         go to state 312
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 231
+state 230
 
    11 block: label_declaration_part constant_declaration_part type_declaration_part variable_declaration_part $@1 procedure_and_function_declaration_part $@2 statement_part .
 
     $default  reduce using rule 11 (block)
 
 
-state 232
+state 231
 
    45 statement_part: compound_statement .
 
     $default  reduce using rule 45 (statement_part)
 
 
-state 233
+state 232
 
   254 procedure_body: "forward" .
 
     $default  reduce using rule 254 (procedure_body)
 
 
-state 234
+state 233
 
   255 procedure_body: "external" .
 
     $default  reduce using rule 255 (procedure_body)
 
 
-state 235
+state 234
 
   253 procedure_body: block .
 
     $default  reduce using rule 253 (procedure_body)
 
 
-state 236
+state 235
 
   252 procedure_declaration: procedure_heading ';' procedure_body . ';'
 
-    ';'  shift, and go to state 328
+    ';'  shift, and go to state 321
 
 
-state 237
+state 236
 
-  260 function_body: "forward" .
-
-    $default  reduce using rule 260 (function_body)
-
-
-state 238
-
-  261 function_body: "external" .
+  261 function_body: "forward" .
 
     $default  reduce using rule 261 (function_body)
 
 
+state 237
+
+  262 function_body: "external" .
+
+    $default  reduce using rule 262 (function_body)
+
+
+state 238
+
+  260 function_body: block .
+
+    $default  reduce using rule 260 (function_body)
+
+
 state 239
 
-  259 function_body: block .
+  259 function_declaration: function_heading ';' function_body . ';'
 
-    $default  reduce using rule 259 (function_body)
+    ';'  shift, and go to state 322
 
 
 state 240
-
-  258 function_declaration: function_heading ';' function_body . ';'
-
-    ';'  shift, and go to state 329
-
-
-state 241
 
    73 string_type: "string" '[' DECIMAL_INT ']' .
 
     $default  reduce using rule 73 (string_type)
 
 
-state 242
+state 241
 
    74 string_type: "string" '[' IDENTIFIER ']' .
 
     $default  reduce using rule 74 (string_type)
 
 
-state 243
+state 242
 
   163 term_operator_list: "div" .
 
     $default  reduce using rule 163 (term_operator_list)
 
 
-state 244
+state 243
 
   164 term_operator_list: "mod" .
 
     $default  reduce using rule 164 (term_operator_list)
 
 
-state 245
+state 244
 
   165 term_operator_list: "and" .
 
     $default  reduce using rule 165 (term_operator_list)
 
 
-state 246
+state 245
 
   161 term_operator_list: '*' .
 
     $default  reduce using rule 161 (term_operator_list)
 
 
-state 247
+state 246
 
   162 term_operator_list: '/' .
 
     $default  reduce using rule 162 (term_operator_list)
 
 
-state 248
+state 247
 
    86 ordinal_type_expression: ordinal_type sign . unsigned_number_expression_list
 
@@ -3421,11 +3408,11 @@ state 248
     HEXADECIMAL   shift, and go to state 62
     REAL_DECIMAL  shift, and go to state 63
 
-    unsigned_number_expression_list  go to state 330
-    unsigned_number                  go to state 331
+    unsigned_number_expression_list  go to state 323
+    unsigned_number                  go to state 324
 
 
-state 249
+state 248
 
    85 ordinal_type_expression: ordinal_type term_operator_list . signed_number_expression_list
 
@@ -3436,12 +3423,12 @@ state 249
     '-'           shift, and go to state 68
 
     sign                           go to state 84
-    signed_number_expression_list  go to state 332
+    signed_number_expression_list  go to state 325
     unsigned_number                go to state 73
-    signed_number                  go to state 333
+    signed_number                  go to state 326
 
 
-state 250
+state 249
 
    82 index_type_list: index_type_list ',' . ordinal_type_expression
 
@@ -3469,30 +3456,30 @@ state 250
     ordinal_type_identifier  go to state 111
     enumerated_type          go to state 112
     subrange_type            go to state 113
-    ordinal_type_expression  go to state 334
+    ordinal_type_expression  go to state 327
     unsigned_number          go to state 73
     signed_number            go to state 74
     function_call            go to state 125
     function_identifier      go to state 126
 
 
-state 251
+state 250
 
    81 array_type: "array" '[' index_type_list ']' . "of" type
 
-    "of"  shift, and go to state 335
+    "of"  shift, and go to state 328
 
 
-state 252
+state 251
 
   103 variant_part: "case" IDENTIFIER ':' . tag_field_type "of" variant_list
 
-    IDENTIFIER  shift, and go to state 336
+    IDENTIFIER  shift, and go to state 329
 
-    tag_field_type  go to state 337
+    tag_field_type  go to state 330
 
 
-state 253
+state 252
 
   102 variant_part: "case" tag_field_type "of" . variant_list
 
@@ -3506,128 +3493,128 @@ state 253
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 338
+    constant             go to state 331
     constant_identifier  go to state 71
     sign                 go to state 72
-    variant_list         go to state 339
-    variant              go to state 340
-    constant_list        go to state 341
+    variant_list         go to state 332
+    variant              go to state 333
+    constant_list        go to state 334
     unsigned_number      go to state 73
     signed_number        go to state 74
 
 
-state 254
+state 253
 
   101 field_declaration: identifier_list ':' type .
 
     $default  reduce using rule 101 (field_declaration)
 
 
-state 255
+state 254
 
    99 fixed_part: fixed_part ';' field_declaration .
 
     $default  reduce using rule 99 (fixed_part)
 
 
-state 256
+state 255
 
    95 field_list: fixed_part ';' variant_part .
    96           | fixed_part ';' variant_part . ';'
 
-    ';'  shift, and go to state 342
+    ';'  shift, and go to state 335
 
     $default  reduce using rule 95 (field_list)
 
 
-state 257
+state 256
 
   156 factor: "not" factor .
 
     $default  reduce using rule 156 (factor)
 
 
-state 258
+state 257
 
   130 variable_identifier: IDENTIFIER .
 
     $default  reduce using rule 130 (variable_identifier)
 
 
-state 259
+state 258
 
   151 factor: '@' variable_reference .
 
     $default  reduce using rule 151 (factor)
 
 
-state 260
+state 259
 
   155 factor: '(' expression . ')'
 
-    ')'  shift, and go to state 343
+    ')'  shift, and go to state 336
 
 
-state 261
+state 260
 
   197 set_constructor: '[' ']' .
 
     $default  reduce using rule 197 (set_constructor)
 
 
-state 262
+state 261
 
   201 member_group: expression .
   202             | expression . ".." expression
 
-    ".."  shift, and go to state 344
+    ".."  shift, and go to state 337
 
     $default  reduce using rule 201 (member_group)
 
 
-state 263
+state 262
 
   198 set_constructor: '[' member_group_list . ']'
   199 member_group_list: member_group_list . ',' member_group
 
-    ','  shift, and go to state 345
-    ']'  shift, and go to state 346
+    ','  shift, and go to state 338
+    ']'  shift, and go to state 339
 
 
-state 264
+state 263
 
   200 member_group_list: member_group .
 
     $default  reduce using rule 200 (member_group_list)
 
 
-state 265
+state 264
 
   166 simple_expression: sign simple_expression_term_operator_iterable .
   168 simple_expression_term_operator_iterable: simple_expression_term_operator_iterable . simple_expression_term_operator_list term
 
-    "or"  shift, and go to state 282
-    '+'   shift, and go to state 283
-    '-'   shift, and go to state 284
+    "or"  shift, and go to state 281
+    '+'   shift, and go to state 282
+    '-'   shift, and go to state 283
 
     $default  reduce using rule 166 (simple_expression)
 
-    simple_expression_term_operator_list  go to state 285
+    simple_expression_term_operator_list  go to state 284
 
 
-state 266
+state 265
 
   139 field_designator: '.' . IDENTIFIER
   140                 | '.' . function_call
 
-    IDENTIFIER  shift, and go to state 347
+    IDENTIFIER  shift, and go to state 340
     "function"  shift, and go to state 102
 
-    function_call        go to state 348
+    function_call        go to state 341
     function_identifier  go to state 126
 
 
-state 267
+state 266
 
   136 index: '[' . expression_list ']'
 
@@ -3652,64 +3639,64 @@ state 267
     type_boolean                              go to state 209
     variable_reference                        go to state 210
     variable_identifier                       go to state 211
-    expression_list                           go to state 349
+    expression_list                           go to state 342
     unsigned_constant                         go to state 212
     unsigned_number                           go to state 213
     factor                                    go to state 214
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 350
+    expression                                go to state 343
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 268
+state 267
 
   135 qualifier: '^' .
 
     $default  reduce using rule 135 (qualifier)
 
 
-state 269
+state 268
 
   129 variable_reference: variable_identifier qualifier_list .
   131 qualifier_list: qualifier_list . qualifier
 
-    '.'  shift, and go to state 266
-    '['  shift, and go to state 267
-    '^'  shift, and go to state 268
+    '.'  shift, and go to state 265
+    '['  shift, and go to state 266
+    '^'  shift, and go to state 267
 
     $default  reduce using rule 129 (variable_reference)
 
-    qualifier         go to state 351
-    index             go to state 271
-    field_designator  go to state 272
+    qualifier         go to state 344
+    index             go to state 270
+    field_designator  go to state 271
 
 
-state 270
+state 269
 
   132 qualifier_list: qualifier .
 
     $default  reduce using rule 132 (qualifier_list)
 
 
-state 271
+state 270
 
   133 qualifier: index .
 
     $default  reduce using rule 133 (qualifier)
 
 
-state 272
+state 271
 
   134 qualifier: field_designator .
 
     $default  reduce using rule 134 (qualifier)
 
 
-state 273
+state 272
 
   159 term: term term_operator_list . factor
 
@@ -3733,62 +3720,62 @@ state 273
     variable_identifier  go to state 211
     unsigned_constant    go to state 212
     unsigned_number      go to state 213
-    factor               go to state 352
+    factor               go to state 345
     function_call        go to state 219
     function_identifier  go to state 126
     set_constructor      go to state 223
 
 
-state 274
+state 273
 
   181 relational_operator: "in" .
 
     $default  reduce using rule 181 (relational_operator)
 
 
-state 275
+state 274
 
   175 relational_operator: '=' .
 
     $default  reduce using rule 175 (relational_operator)
 
 
-state 276
+state 275
 
   176 relational_operator: '<' .
 
     $default  reduce using rule 176 (relational_operator)
 
 
-state 277
+state 276
 
   177 relational_operator: '>' .
 
     $default  reduce using rule 177 (relational_operator)
 
 
-state 278
+state 277
 
   179 relational_operator: RE .
 
     $default  reduce using rule 179 (relational_operator)
 
 
-state 279
+state 278
 
   178 relational_operator: LE .
 
     $default  reduce using rule 178 (relational_operator)
 
 
-state 280
+state 279
 
   180 relational_operator: NOTEQUAL .
 
     $default  reduce using rule 180 (relational_operator)
 
 
-state 281
+state 280
 
   174 expression: simple_expression relational_operator . simple_expression
 
@@ -3817,35 +3804,35 @@ state 281
     unsigned_number                           go to state 213
     factor                                    go to state 214
     term                                      go to state 215
-    simple_expression                         go to state 353
+    simple_expression                         go to state 346
     simple_expression_term_operator_iterable  go to state 217
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 282
+state 281
 
   172 simple_expression_term_operator_list: "or" .
 
     $default  reduce using rule 172 (simple_expression_term_operator_list)
 
 
-state 283
+state 282
 
   170 simple_expression_term_operator_list: '+' .
 
     $default  reduce using rule 170 (simple_expression_term_operator_list)
 
 
-state 284
+state 283
 
   171 simple_expression_term_operator_list: '-' .
 
     $default  reduce using rule 171 (simple_expression_term_operator_list)
 
 
-state 285
+state 284
 
   168 simple_expression_term_operator_iterable: simple_expression_term_operator_iterable simple_expression_term_operator_list . term
 
@@ -3870,20 +3857,20 @@ state 285
     unsigned_constant    go to state 212
     unsigned_number      go to state 213
     factor               go to state 214
-    term                 go to state 354
+    term                 go to state 347
     function_call        go to state 219
     function_identifier  go to state 126
     set_constructor      go to state 223
 
 
-state 286
+state 285
 
   186 actual_parameter_list: '(' actual_parameter_iterable ')' .
 
     $default  reduce using rule 186 (actual_parameter_list)
 
 
-state 287
+state 286
 
   189 actual_parameter_iterable: actual_parameter_iterable ',' . actual_parameter
 
@@ -3921,12 +3908,12 @@ state 287
     expression                                go to state 218
     function_call                             go to state 219
     function_identifier                       go to state 126
-    actual_parameter                          go to state 355
+    actual_parameter                          go to state 348
     procedure_identifier                      go to state 222
     set_constructor                           go to state 223
 
 
-state 288
+state 287
 
   188 actual_parameter_list: '(' actual_parameter_iterable ':' . base_type ')'
 
@@ -3945,20 +3932,20 @@ state 288
     "function"    shift, and go to state 162
     "file"        shift, and go to state 163
 
-    base_type        go to state 356
+    base_type        go to state 349
     unsigned_number  go to state 165
 
 
-state 289
+state 288
 
   183 function_call: function_identifier actual_parameter_list ':' base_type .
 
     $default  reduce using rule 183 (function_call)
 
 
-state 290
+state 289
 
-  263 function_heading: "function" IDENTIFIER $@3 ':' . base_type
+  264 function_heading: "function" IDENTIFIER $@4 ':' . base_type
 
     DECIMAL_INT   shift, and go to state 61
     HEXADECIMAL   shift, and go to state 62
@@ -3975,80 +3962,44 @@ state 290
     "function"    shift, and go to state 162
     "file"        shift, and go to state 163
 
-    base_type        go to state 357
+    base_type        go to state 350
     unsigned_number  go to state 165
+
+
+state 290
+
+  267 formal_parameter_list: '(' . formal_parameter_list_iterable ')'
+  268                      | '(' . ')'
+
+    IDENTIFIER   shift, and go to state 21
+    "var"        shift, and go to state 351
+    "function"   shift, and go to state 129
+    "procedure"  shift, and go to state 130
+    ')'          shift, and go to state 352
+
+    identifier_list                      go to state 353
+    procedure_heading                    go to state 354
+    function_heading                     go to state 355
+    formal_parameter_list_iterable       go to state 356
+    formal_parameter_list_iterable_list  go to state 357
+    parameter_declaration                go to state 358
 
 
 state 291
 
-  265 function_heading: "function" IDENTIFIER $@4 formal_parameter_list . ':' base_type
+  266 function_heading: "function" IDENTIFIER $@5 formal_parameter_list . ':' base_type
 
-    ':'  shift, and go to state 358
+    ':'  shift, and go to state 359
 
 
 state 292
 
-  273 parameter_declaration: "var" . identifier_list ':' type_identifier
+  258 procedure_heading: "procedure" IDENTIFIER $@3 formal_parameter_list .
 
-    IDENTIFIER  shift, and go to state 21
-
-    identifier_list  go to state 359
+    $default  reduce using rule 258 (procedure_heading)
 
 
 state 293
-
-  267 formal_parameter_list: '(' ')' .
-
-    $default  reduce using rule 267 (formal_parameter_list)
-
-
-state 294
-
-   49 identifier_list: identifier_list . ',' IDENTIFIER
-  274 parameter_declaration: identifier_list . ':' type_identifier
-
-    ','  shift, and go to state 36
-    ':'  shift, and go to state 360
-
-
-state 295
-
-  271 formal_parameter_list_iterable_list: procedure_heading .
-
-    $default  reduce using rule 271 (formal_parameter_list_iterable_list)
-
-
-state 296
-
-  272 formal_parameter_list_iterable_list: function_heading .
-
-    $default  reduce using rule 272 (formal_parameter_list_iterable_list)
-
-
-state 297
-
-  266 formal_parameter_list: '(' formal_parameter_list_iterable . ')'
-  268 formal_parameter_list_iterable: formal_parameter_list_iterable . ';' formal_parameter_list_iterable_list
-
-    ';'  shift, and go to state 361
-    ')'  shift, and go to state 362
-
-
-state 298
-
-  269 formal_parameter_list_iterable: formal_parameter_list_iterable_list .
-
-    $default  reduce using rule 269 (formal_parameter_list_iterable)
-
-
-state 299
-
-  270 formal_parameter_list_iterable_list: parameter_declaration .
-
-    $default  reduce using rule 270 (formal_parameter_list_iterable_list)
-
-
-state 300
 
   130 variable_identifier: IDENTIFIER .
   185 function_identifier: IDENTIFIER .
@@ -4063,10 +4014,10 @@ state 300
     '^'       reduce using rule 130 (variable_identifier)
     $default  reduce using rule 209 (statement)
 
-    actual_parameter_list  go to state 363
+    actual_parameter_list  go to state 360
 
 
-state 301
+state 294
 
   231 case_statement: "case" . expression "of" case_list "end"
   232               | "case" . expression "of" case_list otherwise_clause "end"
@@ -4100,22 +4051,22 @@ state 301
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 364
+    expression                                go to state 361
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 302
+state 295
 
   219 goto_statement: "goto" . label
 
     DECIMAL_INT  shift, and go to state 25
 
-    label  go to state 365
+    label  go to state 362
 
 
-state 303
+state 296
 
   229 if_statement: "if" . expression "then" statement
   230             | "if" . expression "then" statement "else" statement
@@ -4147,27 +4098,27 @@ state 303
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 366
+    expression                                go to state 363
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 304
+state 297
 
   242 repeat_statement: "repeat" . statement_list "until" expression
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -4175,30 +4126,30 @@ state 304
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 312
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    statement_list         go to state 367
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 305
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    statement_list         go to state 364
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 305
+state 298
 
   243 while_statement: "while" . expression "do" statement
 
@@ -4229,60 +4180,60 @@ state 305
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 368
+    expression                                go to state 365
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 306
+state 299
 
   244 for_statement: "for" . control_variable ":=" initial_value "to" final_value "do" statement
   245              | "for" . control_variable ":=" initial_value "downto" final_value "do" statement
 
-    IDENTIFIER  shift, and go to state 369
+    IDENTIFIER  shift, and go to state 366
 
-    control_variable  go to state 370
+    control_variable  go to state 367
 
 
-state 307
+state 300
 
   249 with_statement: "with" . record_variable_reference_list "do" statement
 
-    IDENTIFIER  shift, and go to state 258
+    IDENTIFIER  shift, and go to state 257
 
-    variable_reference              go to state 371
+    variable_reference              go to state 368
     variable_identifier             go to state 211
-    record_variable_reference_list  go to state 372
+    record_variable_reference_list  go to state 369
 
 
-state 308
+state 301
 
   204 statement: label . ':'
   205          | label . ':' simple_statement
   206          | label . ':' structured_statement
 
-    ':'  shift, and go to state 373
+    ':'  shift, and go to state 370
 
 
-state 309
+state 302
 
   210 statement: variable_reference .
   214 assignment_statement: variable_reference . ":=" expression
 
-    ":="  shift, and go to state 374
+    ":="  shift, and go to state 371
 
     $default  reduce using rule 210 (statement)
 
 
-state 310
+state 303
 
   215 assignment_statement: function_identifier . ":=" expression
 
-    ":="  shift, and go to state 375
+    ":="  shift, and go to state 372
 
 
-state 311
+state 304
 
   216 procedure_statement: procedure_identifier .
   217                    | procedure_identifier . actual_parameter_list
@@ -4291,138 +4242,138 @@ state 311
 
     $default  reduce using rule 216 (procedure_statement)
 
-    actual_parameter_list  go to state 376
+    actual_parameter_list  go to state 373
 
 
-state 312
+state 305
 
   226 statement_list: statement .
 
     $default  reduce using rule 226 (statement_list)
 
 
-state 313
+state 306
 
   207 statement: simple_statement .
 
     $default  reduce using rule 207 (statement)
 
 
-state 314
+state 307
 
   211 simple_statement: assignment_statement .
 
     $default  reduce using rule 211 (simple_statement)
 
 
-state 315
+state 308
 
   212 simple_statement: procedure_statement .
 
     $default  reduce using rule 212 (simple_statement)
 
 
-state 316
+state 309
 
   213 simple_statement: goto_statement .
 
     $default  reduce using rule 213 (simple_statement)
 
 
-state 317
+state 310
 
   208 statement: structured_statement .
 
     $default  reduce using rule 208 (statement)
 
 
-state 318
+state 311
 
   220 structured_statement: compound_statement .
 
     $default  reduce using rule 220 (structured_statement)
 
 
-state 319
+state 312
 
   224 compound_statement: "begin" statement_list . "end"
   225 statement_list: statement_list . ';' statement
 
-    "end"  shift, and go to state 377
-    ';'    shift, and go to state 378
+    "end"  shift, and go to state 374
+    ';'    shift, and go to state 375
 
 
-state 320
+state 313
 
   221 structured_statement: conditional_statement .
 
     $default  reduce using rule 221 (structured_statement)
 
 
-state 321
+state 314
 
   227 conditional_statement: if_statement .
 
     $default  reduce using rule 227 (conditional_statement)
 
 
-state 322
+state 315
 
   228 conditional_statement: case_statement .
 
     $default  reduce using rule 228 (conditional_statement)
 
 
-state 323
+state 316
 
   222 structured_statement: repetitive_statement .
 
     $default  reduce using rule 222 (structured_statement)
 
 
-state 324
+state 317
 
   239 repetitive_statement: repeat_statement .
 
     $default  reduce using rule 239 (repetitive_statement)
 
 
-state 325
+state 318
 
   240 repetitive_statement: while_statement .
 
     $default  reduce using rule 240 (repetitive_statement)
 
 
-state 326
+state 319
 
   241 repetitive_statement: for_statement .
 
     $default  reduce using rule 241 (repetitive_statement)
 
 
-state 327
+state 320
 
   223 structured_statement: with_statement .
 
     $default  reduce using rule 223 (structured_statement)
 
 
-state 328
+state 321
 
   252 procedure_declaration: procedure_heading ';' procedure_body ';' .
 
     $default  reduce using rule 252 (procedure_declaration)
 
 
-state 329
+state 322
 
-  258 function_declaration: function_heading ';' function_body ';' .
+  259 function_declaration: function_heading ';' function_body ';' .
 
-    $default  reduce using rule 258 (function_declaration)
+    $default  reduce using rule 259 (function_declaration)
 
 
-state 330
+state 323
 
    86 ordinal_type_expression: ordinal_type sign unsigned_number_expression_list .
    89 unsigned_number_expression_list: unsigned_number_expression_list . sign unsigned_number
@@ -4432,47 +4383,47 @@ state 330
 
     $default  reduce using rule 86 (ordinal_type_expression)
 
-    sign  go to state 379
+    sign  go to state 376
 
 
-state 331
+state 324
 
    90 unsigned_number_expression_list: unsigned_number .
 
     $default  reduce using rule 90 (unsigned_number_expression_list)
 
 
-state 332
+state 325
 
    85 ordinal_type_expression: ordinal_type term_operator_list signed_number_expression_list .
    87 signed_number_expression_list: signed_number_expression_list . term_operator_list signed_number
 
-    "div"  shift, and go to state 243
-    "mod"  shift, and go to state 244
-    "and"  shift, and go to state 245
-    '*'    shift, and go to state 246
-    '/'    shift, and go to state 247
+    "div"  shift, and go to state 242
+    "mod"  shift, and go to state 243
+    "and"  shift, and go to state 244
+    '*'    shift, and go to state 245
+    '/'    shift, and go to state 246
 
     $default  reduce using rule 85 (ordinal_type_expression)
 
-    term_operator_list  go to state 380
+    term_operator_list  go to state 377
 
 
-state 333
+state 326
 
    88 signed_number_expression_list: signed_number .
 
     $default  reduce using rule 88 (signed_number_expression_list)
 
 
-state 334
+state 327
 
    82 index_type_list: index_type_list ',' ordinal_type_expression .
 
     $default  reduce using rule 82 (index_type_list)
 
 
-state 335
+state 328
 
    81 array_type: "array" '[' index_type_list ']' "of" . type
 
@@ -4506,7 +4457,7 @@ state 335
     constant                 go to state 107
     constant_identifier      go to state 71
     sign                     go to state 72
-    type                     go to state 381
+    type                     go to state 378
     simple_type              go to state 109
     ordinal_type             go to state 110
     ordinal_type_identifier  go to state 111
@@ -4529,70 +4480,70 @@ state 335
     function_identifier      go to state 126
 
 
-state 336
+state 329
 
   110 tag_field_type: IDENTIFIER .
 
     $default  reduce using rule 110 (tag_field_type)
 
 
-state 337
+state 330
 
   103 variant_part: "case" IDENTIFIER ':' tag_field_type . "of" variant_list
 
-    "of"  shift, and go to state 382
+    "of"  shift, and go to state 379
 
 
-state 338
+state 331
 
   109 constant_list: constant .
 
     $default  reduce using rule 109 (constant_list)
 
 
-state 339
+state 332
 
   102 variant_part: "case" tag_field_type "of" variant_list .
   104 variant_list: variant_list . ';' variant
 
-    ';'  shift, and go to state 383
+    ';'  shift, and go to state 380
 
     ';'       [reduce using rule 102 (variant_part)]
     $default  reduce using rule 102 (variant_part)
 
 
-state 340
+state 333
 
   105 variant_list: variant .
 
     $default  reduce using rule 105 (variant_list)
 
 
-state 341
+state 334
 
   106 variant: constant_list . ':' '(' ')'
   107        | constant_list . ':' '(' field_list ')'
   108 constant_list: constant_list . ',' constant
 
-    ','  shift, and go to state 384
-    ':'  shift, and go to state 385
+    ','  shift, and go to state 381
+    ':'  shift, and go to state 382
 
 
-state 342
+state 335
 
    96 field_list: fixed_part ';' variant_part ';' .
 
     $default  reduce using rule 96 (field_list)
 
 
-state 343
+state 336
 
   155 factor: '(' expression ')' .
 
     $default  reduce using rule 155 (factor)
 
 
-state 344
+state 337
 
   202 member_group: expression ".." . expression
 
@@ -4623,13 +4574,13 @@ state 344
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 386
+    expression                                go to state 383
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 345
+state 338
 
   199 member_group_list: member_group_list ',' . member_group
 
@@ -4660,21 +4611,21 @@ state 345
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 262
+    expression                                go to state 261
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
-    member_group                              go to state 387
+    member_group                              go to state 384
 
 
-state 346
+state 339
 
   198 set_constructor: '[' member_group_list ']' .
 
     $default  reduce using rule 198 (set_constructor)
 
 
-state 347
+state 340
 
   139 field_designator: '.' IDENTIFIER .
   185 function_identifier: IDENTIFIER .
@@ -4683,90 +4634,152 @@ state 347
     $default  reduce using rule 139 (field_designator)
 
 
-state 348
+state 341
 
   140 field_designator: '.' function_call .
 
     $default  reduce using rule 140 (field_designator)
 
 
-state 349
+state 342
 
   136 index: '[' expression_list . ']'
   137 expression_list: expression_list . ',' expression
 
-    ','  shift, and go to state 388
-    ']'  shift, and go to state 389
+    ','  shift, and go to state 385
+    ']'  shift, and go to state 386
 
 
-state 350
+state 343
 
   138 expression_list: expression .
 
     $default  reduce using rule 138 (expression_list)
 
 
-state 351
+state 344
 
   131 qualifier_list: qualifier_list qualifier .
 
     $default  reduce using rule 131 (qualifier_list)
 
 
-state 352
+state 345
 
   159 term: term term_operator_list factor .
 
     $default  reduce using rule 159 (term)
 
 
-state 353
+state 346
 
   174 expression: simple_expression relational_operator simple_expression .
 
     $default  reduce using rule 174 (expression)
 
 
-state 354
+state 347
 
   159 term: term . term_operator_list factor
   168 simple_expression_term_operator_iterable: simple_expression_term_operator_iterable simple_expression_term_operator_list term .
 
-    "div"  shift, and go to state 243
-    "mod"  shift, and go to state 244
-    "and"  shift, and go to state 245
-    '*'    shift, and go to state 246
-    '/'    shift, and go to state 247
+    "div"  shift, and go to state 242
+    "mod"  shift, and go to state 243
+    "and"  shift, and go to state 244
+    '*'    shift, and go to state 245
+    '/'    shift, and go to state 246
 
     $default  reduce using rule 168 (simple_expression_term_operator_iterable)
 
-    term_operator_list  go to state 273
+    term_operator_list  go to state 272
 
 
-state 355
+state 348
 
   189 actual_parameter_iterable: actual_parameter_iterable ',' actual_parameter .
 
     $default  reduce using rule 189 (actual_parameter_iterable)
 
 
-state 356
+state 349
 
   188 actual_parameter_list: '(' actual_parameter_iterable ':' base_type . ')'
 
-    ')'  shift, and go to state 390
+    ')'  shift, and go to state 387
+
+
+state 350
+
+  264 function_heading: "function" IDENTIFIER $@4 ':' base_type .
+
+    $default  reduce using rule 264 (function_heading)
+
+
+state 351
+
+  274 parameter_declaration: "var" . identifier_list ':' type_identifier
+
+    IDENTIFIER  shift, and go to state 21
+
+    identifier_list  go to state 388
+
+
+state 352
+
+  268 formal_parameter_list: '(' ')' .
+
+    $default  reduce using rule 268 (formal_parameter_list)
+
+
+state 353
+
+   49 identifier_list: identifier_list . ',' IDENTIFIER
+  275 parameter_declaration: identifier_list . ':' type_identifier
+
+    ','  shift, and go to state 36
+    ':'  shift, and go to state 389
+
+
+state 354
+
+  272 formal_parameter_list_iterable_list: procedure_heading .
+
+    $default  reduce using rule 272 (formal_parameter_list_iterable_list)
+
+
+state 355
+
+  273 formal_parameter_list_iterable_list: function_heading .
+
+    $default  reduce using rule 273 (formal_parameter_list_iterable_list)
+
+
+state 356
+
+  267 formal_parameter_list: '(' formal_parameter_list_iterable . ')'
+  269 formal_parameter_list_iterable: formal_parameter_list_iterable . ';' formal_parameter_list_iterable_list
+
+    ';'  shift, and go to state 390
+    ')'  shift, and go to state 391
 
 
 state 357
 
-  263 function_heading: "function" IDENTIFIER $@3 ':' base_type .
+  270 formal_parameter_list_iterable: formal_parameter_list_iterable_list .
 
-    $default  reduce using rule 263 (function_heading)
+    $default  reduce using rule 270 (formal_parameter_list_iterable)
 
 
 state 358
 
-  265 function_heading: "function" IDENTIFIER $@4 formal_parameter_list ':' . base_type
+  271 formal_parameter_list_iterable_list: parameter_declaration .
+
+    $default  reduce using rule 271 (formal_parameter_list_iterable_list)
+
+
+state 359
+
+  266 function_heading: "function" IDENTIFIER $@5 formal_parameter_list ':' . base_type
 
     DECIMAL_INT   shift, and go to state 61
     HEXADECIMAL   shift, and go to state 62
@@ -4783,195 +4796,105 @@ state 358
     "function"    shift, and go to state 162
     "file"        shift, and go to state 163
 
-    base_type        go to state 391
+    base_type        go to state 392
     unsigned_number  go to state 165
 
 
-state 359
-
-   49 identifier_list: identifier_list . ',' IDENTIFIER
-  273 parameter_declaration: "var" identifier_list . ':' type_identifier
-
-    ','  shift, and go to state 36
-    ':'  shift, and go to state 392
-
-
 state 360
-
-  274 parameter_declaration: identifier_list ':' . type_identifier
-
-    DECIMAL_INT    shift, and go to state 61
-    HEXADECIMAL    shift, and go to state 62
-    REAL_DECIMAL   shift, and go to state 63
-    IDENTIFIER     shift, and go to state 89
-    QUOTED_STRING  shift, and go to state 65
-    QUOTED_CHAR    shift, and go to state 66
-    "real"         shift, and go to state 90
-    "integer"      shift, and go to state 91
-    "longint"      shift, and go to state 92
-    "word"         shift, and go to state 93
-    "char"         shift, and go to state 94
-    "boolean"      shift, and go to state 95
-    "string"       shift, and go to state 96
-    "packed"       shift, and go to state 97
-    "array"        shift, and go to state 98
-    "record"       shift, and go to state 99
-    "of"           shift, and go to state 100
-    "set"          shift, and go to state 101
-    "function"     shift, and go to state 102
-    "file"         shift, and go to state 103
-    "nil"          shift, and go to state 104
-    '+'            shift, and go to state 67
-    '-'            shift, and go to state 68
-    '('            shift, and go to state 105
-    '#'            shift, and go to state 69
-    '^'            shift, and go to state 106
-
-    constant                 go to state 107
-    constant_identifier      go to state 71
-    sign                     go to state 72
-    type                     go to state 393
-    simple_type              go to state 109
-    ordinal_type             go to state 110
-    ordinal_type_identifier  go to state 111
-    enumerated_type          go to state 112
-    subrange_type            go to state 113
-    real_type                go to state 114
-    real_type_identifier     go to state 115
-    string_type              go to state 116
-    structured_type          go to state 117
-    type_list                go to state 118
-    array_type               go to state 119
-    record_type              go to state 120
-    set_type                 go to state 121
-    file_type                go to state 122
-    pointer_type             go to state 123
-    pointer_type_identifier  go to state 124
-    unsigned_number          go to state 73
-    signed_number            go to state 74
-    function_call            go to state 125
-    function_identifier      go to state 126
-    type_identifier          go to state 394
-
-
-state 361
-
-  268 formal_parameter_list_iterable: formal_parameter_list_iterable ';' . formal_parameter_list_iterable_list
-
-    IDENTIFIER   shift, and go to state 21
-    "var"        shift, and go to state 292
-    "function"   shift, and go to state 129
-    "procedure"  shift, and go to state 130
-
-    identifier_list                      go to state 294
-    procedure_heading                    go to state 295
-    function_heading                     go to state 296
-    formal_parameter_list_iterable_list  go to state 395
-    parameter_declaration                go to state 299
-
-
-state 362
-
-  266 formal_parameter_list: '(' formal_parameter_list_iterable ')' .
-
-    $default  reduce using rule 266 (formal_parameter_list)
-
-
-state 363
 
   218 procedure_statement: IDENTIFIER actual_parameter_list .
 
     $default  reduce using rule 218 (procedure_statement)
 
 
-state 364
+state 361
 
   231 case_statement: "case" expression . "of" case_list "end"
   232               | "case" expression . "of" case_list otherwise_clause "end"
   233               | "case" expression . "of" case_list otherwise_clause ';' "end"
   234               | "case" expression . "of" case_list ';' "end"
 
-    "of"  shift, and go to state 396
+    "of"  shift, and go to state 393
 
 
-state 365
+state 362
 
   219 goto_statement: "goto" label .
 
     $default  reduce using rule 219 (goto_statement)
 
 
-state 366
+state 363
 
   229 if_statement: "if" expression . "then" statement
   230             | "if" expression . "then" statement "else" statement
 
-    "then"  shift, and go to state 397
+    "then"  shift, and go to state 394
 
 
-state 367
+state 364
 
   225 statement_list: statement_list . ';' statement
   242 repeat_statement: "repeat" statement_list . "until" expression
 
-    "until"  shift, and go to state 398
-    ';'      shift, and go to state 378
+    "until"  shift, and go to state 395
+    ';'      shift, and go to state 375
 
 
-state 368
+state 365
 
   243 while_statement: "while" expression . "do" statement
 
-    "do"  shift, and go to state 399
+    "do"  shift, and go to state 396
 
 
-state 369
+state 366
 
   246 control_variable: IDENTIFIER .
 
     $default  reduce using rule 246 (control_variable)
 
 
-state 370
+state 367
 
   244 for_statement: "for" control_variable . ":=" initial_value "to" final_value "do" statement
   245              | "for" control_variable . ":=" initial_value "downto" final_value "do" statement
 
-    ":="  shift, and go to state 400
+    ":="  shift, and go to state 397
 
 
-state 371
+state 368
 
   251 record_variable_reference_list: variable_reference .
 
     $default  reduce using rule 251 (record_variable_reference_list)
 
 
-state 372
+state 369
 
   249 with_statement: "with" record_variable_reference_list . "do" statement
   250 record_variable_reference_list: record_variable_reference_list . ',' variable_reference
 
-    "do"  shift, and go to state 401
-    ','   shift, and go to state 402
+    "do"  shift, and go to state 398
+    ','   shift, and go to state 399
 
 
-state 373
+state 370
 
   204 statement: label ':' .
   205          | label ':' . simple_statement
   206          | label ':' . structured_statement
 
-    IDENTIFIER  shift, and go to state 403
-    "begin"     shift, and go to state 230
-    "case"      shift, and go to state 301
+    IDENTIFIER  shift, and go to state 400
+    "begin"     shift, and go to state 229
+    "case"      shift, and go to state 294
     "function"  shift, and go to state 102
-    "goto"      shift, and go to state 302
-    "if"        shift, and go to state 303
-    "repeat"    shift, and go to state 304
-    "while"     shift, and go to state 305
-    "for"       shift, and go to state 306
-    "with"      shift, and go to state 307
+    "goto"      shift, and go to state 295
+    "if"        shift, and go to state 296
+    "repeat"    shift, and go to state 297
+    "while"     shift, and go to state 298
+    "for"       shift, and go to state 299
+    "with"      shift, and go to state 300
     "read"      shift, and go to state 199
     "readln"    shift, and go to state 200
     "write"     shift, and go to state 201
@@ -4979,27 +4902,27 @@ state 373
 
     $default  reduce using rule 204 (statement)
 
-    variable_reference     go to state 404
+    variable_reference     go to state 401
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    simple_statement       go to state 405
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 406
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    simple_statement       go to state 402
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 403
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 374
+state 371
 
   214 assignment_statement: variable_reference ":=" . expression
 
@@ -5030,13 +4953,13 @@ state 374
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 407
+    expression                                go to state 404
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 375
+state 372
 
   215 assignment_statement: function_identifier ":=" . expression
 
@@ -5067,41 +4990,41 @@ state 375
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 408
+    expression                                go to state 405
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 376
+state 373
 
   217 procedure_statement: procedure_identifier actual_parameter_list .
 
     $default  reduce using rule 217 (procedure_statement)
 
 
-state 377
+state 374
 
   224 compound_statement: "begin" statement_list "end" .
 
     $default  reduce using rule 224 (compound_statement)
 
 
-state 378
+state 375
 
   225 statement_list: statement_list ';' . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5109,29 +5032,29 @@ state 378
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 409
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 406
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 379
+state 376
 
    89 unsigned_number_expression_list: unsigned_number_expression_list sign . unsigned_number
 
@@ -5139,10 +5062,10 @@ state 379
     HEXADECIMAL   shift, and go to state 62
     REAL_DECIMAL  shift, and go to state 63
 
-    unsigned_number  go to state 410
+    unsigned_number  go to state 407
 
 
-state 380
+state 377
 
    87 signed_number_expression_list: signed_number_expression_list term_operator_list . signed_number
 
@@ -5154,17 +5077,17 @@ state 380
 
     sign             go to state 84
     unsigned_number  go to state 73
-    signed_number    go to state 411
+    signed_number    go to state 408
 
 
-state 381
+state 378
 
    81 array_type: "array" '[' index_type_list ']' "of" type .
 
     $default  reduce using rule 81 (array_type)
 
 
-state 382
+state 379
 
   103 variant_part: "case" IDENTIFIER ':' tag_field_type "of" . variant_list
 
@@ -5178,17 +5101,17 @@ state 382
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 338
+    constant             go to state 331
     constant_identifier  go to state 71
     sign                 go to state 72
-    variant_list         go to state 412
-    variant              go to state 340
-    constant_list        go to state 341
+    variant_list         go to state 409
+    variant              go to state 333
+    constant_list        go to state 334
     unsigned_number      go to state 73
     signed_number        go to state 74
 
 
-state 383
+state 380
 
   104 variant_list: variant_list ';' . variant
 
@@ -5202,16 +5125,16 @@ state 383
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 338
+    constant             go to state 331
     constant_identifier  go to state 71
     sign                 go to state 72
-    variant              go to state 413
-    constant_list        go to state 341
+    variant              go to state 410
+    constant_list        go to state 334
     unsigned_number      go to state 73
     signed_number        go to state 74
 
 
-state 384
+state 381
 
   108 constant_list: constant_list ',' . constant
 
@@ -5225,36 +5148,36 @@ state 384
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 414
+    constant             go to state 411
     constant_identifier  go to state 71
     sign                 go to state 72
     unsigned_number      go to state 73
     signed_number        go to state 74
 
 
-state 385
+state 382
 
   106 variant: constant_list ':' . '(' ')'
   107        | constant_list ':' . '(' field_list ')'
 
-    '('  shift, and go to state 415
+    '('  shift, and go to state 412
 
 
-state 386
+state 383
 
   202 member_group: expression ".." expression .
 
     $default  reduce using rule 202 (member_group)
 
 
-state 387
+state 384
 
   199 member_group_list: member_group_list ',' member_group .
 
     $default  reduce using rule 199 (member_group_list)
 
 
-state 388
+state 385
 
   137 expression_list: expression_list ',' . expression
 
@@ -5285,36 +5208,38 @@ state 388
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 416
+    expression                                go to state 413
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
 
 
-state 389
+state 386
 
   136 index: '[' expression_list ']' .
 
     $default  reduce using rule 136 (index)
 
 
-state 390
+state 387
 
   188 actual_parameter_list: '(' actual_parameter_iterable ':' base_type ')' .
 
     $default  reduce using rule 188 (actual_parameter_list)
 
 
-state 391
+state 388
 
-  265 function_heading: "function" IDENTIFIER $@4 formal_parameter_list ':' base_type .
+   49 identifier_list: identifier_list . ',' IDENTIFIER
+  274 parameter_declaration: "var" identifier_list . ':' type_identifier
 
-    $default  reduce using rule 265 (function_heading)
+    ','  shift, and go to state 36
+    ':'  shift, and go to state 414
 
 
-state 392
+state 389
 
-  273 parameter_declaration: "var" identifier_list ':' . type_identifier
+  275 parameter_declaration: identifier_list ':' . type_identifier
 
     DECIMAL_INT    shift, and go to state 61
     HEXADECIMAL    shift, and go to state 62
@@ -5346,7 +5271,7 @@ state 392
     constant                 go to state 107
     constant_identifier      go to state 71
     sign                     go to state 72
-    type                     go to state 393
+    type                     go to state 415
     simple_type              go to state 109
     ordinal_type             go to state 110
     ordinal_type_identifier  go to state 111
@@ -5367,31 +5292,40 @@ state 392
     signed_number            go to state 74
     function_call            go to state 125
     function_identifier      go to state 126
-    type_identifier          go to state 417
+    type_identifier          go to state 416
+
+
+state 390
+
+  269 formal_parameter_list_iterable: formal_parameter_list_iterable ';' . formal_parameter_list_iterable_list
+
+    IDENTIFIER   shift, and go to state 21
+    "var"        shift, and go to state 351
+    "function"   shift, and go to state 129
+    "procedure"  shift, and go to state 130
+
+    identifier_list                      go to state 353
+    procedure_heading                    go to state 354
+    function_heading                     go to state 355
+    formal_parameter_list_iterable_list  go to state 417
+    parameter_declaration                go to state 358
+
+
+state 391
+
+  267 formal_parameter_list: '(' formal_parameter_list_iterable ')' .
+
+    $default  reduce using rule 267 (formal_parameter_list)
+
+
+state 392
+
+  266 function_heading: "function" IDENTIFIER $@5 formal_parameter_list ':' base_type .
+
+    $default  reduce using rule 266 (function_heading)
 
 
 state 393
-
-  275 type_identifier: type .
-
-    $default  reduce using rule 275 (type_identifier)
-
-
-state 394
-
-  274 parameter_declaration: identifier_list ':' type_identifier .
-
-    $default  reduce using rule 274 (parameter_declaration)
-
-
-state 395
-
-  268 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list .
-
-    $default  reduce using rule 268 (formal_parameter_list_iterable)
-
-
-state 396
 
   231 case_statement: "case" expression "of" . case_list "end"
   232               | "case" expression "of" . case_list otherwise_clause "end"
@@ -5408,7 +5342,7 @@ state 396
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 338
+    constant             go to state 331
     constant_identifier  go to state 71
     sign                 go to state 72
     constant_list        go to state 418
@@ -5418,22 +5352,22 @@ state 396
     case                 go to state 420
 
 
-state 397
+state 394
 
   229 if_statement: "if" expression "then" . statement
   230             | "if" expression "then" . statement "else" statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5441,29 +5375,29 @@ state 397
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
     statement              go to state 421
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 398
+state 395
 
   242 repeat_statement: "repeat" statement_list "until" . expression
 
@@ -5500,21 +5434,21 @@ state 398
     set_constructor                           go to state 223
 
 
-state 399
+state 396
 
   243 while_statement: "while" expression "do" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5522,29 +5456,29 @@ state 399
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
     statement              go to state 423
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 400
+state 397
 
   244 for_statement: "for" control_variable ":=" . initial_value "to" final_value "do" statement
   245              | "for" control_variable ":=" . initial_value "downto" final_value "do" statement
@@ -5583,21 +5517,21 @@ state 400
     initial_value                             go to state 425
 
 
-state 401
+state 398
 
   249 with_statement: "with" record_variable_reference_list "do" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5605,39 +5539,39 @@ state 401
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
     statement              go to state 426
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 402
+state 399
 
   250 record_variable_reference_list: record_variable_reference_list ',' . variable_reference
 
-    IDENTIFIER  shift, and go to state 258
+    IDENTIFIER  shift, and go to state 257
 
     variable_reference   go to state 427
     variable_identifier  go to state 211
 
 
-state 403
+state 400
 
   130 variable_identifier: IDENTIFIER .
   185 function_identifier: IDENTIFIER .
@@ -5648,91 +5582,91 @@ state 403
     ":="      reduce using rule 185 (function_identifier)
     $default  reduce using rule 130 (variable_identifier)
 
-    actual_parameter_list  go to state 363
+    actual_parameter_list  go to state 360
 
 
-state 404
+state 401
 
   214 assignment_statement: variable_reference . ":=" expression
 
-    ":="  shift, and go to state 374
+    ":="  shift, and go to state 371
 
 
-state 405
+state 402
 
   205 statement: label ':' simple_statement .
 
     $default  reduce using rule 205 (statement)
 
 
-state 406
+state 403
 
   206 statement: label ':' structured_statement .
 
     $default  reduce using rule 206 (statement)
 
 
-state 407
+state 404
 
   214 assignment_statement: variable_reference ":=" expression .
 
     $default  reduce using rule 214 (assignment_statement)
 
 
-state 408
+state 405
 
   215 assignment_statement: function_identifier ":=" expression .
 
     $default  reduce using rule 215 (assignment_statement)
 
 
-state 409
+state 406
 
   225 statement_list: statement_list ';' statement .
 
     $default  reduce using rule 225 (statement_list)
 
 
-state 410
+state 407
 
    89 unsigned_number_expression_list: unsigned_number_expression_list sign unsigned_number .
 
     $default  reduce using rule 89 (unsigned_number_expression_list)
 
 
-state 411
+state 408
 
    87 signed_number_expression_list: signed_number_expression_list term_operator_list signed_number .
 
     $default  reduce using rule 87 (signed_number_expression_list)
 
 
-state 412
+state 409
 
   103 variant_part: "case" IDENTIFIER ':' tag_field_type "of" variant_list .
   104 variant_list: variant_list . ';' variant
 
-    ';'  shift, and go to state 383
+    ';'  shift, and go to state 380
 
     ';'       [reduce using rule 103 (variant_part)]
     $default  reduce using rule 103 (variant_part)
 
 
-state 413
+state 410
 
   104 variant_list: variant_list ';' variant .
 
     $default  reduce using rule 104 (variant_list)
 
 
-state 414
+state 411
 
   108 constant_list: constant_list ',' constant .
 
     $default  reduce using rule 108 (constant_list)
 
 
-state 415
+state 412
 
   106 variant: constant_list ':' '(' . ')'
   107        | constant_list ':' '(' . field_list ')'
@@ -5748,18 +5682,90 @@ state 415
     variant_part       go to state 149
 
 
-state 416
+state 413
 
   137 expression_list: expression_list ',' expression .
 
     $default  reduce using rule 137 (expression_list)
 
 
+state 414
+
+  274 parameter_declaration: "var" identifier_list ':' . type_identifier
+
+    DECIMAL_INT    shift, and go to state 61
+    HEXADECIMAL    shift, and go to state 62
+    REAL_DECIMAL   shift, and go to state 63
+    IDENTIFIER     shift, and go to state 89
+    QUOTED_STRING  shift, and go to state 65
+    QUOTED_CHAR    shift, and go to state 66
+    "real"         shift, and go to state 90
+    "integer"      shift, and go to state 91
+    "longint"      shift, and go to state 92
+    "word"         shift, and go to state 93
+    "char"         shift, and go to state 94
+    "boolean"      shift, and go to state 95
+    "string"       shift, and go to state 96
+    "packed"       shift, and go to state 97
+    "array"        shift, and go to state 98
+    "record"       shift, and go to state 99
+    "of"           shift, and go to state 100
+    "set"          shift, and go to state 101
+    "function"     shift, and go to state 102
+    "file"         shift, and go to state 103
+    "nil"          shift, and go to state 104
+    '+'            shift, and go to state 67
+    '-'            shift, and go to state 68
+    '('            shift, and go to state 105
+    '#'            shift, and go to state 69
+    '^'            shift, and go to state 106
+
+    constant                 go to state 107
+    constant_identifier      go to state 71
+    sign                     go to state 72
+    type                     go to state 415
+    simple_type              go to state 109
+    ordinal_type             go to state 110
+    ordinal_type_identifier  go to state 111
+    enumerated_type          go to state 112
+    subrange_type            go to state 113
+    real_type                go to state 114
+    real_type_identifier     go to state 115
+    string_type              go to state 116
+    structured_type          go to state 117
+    type_list                go to state 118
+    array_type               go to state 119
+    record_type              go to state 120
+    set_type                 go to state 121
+    file_type                go to state 122
+    pointer_type             go to state 123
+    pointer_type_identifier  go to state 124
+    unsigned_number          go to state 73
+    signed_number            go to state 74
+    function_call            go to state 125
+    function_identifier      go to state 126
+    type_identifier          go to state 430
+
+
+state 415
+
+  276 type_identifier: type .
+
+    $default  reduce using rule 276 (type_identifier)
+
+
+state 416
+
+  275 parameter_declaration: identifier_list ':' type_identifier .
+
+    $default  reduce using rule 275 (parameter_declaration)
+
+
 state 417
 
-  273 parameter_declaration: "var" identifier_list ':' type_identifier .
+  269 formal_parameter_list_iterable: formal_parameter_list_iterable ';' formal_parameter_list_iterable_list .
 
-    $default  reduce using rule 273 (parameter_declaration)
+    $default  reduce using rule 269 (formal_parameter_list_iterable)
 
 
 state 418
@@ -5767,8 +5773,8 @@ state 418
   108 constant_list: constant_list . ',' constant
   237 case: constant_list . ':' statement
 
-    ','  shift, and go to state 384
-    ':'  shift, and go to state 430
+    ','  shift, and go to state 381
+    ':'  shift, and go to state 431
 
 
 state 419
@@ -5779,10 +5785,10 @@ state 419
   234               | "case" expression "of" case_list . ';' "end"
   235 case_list: case_list . ';' case
 
-    "end"  shift, and go to state 431
-    ';'    shift, and go to state 432
+    "end"  shift, and go to state 432
+    ';'    shift, and go to state 433
 
-    otherwise_clause  go to state 433
+    otherwise_clause  go to state 434
 
 
 state 420
@@ -5797,7 +5803,7 @@ state 421
   229 if_statement: "if" expression "then" statement .
   230             | "if" expression "then" statement . "else" statement
 
-    "else"  shift, and go to state 434
+    "else"  shift, and go to state 435
 
     "else"    [reduce using rule 229 (if_statement)]
     $default  reduce using rule 229 (if_statement)
@@ -5829,8 +5835,8 @@ state 425
   244 for_statement: "for" control_variable ":=" initial_value . "to" final_value "do" statement
   245              | "for" control_variable ":=" initial_value . "downto" final_value "do" statement
 
-    "to"      shift, and go to state 435
-    "downto"  shift, and go to state 436
+    "to"      shift, and go to state 436
+    "downto"  shift, and go to state 437
 
 
 state 426
@@ -5858,24 +5864,31 @@ state 429
 
   107 variant: constant_list ':' '(' field_list . ')'
 
-    ')'  shift, and go to state 437
+    ')'  shift, and go to state 438
 
 
 state 430
 
+  274 parameter_declaration: "var" identifier_list ':' type_identifier .
+
+    $default  reduce using rule 274 (parameter_declaration)
+
+
+state 431
+
   237 case: constant_list ':' . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5883,36 +5896,36 @@ state 430
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 438
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 439
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 431
+state 432
 
   231 case_statement: "case" expression "of" case_list "end" .
 
     $default  reduce using rule 231 (case_statement)
 
 
-state 432
+state 433
 
   234 case_statement: "case" expression "of" case_list ';' . "end"
   235 case_list: case_list ';' . case
@@ -5924,45 +5937,45 @@ state 432
     IDENTIFIER     shift, and go to state 64
     QUOTED_STRING  shift, and go to state 65
     QUOTED_CHAR    shift, and go to state 66
-    "end"          shift, and go to state 439
-    "otherwise"    shift, and go to state 440
+    "end"          shift, and go to state 440
+    "otherwise"    shift, and go to state 441
     '+'            shift, and go to state 67
     '-'            shift, and go to state 68
     '#'            shift, and go to state 69
 
-    constant             go to state 338
+    constant             go to state 331
     constant_identifier  go to state 71
     sign                 go to state 72
     constant_list        go to state 418
     unsigned_number      go to state 73
     signed_number        go to state 74
-    case                 go to state 441
-
-
-state 433
-
-  232 case_statement: "case" expression "of" case_list otherwise_clause . "end"
-  233               | "case" expression "of" case_list otherwise_clause . ';' "end"
-
-    "end"  shift, and go to state 442
-    ';'    shift, and go to state 443
+    case                 go to state 442
 
 
 state 434
 
+  232 case_statement: "case" expression "of" case_list otherwise_clause . "end"
+  233               | "case" expression "of" case_list otherwise_clause . ';' "end"
+
+    "end"  shift, and go to state 443
+    ';'    shift, and go to state 444
+
+
+state 435
+
   230 if_statement: "if" expression "then" statement "else" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -5970,29 +5983,29 @@ state 434
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 444
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 445
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 435
+state 436
 
   244 for_statement: "for" control_variable ":=" initial_value "to" . final_value "do" statement
 
@@ -6023,14 +6036,14 @@ state 435
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 445
+    expression                                go to state 446
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
-    final_value                               go to state 446
+    final_value                               go to state 447
 
 
-state 436
+state 437
 
   245 for_statement: "for" control_variable ":=" initial_value "downto" . final_value "do" statement
 
@@ -6061,49 +6074,49 @@ state 436
     term                                      go to state 215
     simple_expression                         go to state 216
     simple_expression_term_operator_iterable  go to state 217
-    expression                                go to state 445
+    expression                                go to state 446
     function_call                             go to state 219
     function_identifier                       go to state 126
     set_constructor                           go to state 223
-    final_value                               go to state 447
+    final_value                               go to state 448
 
 
-state 437
+state 438
 
   107 variant: constant_list ':' '(' field_list ')' .
 
     $default  reduce using rule 107 (variant)
 
 
-state 438
+state 439
 
   237 case: constant_list ':' statement .
 
     $default  reduce using rule 237 (case)
 
 
-state 439
+state 440
 
   234 case_statement: "case" expression "of" case_list ';' "end" .
 
     $default  reduce using rule 234 (case_statement)
 
 
-state 440
+state 441
 
   238 otherwise_clause: ';' "otherwise" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -6111,106 +6124,106 @@ state 440
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 448
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 449
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 441
+state 442
 
   235 case_list: case_list ';' case .
 
     $default  reduce using rule 235 (case_list)
 
 
-state 442
+state 443
 
   232 case_statement: "case" expression "of" case_list otherwise_clause "end" .
 
     $default  reduce using rule 232 (case_statement)
 
 
-state 443
+state 444
 
   233 case_statement: "case" expression "of" case_list otherwise_clause ';' . "end"
 
-    "end"  shift, and go to state 449
+    "end"  shift, and go to state 450
 
 
-state 444
+state 445
 
   230 if_statement: "if" expression "then" statement "else" statement .
 
     $default  reduce using rule 230 (if_statement)
 
 
-state 445
+state 446
 
   248 final_value: expression .
 
     $default  reduce using rule 248 (final_value)
 
 
-state 446
-
-  244 for_statement: "for" control_variable ":=" initial_value "to" final_value . "do" statement
-
-    "do"  shift, and go to state 450
-
-
 state 447
 
-  245 for_statement: "for" control_variable ":=" initial_value "downto" final_value . "do" statement
+  244 for_statement: "for" control_variable ":=" initial_value "to" final_value . "do" statement
 
     "do"  shift, and go to state 451
 
 
 state 448
 
+  245 for_statement: "for" control_variable ":=" initial_value "downto" final_value . "do" statement
+
+    "do"  shift, and go to state 452
+
+
+state 449
+
   238 otherwise_clause: ';' "otherwise" statement .
 
     $default  reduce using rule 238 (otherwise_clause)
 
 
-state 449
+state 450
 
   233 case_statement: "case" expression "of" case_list otherwise_clause ';' "end" .
 
     $default  reduce using rule 233 (case_statement)
 
 
-state 450
+state 451
 
   244 for_statement: "for" control_variable ":=" initial_value "to" final_value "do" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -6218,43 +6231,43 @@ state 450
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 452
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 453
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 451
+state 452
 
   245 for_statement: "for" control_variable ":=" initial_value "downto" final_value "do" . statement
 
     DECIMAL_INT  shift, and go to state 25
-    IDENTIFIER   shift, and go to state 300
-    "begin"      shift, and go to state 230
-    "case"       shift, and go to state 301
+    IDENTIFIER   shift, and go to state 293
+    "begin"      shift, and go to state 229
+    "case"       shift, and go to state 294
     "function"   shift, and go to state 102
-    "goto"       shift, and go to state 302
-    "if"         shift, and go to state 303
-    "repeat"     shift, and go to state 304
-    "while"      shift, and go to state 305
-    "for"        shift, and go to state 306
-    "with"       shift, and go to state 307
+    "goto"       shift, and go to state 295
+    "if"         shift, and go to state 296
+    "repeat"     shift, and go to state 297
+    "while"      shift, and go to state 298
+    "for"        shift, and go to state 299
+    "with"       shift, and go to state 300
     "read"       shift, and go to state 199
     "readln"     shift, and go to state 200
     "write"      shift, and go to state 201
@@ -6262,36 +6275,36 @@ state 451
 
     $default  reduce using rule 203 (statement)
 
-    label                  go to state 308
-    variable_reference     go to state 309
+    label                  go to state 301
+    variable_reference     go to state 302
     variable_identifier    go to state 211
-    function_identifier    go to state 310
-    procedure_identifier   go to state 311
-    statement              go to state 453
-    simple_statement       go to state 313
-    assignment_statement   go to state 314
-    procedure_statement    go to state 315
-    goto_statement         go to state 316
-    structured_statement   go to state 317
-    compound_statement     go to state 318
-    conditional_statement  go to state 320
-    if_statement           go to state 321
-    case_statement         go to state 322
-    repetitive_statement   go to state 323
-    repeat_statement       go to state 324
-    while_statement        go to state 325
-    for_statement          go to state 326
-    with_statement         go to state 327
+    function_identifier    go to state 303
+    procedure_identifier   go to state 304
+    statement              go to state 454
+    simple_statement       go to state 306
+    assignment_statement   go to state 307
+    procedure_statement    go to state 308
+    goto_statement         go to state 309
+    structured_statement   go to state 310
+    compound_statement     go to state 311
+    conditional_statement  go to state 313
+    if_statement           go to state 314
+    case_statement         go to state 315
+    repetitive_statement   go to state 316
+    repeat_statement       go to state 317
+    while_statement        go to state 318
+    for_statement          go to state 319
+    with_statement         go to state 320
 
 
-state 452
+state 453
 
   244 for_statement: "for" control_variable ":=" initial_value "to" final_value "do" statement .
 
     $default  reduce using rule 244 (for_statement)
 
 
-state 453
+state 454
 
   245 for_statement: "for" control_variable ":=" initial_value "downto" final_value "do" statement .
 
